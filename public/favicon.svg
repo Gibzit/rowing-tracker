@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="64" fill="#1e40af"/>
+  <text x="256" y="200" font-family="Arial,sans-serif" font-size="100" font-weight="bold" fill="white" text-anchor="middle">PETE</text>
+  <text x="256" y="310" font-family="Arial,sans-serif" font-size="100" font-weight="bold" fill="white" text-anchor="middle">PLAN</text>
+  <line x1="100" y1="380" x2="412" y2="380" stroke="white" stroke-width="8" stroke-linecap="round"/>
+  <ellipse cx="140" cy="400" rx="30" ry="8" fill="white" opacity="0.8"/>
+  <ellipse cx="256" cy="400" rx="30" ry="8" fill="white" opacity="0.8"/>
+  <ellipse cx="372" cy="400" rx="30" ry="8" fill="white" opacity="0.8"/>
+</svg>

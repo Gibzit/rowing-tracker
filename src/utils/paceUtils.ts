@@ -1,0 +1,59 @@
+import type { SessionRecord } from './storage';
+import type { SessionDescriptor } from '../data/trainingPlan';
+
+export type WorkoutCategory = 'distance' | 'interval' | 'time';
+
+export interface PaceDataPoint {
+  weekNumber: number;
+  dayNumber: number;
+  label: string;
+  paceSeconds: number;
+  category: WorkoutCategory;
+}
+
+export function paceToSeconds(pace: string): number | null {
+  const match = pace.trim().match(/^(\d{1,2}):(\d{2})$/);
+  if (!match) return null;
+  const minutes = parseInt(match[1], 10);
+  const seconds = parseInt(match[2], 10);
+  if (seconds >= 60) return null;
+  return minutes * 60 + seconds;
+}
+
+export function secondsToPace(totalSeconds: number): string {
+  const m = Math.floor(totalSeconds / 60);
+  const s = Math.round(totalSeconds % 60);
+  return `${m}:${s.toString().padStart(2, '0')}`;
+}
+
+export function categorizeWorkout(label: string): WorkoutCategory {
+  if (/\d+\s*[x\u00d7]\s*\d+/i.test(label)) return 'interval';
+  if (/\d+\s*min/i.test(label)) return 'time';
+  return 'distance';
+}
+
+export function extractPaceData(
+  sessions: Record<string, SessionRecord>,
+  plan: SessionDescriptor[]
+): PaceDataPoint[] {
+  const points: PaceDataPoint[] = [];
+
+  for (const desc of plan) {
+    const key = `${desc.weekNumber}-${desc.dayNumber}`;
+    const record = sessions[key];
+    if (!record?.pace) continue;
+
+    const paceSeconds = paceToSeconds(record.pace);
+    if (paceSeconds === null) continue;
+
+    points.push({
+      weekNumber: desc.weekNumber,
+      dayNumber: desc.dayNumber,
+      label: desc.label,
+      paceSeconds,
+      category: categorizeWorkout(desc.label),
+    });
+  }
+
+  return points;
+}
