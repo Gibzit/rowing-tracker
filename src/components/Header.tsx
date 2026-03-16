@@ -1,7 +1,7 @@
 import ProgressBar from './ProgressBar';
 import ThemeToggle from './ThemeToggle';
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = 'light' | 'dark';
 
 interface HeaderProps {
   coreCompleted: number;
