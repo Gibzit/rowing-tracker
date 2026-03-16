@@ -122,6 +122,14 @@ export function useTrainingData() {
     setData(createDefault());
   }, []);
 
+  const importData = useCallback((newData: StoredData) => {
+    setData(newData);
+  }, []);
+
+  const completeOnboarding = useCallback(() => {
+    setData((prev) => ({ ...prev, onboardingComplete: true }));
+  }, []);
+
   const totalWeeks = useMemo(() => {
     if (data.extraWeeks.length === 0) return 24;
     return Math.max(24, ...data.extraWeeks.map((s) => s.weekNumber));
@@ -204,5 +212,7 @@ export function useTrainingData() {
     all24Complete,
     isWeekComplete,
     generateNextWeek,
+    importData,
+    completeOnboarding,
   };
 }

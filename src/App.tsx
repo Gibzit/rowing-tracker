@@ -3,17 +3,21 @@ import { useTrainingData } from './hooks/useTrainingData';
 import { useDarkMode } from './hooks/useDarkMode';
 import { paceToSeconds } from './utils/paceUtils';
 import { computePersonalBests, isNewPB } from './utils/personalBests';
+import { computeStreaks } from './utils/streakUtils';
 import { getWeekSessions } from './utils/combinedPlan';
 import type { SessionRecord } from './utils/storage';
 import type { ViewType } from './types';
 import Header from './components/Header';
 import WeekSelector from './components/WeekSelector';
 import WeekView from './components/WeekView';
+import WeeklySummary from './components/WeeklySummary';
 import ResetButton from './components/ResetButton';
+import DataManagement from './components/DataManagement';
 import BottomNav from './components/BottomNav';
 import PBCelebration from './components/PBCelebration';
 import ViewTransition from './components/ViewTransition';
 import WeekCelebration from './components/WeekCelebration';
+import Onboarding from './components/Onboarding';
 import ChartsView from './components/views/ChartsView';
 import PersonalBestsView from './components/views/PersonalBestsView';
 import CalendarView from './components/views/CalendarView';
@@ -31,6 +35,8 @@ function App() {
     addCustomSession,
     deleteCustomSession,
     resetAll,
+    importData,
+    completeOnboarding,
     coreCompleted,
     coreTotal,
     currentWeek,
@@ -70,6 +76,11 @@ function App() {
     [data.sessions, combinedPlan]
   );
 
+  const { currentStreak, longestStreak } = useMemo(
+    () => computeStreaks(data.sessions),
+    [data.sessions]
+  );
+
   const handleUpdateSession = useCallback(
     (week: number, day: number, partial: Partial<SessionRecord>) => {
       if (partial.pace) {
@@ -88,7 +99,7 @@ function App() {
 
   return (
     <div className="max-w-lg mx-auto bg-white dark:bg-[#0c1929] min-h-dvh pb-20">
-      <Header coreCompleted={coreCompleted} coreTotal={coreTotal} theme={theme} onToggleTheme={cycleTheme} />
+      <Header coreCompleted={coreCompleted} coreTotal={coreTotal} theme={theme} onToggleTheme={cycleTheme} currentStreak={currentStreak} longestStreak={longestStreak} />
 
       <ViewTransition viewKey={activeView}>
         {activeView === 'training' && (
@@ -100,6 +111,7 @@ function App() {
               isWeekComplete={isWeekComplete}
               totalWeeks={totalWeeks}
             />
+            <WeeklySummary weekNumber={selectedWeek} sessions={weekSessions} getSession={getSession} />
             <WeekView
               weekNumber={selectedWeek}
               sessions={weekSessions}
@@ -124,6 +136,7 @@ function App() {
                 }}
               />
             )}
+            <DataManagement data={data} onImport={importData} />
             <ResetButton onReset={resetAll} />
           </>
         )}
@@ -150,6 +163,8 @@ function App() {
           onDone={() => setCelebration(null)}
         />
       )}
+
+      {!data.onboardingComplete && <Onboarding onComplete={completeOnboarding} />}
     </div>
   );
 }

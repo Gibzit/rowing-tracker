@@ -1,5 +1,6 @@
 import ProgressBar from './ProgressBar';
 import ThemeToggle from './ThemeToggle';
+import StreakDisplay from './StreakDisplay';
 
 type Theme = 'light' | 'dark';
 
@@ -8,9 +9,11 @@ interface HeaderProps {
   coreTotal: number;
   theme: Theme;
   onToggleTheme: () => void;
+  currentStreak: number;
+  longestStreak: number;
 }
 
-export default function Header({ coreCompleted, coreTotal, theme, onToggleTheme }: HeaderProps) {
+export default function Header({ coreCompleted, coreTotal, theme, onToggleTheme, currentStreak, longestStreak }: HeaderProps) {
   return (
     <header className="sticky top-0 z-10 bg-white dark:bg-gradient-to-br dark:from-[#0f2942] dark:to-[#134e4a] border-b-2 border-gray-200 dark:border-b-teal-600 px-4 py-3 shadow-sm backdrop-blur-sm">
       <div className="flex items-center justify-between mb-2">
@@ -20,6 +23,7 @@ export default function Header({ coreCompleted, coreTotal, theme, onToggleTheme 
         </div>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>
+      <StreakDisplay currentStreak={currentStreak} longestStreak={longestStreak} />
       <ProgressBar completed={coreCompleted} total={coreTotal} />
     </header>
   );

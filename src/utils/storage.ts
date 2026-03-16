@@ -16,6 +16,7 @@ export interface StoredData {
   optionalVisible: Record<number, boolean>;
   customSessions: Record<number, SessionDescriptor[]>;
   extraWeeks: SessionDescriptor[];
+  onboardingComplete?: boolean;
 }
 
 const STORAGE_KEY = 'petePlanData';
@@ -36,6 +37,9 @@ export function loadData(): StoredData {
     if (parsed.version !== 1) return createDefault();
     if (!parsed.customSessions) parsed.customSessions = {};
     if (!parsed.extraWeeks) parsed.extraWeeks = [];
+    if (!parsed.onboardingComplete && Object.keys(parsed.sessions || {}).length > 0) {
+      parsed.onboardingComplete = true;
+    }
     return parsed as StoredData;
   } catch {
     return createDefault();
