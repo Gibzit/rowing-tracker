@@ -7,7 +7,7 @@ interface PaceTrendChartProps {
 }
 
 const CATEGORY_COLORS: Record<string, { stroke: string; fill: string }> = {
-  distance: { stroke: '#3b82f6', fill: '#3b82f6' },
+  distance: { stroke: '#14b8a6', fill: '#14b8a6' },
   interval: { stroke: '#f59e0b', fill: '#f59e0b' },
   time: { stroke: '#10b981', fill: '#10b981' },
 };
@@ -69,7 +69,7 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
               y2={g.y}
               stroke="currentColor"
               strokeWidth="0.5"
-              className="text-gray-200 dark:text-gray-700"
+              className="text-gray-200 dark:text-[#1e3a5f]"
             />
             <text
               x={PADDING.left - 6}
@@ -92,12 +92,12 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
           y2={CHART_HEIGHT - PADDING.bottom}
           stroke="currentColor"
           strokeWidth="1"
-          className="text-gray-300 dark:text-gray-600"
+          className="text-gray-300 dark:text-[#2a4a6b]"
         />
 
         {/* Line */}
         {data.length > 1 && (
-          <path d={linePath} fill="none" stroke="#3b82f6" strokeWidth="2" strokeLinejoin="round" />
+          <path d={linePath} fill="none" stroke="#14b8a6" strokeWidth="2" strokeLinejoin="round" />
         )}
 
         {/* Data points */}

@@ -25,7 +25,7 @@ export default function PersonalBestsView({ sessions, plan }: PersonalBestsViewP
           {pbs.map((pb) => (
             <div
               key={pb.label}
-              className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-3 border-t-2 border-t-amber-400"
+              className="bg-white dark:bg-[#0f2438] border border-gray-200 dark:border-[#1e3a5f] rounded-lg p-3 border-t-2 border-t-amber-400"
             >
               <div className="flex items-start justify-between mb-1">
                 <span className="text-xs text-gray-500 dark:text-gray-400 leading-tight">

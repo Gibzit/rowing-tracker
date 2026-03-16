@@ -20,9 +20,9 @@ export default function PBCelebration({ label, pace, onDone }: PBCelebrationProp
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 pointer-events-none">
+    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-none">
       <div
-        className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-2xl text-center animate-[pbPop_0.4s_ease-out]"
+        className="bg-white dark:bg-[#0f2438] rounded-2xl p-6 shadow-2xl ring-1 ring-white/10 text-center animate-[pbPop_0.4s_ease-out]"
         style={{ maxWidth: 280 }}
       >
         <div className="text-5xl mb-2">🏆</div>

@@ -34,7 +34,7 @@ export default function ComparisonView({ sessions, plan }: ComparisonViewProps) 
       <select
         value={activeGroup?.label || ''}
         onChange={(e) => setSelected(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-base min-h-[44px] mb-4"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#0f2438] dark:text-gray-100 rounded-lg text-base min-h-[44px] mb-4"
       >
         {groups.map((g) => (
           <option key={g.label} value={g.label}>

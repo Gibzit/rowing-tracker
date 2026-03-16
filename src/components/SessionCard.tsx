@@ -86,12 +86,15 @@ export default function SessionCard({
   }, [record]);
 
   const cardBg = record.completed
-    ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-800'
-    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700';
+    ? 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800'
+    : 'bg-white dark:bg-[#0f2438] border-gray-200 dark:border-[#1e3a5f]';
   const borderStyle = descriptor.isOptional ? 'border-dashed' : 'border-solid';
+  const leftAccent = record.completed
+    ? 'dark:border-l-[3px] dark:border-l-green-500'
+    : 'dark:border-l-[3px] dark:border-l-teal-600';
 
   return (
-    <div className={`border rounded-lg p-4 mb-3 ${cardBg} ${borderStyle}`}>
+    <div className={`border rounded-xl p-4 mb-3 ${cardBg} ${borderStyle} ${leftAccent} dark:shadow-lg dark:shadow-black/20 hover:translate-y-[-1px] transition-all duration-200`}>
       <div
         className="flex items-start gap-3 cursor-pointer touch-manipulation"
         onClick={() => setExpanded(!expanded)}
@@ -118,26 +121,26 @@ export default function SessionCard({
               Day {descriptor.dayNumber}: {descriptor.label}
             </span>
             {isCustom && (
-              <span className="text-xs bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
                 custom
               </span>
             )}
             {descriptor.isOptional && !isCustom && (
-              <span className="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
+              <span className="text-[11px] font-medium bg-gray-100 dark:bg-[#1a3550] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
                 optional
               </span>
             )}
           </div>
           <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{descriptor.description}</p>
           {!expanded && (record.pace || record.strokeRate) && (
-            <div className="flex gap-2 mt-1">
+            <div className="flex gap-2 mt-1.5">
               {record.pace && (
-                <span className="text-xs bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-medium bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 px-2 py-0.5 rounded-full">
                   {record.pace}/500m
                 </span>
               )}
               {record.strokeRate && (
-                <span className="text-xs bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
+                <span className="text-[11px] font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
                   {record.strokeRate} spm
                 </span>
               )}
@@ -167,7 +170,7 @@ export default function SessionCard({
       </div>
 
       {expanded && (
-        <div className="mt-4 space-y-3 border-t border-gray-100 dark:border-gray-700 pt-4">
+        <div className="mt-4 space-y-3 border-t border-gray-100 dark:border-[#1e3a5f] pt-4">
           <PaceInput
             label="Average Pace (per 500m)"
             value={draft.pace}
@@ -195,7 +198,7 @@ export default function SessionCard({
                   }
                 }
               }}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-base min-h-[44px]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#0f2438] dark:text-gray-100 rounded-xl text-base min-h-[44px] focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
             />
           </div>
 
@@ -219,14 +222,14 @@ export default function SessionCard({
 
           {isInterval && <SessionTimer />}
 
-          <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-gray-700">
+          <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-[#1e3a5f]">
             <button
               onClick={handleDiscard}
               disabled={!hasChanges}
-              className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium border transition-colors touch-manipulation ${
+              className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-sm font-medium border transition-colors touch-manipulation ${
                 hasChanges
-                  ? 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
-                  : 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                  ? 'border-gray-300 dark:border-[#2a4a6b] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a3550]'
+                  : 'border-gray-200 dark:border-[#1e3a5f] text-gray-400 dark:text-gray-600 cursor-not-allowed'
               }`}
             >
               Discard
@@ -234,10 +237,10 @@ export default function SessionCard({
             <button
               onClick={handleSave}
               disabled={!hasChanges}
-              className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-sm font-medium transition-colors touch-manipulation ${
+              className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-colors touch-manipulation ${
                 hasChanges
                   ? 'bg-green-600 hover:bg-green-700 text-white'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-200 dark:bg-[#1a3550] text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
             >
               Save

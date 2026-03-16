@@ -18,7 +18,7 @@ export default function ComparisonTable({ group }: ComparisonTableProps) {
             className={`flex items-center justify-between p-3 rounded-lg border ${
               isBest
                 ? 'border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20'
-                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800'
+                : 'border-gray-200 dark:border-[#1e3a5f] bg-white dark:bg-[#0f2438]'
             }`}
           >
             <div>

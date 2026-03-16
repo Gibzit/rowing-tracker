@@ -40,7 +40,7 @@ export default function ChartsView({ sessions, plan }: ChartsViewProps) {
           <PaceTrendChart data={filtered} />
           <div className="px-4 mt-2 flex gap-4 text-xs text-gray-500 dark:text-gray-400">
             <span className="flex items-center gap-1">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-500 inline-block" /> Distance
+              <span className="w-2.5 h-2.5 rounded-full bg-teal-500 inline-block" /> Distance
             </span>
             <span className="flex items-center gap-1">
               <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Interval

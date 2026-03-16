@@ -28,8 +28,8 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
           if (error) setError('');
         }}
         onBlur={handleBlur}
-        className={`w-full px-3 py-2 border rounded-lg text-base min-h-[44px] dark:bg-gray-800 dark:text-gray-100 ${
-          error ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-gray-300 dark:border-gray-600'
+        className={`w-full px-3 py-2 border rounded-xl text-base min-h-[44px] dark:bg-[#0f2438] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors ${
+          error ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-gray-300 dark:border-[#2a4a6b]'
         }`}
       />
       {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{error}</p>}

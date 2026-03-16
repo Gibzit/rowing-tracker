@@ -14,9 +14,9 @@ export default function ProgressBar({ completed, total }: ProgressBarProps) {
         </span>
         <span>{pct}%</span>
       </div>
-      <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-3">
+      <div className="w-full bg-gray-200 dark:bg-[#1a3550] rounded-full h-2.5">
         <div
-          className="bg-blue-600 h-3 rounded-full transition-all duration-300"
+          className="bg-gradient-to-r from-teal-600 to-cyan-500 h-2.5 rounded-full transition-all duration-300 shadow-[0_0_8px_rgba(13,148,136,0.4)]"
           style={{ width: `${pct}%` }}
         />
       </div>

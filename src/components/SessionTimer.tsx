@@ -30,7 +30,7 @@ export default function SessionTimer() {
   const isActive = totalDuration > 0;
 
   return (
-    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-3">
+    <div className="bg-gray-50 dark:bg-[#1a3550]/50 rounded-lg p-3">
       <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rest Timer</p>
 
       {!isActive && (
@@ -39,7 +39,7 @@ export default function SessionTimer() {
             <button
               key={p.seconds}
               onClick={() => start(p.seconds)}
-              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/60 transition-colors touch-manipulation"
+              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-900/60 transition-colors touch-manipulation"
             >
               {p.label}
             </button>
@@ -58,7 +58,7 @@ export default function SessionTimer() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="4"
-                className="text-gray-200 dark:text-gray-600"
+                className="text-gray-200 dark:text-[#1e3a5f]"
               />
               <circle
                 cx="32"
@@ -70,7 +70,7 @@ export default function SessionTimer() {
                 strokeLinecap="round"
                 strokeDasharray={circumference}
                 strokeDashoffset={strokeDashoffset}
-                className={isFinished ? 'text-green-500' : 'text-blue-500'}
+                className={isFinished ? 'text-green-500' : 'text-teal-500'}
               />
             </svg>
             <span
@@ -102,7 +102,7 @@ export default function SessionTimer() {
             ) : null}
             <button
               onClick={reset}
-              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-500 transition-colors touch-manipulation"
+              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-200 dark:bg-[#1e3a5f] text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-[#2a4a6b] transition-colors touch-manipulation"
             >
               Reset
             </button>

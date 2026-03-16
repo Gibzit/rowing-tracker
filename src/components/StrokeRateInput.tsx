@@ -25,7 +25,7 @@ export default function StrokeRateInput({ value, onChange }: StrokeRateInputProp
             onChange(num);
           }
         }}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg text-base min-h-[44px]"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#0f2438] dark:text-gray-100 rounded-xl text-base min-h-[44px] focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
       />
     </div>
   );

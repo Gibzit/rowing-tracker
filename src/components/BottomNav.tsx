@@ -69,7 +69,7 @@ const tabs: { id: ViewType; label: string; icon: ReactNode }[] = [
 
 export default function BottomNav({ active, onNavigate }: BottomNavProps) {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 pb-[env(safe-area-inset-bottom)]">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 bg-white/80 dark:bg-[#0c1929]/80 backdrop-blur-md border-t border-gray-200 dark:border-[#1e3a5f]/50 pb-[env(safe-area-inset-bottom)]">
       <div className="max-w-lg mx-auto flex">
         {tabs.map((tab) => {
           const isActive = tab.id === active;
@@ -79,12 +79,13 @@ export default function BottomNav({ active, onNavigate }: BottomNavProps) {
               onClick={() => onNavigate(tab.id)}
               className={`flex-1 flex flex-col items-center py-2 min-h-[56px] transition-colors touch-manipulation ${
                 isActive
-                  ? 'text-blue-600 dark:text-blue-400'
+                  ? 'text-teal-600 dark:text-teal-400'
                   : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'
               }`}
             >
               {tab.icon}
               <span className="text-xs mt-0.5 font-medium">{tab.label}</span>
+              {isActive && <span className="w-1 h-1 rounded-full bg-teal-500 dark:bg-teal-400 mt-0.5" />}
             </button>
           );
         })}

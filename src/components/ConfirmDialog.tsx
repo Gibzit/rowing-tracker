@@ -34,11 +34,11 @@ export default function ConfirmDialog({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
       onClick={onCancel}
     >
       <div
-        className="bg-white dark:bg-gray-800 rounded-xl p-6 max-w-sm w-full shadow-xl"
+        className="bg-white dark:bg-[#0f2438] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         <p className="text-gray-800 dark:text-gray-200 text-base mb-4">{message}</p>
@@ -54,7 +54,7 @@ export default function ConfirmDialog({
               value={typedText}
               onChange={(e) => setTypedText(e.target.value)}
               placeholder={requireTypedConfirmation}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100 rounded-lg text-base min-h-[44px] font-mono tracking-wider"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#1a3550] dark:text-gray-100 rounded-xl text-base min-h-[44px] font-mono tracking-wider focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
             />
           </div>
         )}
@@ -62,7 +62,7 @@ export default function ConfirmDialog({
         <div className="flex gap-3">
           <button
             onClick={onCancel}
-            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors touch-manipulation"
+            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-[#2a4a6b] rounded-lg text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-[#1a3550] transition-colors touch-manipulation"
           >
             Cancel
           </button>
@@ -72,7 +72,7 @@ export default function ConfirmDialog({
             className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg font-medium transition-colors touch-manipulation ${
               canConfirm
                 ? 'bg-red-600 text-white hover:bg-red-700'
-                : 'bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed'
+                : 'bg-gray-300 dark:bg-[#1e3a5f] text-gray-500 dark:text-gray-400 cursor-not-allowed'
             }`}
           >
             {!delayPassed ? `Wait (${countdown}s)...` : confirmLabel}

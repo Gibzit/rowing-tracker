@@ -70,7 +70,7 @@ function App() {
   );
 
   return (
-    <div className="max-w-lg mx-auto bg-white dark:bg-gray-900 min-h-dvh pb-20">
+    <div className="max-w-lg mx-auto bg-white dark:bg-[#0c1929] min-h-dvh pb-20">
       <Header coreCompleted={coreCompleted} coreTotal={coreTotal} theme={theme} onToggleTheme={cycleTheme} />
 
       {activeView === 'training' && (

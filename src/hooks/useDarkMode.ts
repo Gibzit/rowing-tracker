@@ -19,7 +19,7 @@ function applyTheme(theme: Theme) {
   const isDark = theme === 'dark' || (theme === 'system' && getSystemDark());
   document.documentElement.classList.toggle('dark', isDark);
   const metaTheme = document.querySelector('meta[name="theme-color"]');
-  metaTheme?.setAttribute('content', isDark ? '#111827' : '#1e40af');
+  metaTheme?.setAttribute('content', isDark ? '#0f2942' : '#0f766e');
 }
 
 export function useDarkMode() {

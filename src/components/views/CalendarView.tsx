@@ -17,7 +17,7 @@ const GAP = 2;
 const DAY_LABELS = ['', 'M', '', 'W', '', 'F', ''];
 
 const INTENSITY_COLORS = [
-  'bg-gray-100 dark:bg-gray-700',
+  'bg-gray-100 dark:bg-[#1a3550]',
   'bg-green-200 dark:bg-green-800',
   'bg-green-400 dark:bg-green-600',
   'bg-green-600 dark:bg-green-500',
@@ -73,7 +73,7 @@ export default function CalendarView({ sessions }: CalendarViewProps) {
       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Activity Calendar</h2>
 
       {!hasAnyDates && (
-        <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-3 mb-4 text-sm text-blue-700 dark:text-blue-300">
+        <div className="bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-lg p-3 mb-4 text-sm text-teal-700 dark:text-teal-300">
           Date tracking starts now. Complete sessions to see your activity heatmap.
         </div>
       )}
@@ -131,7 +131,7 @@ export default function CalendarView({ sessions }: CalendarViewProps) {
                       <div
                         key={dayIdx}
                         className={`rounded-sm ${INTENSITY_COLORS[level]} ${
-                          isToday ? 'ring-1 ring-blue-400' : ''
+                          isToday ? 'ring-1 ring-teal-400' : ''
                         } cursor-pointer`}
                         style={{ width: CELL_SIZE, height: CELL_SIZE }}
                         onPointerEnter={() => setTooltip({ date: dateKey, count })}
