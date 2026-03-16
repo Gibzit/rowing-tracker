@@ -11,9 +11,9 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Pete Plan Rowing Tracker',
-        short_name: 'Pete Plan',
-        description: '24-week beginner rowing training tracker',
+        name: "Ido's Rowing Tracker",
+        short_name: "Ido's Rowing",
+        description: 'Personal rowing training tracker',
         theme_color: '#1e40af',
         background_color: '#ffffff',
         display: 'standalone',
