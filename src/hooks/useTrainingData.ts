@@ -127,7 +127,10 @@ export function useTrainingData() {
     return Math.max(24, ...data.extraWeeks.map((s) => s.weekNumber));
   }, [data.extraWeeks]);
 
-  const coreTotal = combinedPlan.length;
+  const completedOptionalCount = combinedPlan.filter(
+    (s) => s.isOptional && data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
+  ).length;
+  const coreTotal = combinedPlan.filter((s) => !s.isOptional).length + completedOptionalCount;
   const coreCompleted = combinedPlan.filter(
     (s) => data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
   ).length;
