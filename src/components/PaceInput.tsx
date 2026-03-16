@@ -20,7 +20,7 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
       <input
         type="text"
-        inputMode="numeric"
+        inputMode="text"
         placeholder="m:ss"
         value={value}
         onChange={(e) => {

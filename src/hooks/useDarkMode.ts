@@ -1,31 +1,24 @@
 import { useState, useEffect, useCallback } from 'react';
 
-type Theme = 'light' | 'dark' | 'system';
+type Theme = 'light' | 'dark';
 const STORAGE_KEY = 'petePlanTheme';
 
 function getStoredTheme(): Theme {
   try {
     const val = localStorage.getItem(STORAGE_KEY);
-    if (val === 'light' || val === 'dark' || val === 'system') return val;
+    if (val === 'light' || val === 'dark') return val;
   } catch { /* ignore */ }
-  return 'system';
-}
-
-function getSystemDark(): boolean {
-  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
 function applyTheme(theme: Theme) {
-  const isDark = theme === 'dark' || (theme === 'system' && getSystemDark());
-  document.documentElement.classList.toggle('dark', isDark);
+  document.documentElement.classList.toggle('dark', theme === 'dark');
   const metaTheme = document.querySelector('meta[name="theme-color"]');
-  metaTheme?.setAttribute('content', isDark ? '#0f2942' : '#0f766e');
+  metaTheme?.setAttribute('content', theme === 'dark' ? '#0f2942' : '#0f766e');
 }
 
 export function useDarkMode() {
   const [theme, setThemeState] = useState<Theme>(getStoredTheme);
-
-  const isDark = theme === 'dark' || (theme === 'system' && getSystemDark());
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
@@ -34,21 +27,12 @@ export function useDarkMode() {
   }, []);
 
   const cycleTheme = useCallback(() => {
-    const next: Theme = theme === 'system' ? 'light' : theme === 'light' ? 'dark' : 'system';
-    setTheme(next);
+    setTheme(theme === 'dark' ? 'light' : 'dark');
   }, [theme, setTheme]);
 
   useEffect(() => {
     applyTheme(theme);
   }, [theme]);
 
-  useEffect(() => {
-    if (theme !== 'system') return;
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => applyTheme('system');
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, [theme]);
-
-  return { isDark, theme, setTheme, cycleTheme };
+  return { isDark: theme === 'dark', theme, setTheme, cycleTheme };
 }
