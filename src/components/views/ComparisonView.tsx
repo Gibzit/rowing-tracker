@@ -4,6 +4,7 @@ import { groupWorkouts } from '../../utils/workoutGrouping';
 import type { SessionDescriptor } from '../../data/trainingPlan';
 import ComparisonSparkline from '../comparison/ComparisonSparkline';
 import ComparisonTable from '../comparison/ComparisonTable';
+import EmptyState from '../EmptyState';
 
 interface ComparisonViewProps {
   sessions: Record<string, SessionRecord>;
@@ -18,12 +19,11 @@ export default function ComparisonView({ sessions, plan }: ComparisonViewProps) 
 
   if (groups.length === 0) {
     return (
-      <div className="py-12 px-4 text-center text-gray-500 dark:text-gray-400">
-        <p className="text-lg font-medium mb-2">No comparisons yet</p>
-        <p className="text-sm">
-          Complete the same workout type at least twice with pace data to compare results here.
-        </p>
-      </div>
+      <EmptyState
+        icon="⚖️"
+        title="No comparisons yet"
+        description="Complete the same workout type at least twice with pace data to compare results here."
+      />
     );
   }
 

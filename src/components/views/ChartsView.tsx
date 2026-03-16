@@ -5,6 +5,7 @@ import { extractPaceData } from '../../utils/paceUtils';
 import type { SessionDescriptor } from '../../data/trainingPlan';
 import ChartFilterBar from '../charts/ChartFilterBar';
 import PaceTrendChart from '../charts/PaceTrendChart';
+import EmptyState from '../EmptyState';
 
 type FilterOption = 'all' | WorkoutCategory;
 
@@ -29,12 +30,11 @@ export default function ChartsView({ sessions, plan }: ChartsViewProps) {
       <ChartFilterBar active={filter} onChange={setFilter} />
 
       {filtered.length === 0 ? (
-        <div className="px-4 py-12 text-center text-gray-500 dark:text-gray-400">
-          <p className="text-lg font-medium mb-2">No pace data yet</p>
-          <p className="text-sm">
-            Log pace data on your sessions to see trends here.
-          </p>
-        </div>
+        <EmptyState
+          icon="📈"
+          title="No pace data yet"
+          description="Log pace data on your sessions to see trends here."
+        />
       ) : (
         <>
           <PaceTrendChart data={filtered} />

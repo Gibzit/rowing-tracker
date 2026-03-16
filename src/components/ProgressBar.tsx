@@ -10,7 +10,7 @@ export default function ProgressBar({ completed, total }: ProgressBarProps) {
     <div>
       <div className="flex justify-between text-sm text-gray-600 dark:text-gray-400 mb-1">
         <span>
-          {completed} / {total} core sessions
+          {completed} / {total} sessions
         </span>
         <span>{pct}%</span>
       </div>

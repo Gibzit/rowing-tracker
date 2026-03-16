@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import type { SessionRecord } from '../../utils/storage';
 import { computePersonalBests } from '../../utils/personalBests';
 import type { SessionDescriptor } from '../../data/trainingPlan';
+import EmptyState from '../EmptyState';
 
 interface PersonalBestsViewProps {
   sessions: Record<string, SessionRecord>;
@@ -16,10 +17,11 @@ export default function PersonalBestsView({ sessions, plan }: PersonalBestsViewP
       <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">Personal Bests</h2>
 
       {pbs.length === 0 ? (
-        <div className="py-12 text-center text-gray-500 dark:text-gray-400">
-          <p className="text-lg font-medium mb-2">No personal bests yet</p>
-          <p className="text-sm">Log pace data on your sessions to track personal bests here.</p>
-        </div>
+        <EmptyState
+          icon="🏆"
+          title="No personal bests yet"
+          description="Log pace data on your sessions to track personal bests here."
+        />
       ) : (
         <div className="grid grid-cols-2 gap-3">
           {pbs.map((pb) => (
