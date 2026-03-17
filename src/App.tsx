@@ -248,7 +248,7 @@ function App() {
             )}
             {activeView === 'calendar' && (
               <ErrorBoundary>
-                <CalendarView sessions={data.sessions} />
+                <CalendarView sessions={data.sessions} restDays={restDays} plan={combinedPlan} />
               </ErrorBoundary>
             )}
             {activeView === 'compare' && (

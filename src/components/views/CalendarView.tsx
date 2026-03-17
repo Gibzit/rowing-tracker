@@ -1,204 +1,422 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { SessionRecord } from '../../utils/storage';
-import {
-  sessionsPerDate,
-  intensityLevel,
-  generateDateRange,
-  formatDateKey,
-  getMonthLabel,
-} from '../../utils/calendarUtils';
+import type { SessionDescriptor } from '../../data/trainingPlan';
 
 interface CalendarViewProps {
   sessions: Record<string, SessionRecord>;
+  restDays: string[];
+  plan: SessionDescriptor[];
 }
 
-const CELL_SIZE = 18;
-const GAP = 2;
-const DAY_LABELS = ['', 'M', '', 'W', '', 'F', ''];
+interface DayInfo {
+  date: Date;
+  dateKey: string;
+  isCurrentMonth: boolean;
+  isToday: boolean;
+  sessionDetails: { label: string; pace?: string; strokeRate?: number }[];
+  isRestDay: boolean;
+  sessionCount: number;
+}
 
-const INTENSITY_COLORS = [
-  'bg-gray-100 dark:bg-[#1a3550]',
-  'bg-green-200 dark:bg-green-800',
-  'bg-green-400 dark:bg-green-600',
-  'bg-green-600 dark:bg-green-500',
-  'bg-green-800 dark:bg-green-400',
+const WEEKDAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-export default function CalendarView({ sessions }: CalendarViewProps) {
-  const [tooltip, setTooltip] = useState<{ date: string; count: number } | null>(null);
+function formatDateKey(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
-  const dateCounts = useMemo(() => sessionsPerDate(sessions), [sessions]);
+function buildSessionsByDate(
+  sessions: Record<string, SessionRecord>,
+  plan: SessionDescriptor[]
+): Record<string, { label: string; pace?: string; strokeRate?: number }[]> {
+  const map: Record<string, { label: string; pace?: string; strokeRate?: number }[]> = {};
 
-  // Compute daily streak
-  const currentStreak = useMemo(() => {
-    const today = new Date();
-    let streak = 0;
-    const check = new Date(today);
-    while (true) {
-      const key = formatDateKey(check);
-      if (dateCounts[key] && dateCounts[key] > 0) {
-        streak++;
-        check.setDate(check.getDate() - 1);
-      } else {
-        break;
-      }
+  // Build a lookup from session key to plan descriptor
+  const planMap = new Map<string, SessionDescriptor>();
+  for (const desc of plan) {
+    planMap.set(`${desc.weekNumber}-${desc.dayNumber}`, desc);
+  }
+
+  for (const [key, record] of Object.entries(sessions)) {
+    if (record.completed && record.completedDate) {
+      const desc = planMap.get(key);
+      const label = desc?.label || 'Session';
+      if (!map[record.completedDate]) map[record.completedDate] = [];
+      map[record.completedDate].push({
+        label,
+        pace: record.pace || undefined,
+        strokeRate: record.strokeRate,
+      });
     }
-    return streak;
-  }, [dateCounts]);
+  }
 
-  const { weeks, monthLabels } = useMemo(() => {
+  return map;
+}
+
+export default function CalendarView({ sessions, restDays, plan }: CalendarViewProps) {
+  const [currentMonth, setCurrentMonth] = useState(() => {
     const now = new Date();
-    const end = new Date(now);
-    const start = new Date(now);
-    start.setDate(start.getDate() - 140);
-    start.setDate(start.getDate() - start.getDay());
+    return { year: now.getFullYear(), month: now.getMonth() };
+  });
+  const [selectedDay, setSelectedDay] = useState<string | null>(null);
 
-    const dates = generateDateRange(start, end);
+  const restDaySet = useMemo(() => new Set(restDays), [restDays]);
+  const sessionsByDate = useMemo(() => buildSessionsByDate(sessions, plan), [sessions, plan]);
 
-    const wks: { dates: Date[] }[] = [];
-    let currentWeek: Date[] = [];
-    for (const d of dates) {
-      if (d.getDay() === 0 && currentWeek.length > 0) {
-        wks.push({ dates: currentWeek });
-        currentWeek = [];
+  const todayKey = useMemo(() => formatDateKey(new Date()), []);
+
+  // Build calendar grid for current month (always 6 rows × 7 cols, Mon-start)
+  const calendarDays = useMemo((): DayInfo[][] => {
+    const { year, month } = currentMonth;
+    const firstOfMonth = new Date(year, month, 1);
+    // getDay: 0=Sun. Convert to Mon-start: Mon=0, Sun=6
+    let startDow = firstOfMonth.getDay() - 1;
+    if (startDow < 0) startDow = 6;
+
+    // Start from the Monday before (or on) the 1st
+    const gridStart = new Date(year, month, 1 - startDow);
+
+    const weeks: DayInfo[][] = [];
+    const cursor = new Date(gridStart);
+
+    for (let w = 0; w < 6; w++) {
+      const week: DayInfo[] = [];
+      for (let d = 0; d < 7; d++) {
+        const dateKey = formatDateKey(cursor);
+        const details = sessionsByDate[dateKey] || [];
+        week.push({
+          date: new Date(cursor),
+          dateKey,
+          isCurrentMonth: cursor.getMonth() === month,
+          isToday: dateKey === todayKey,
+          sessionDetails: details,
+          isRestDay: restDaySet.has(dateKey),
+          sessionCount: details.length,
+        });
+        cursor.setDate(cursor.getDate() + 1);
       }
-      currentWeek.push(d);
+      weeks.push(week);
     }
-    if (currentWeek.length > 0) wks.push({ dates: currentWeek });
 
-    const labels: { text: string; weekIndex: number }[] = [];
-    let lastMonth = -1;
-    wks.forEach((wk, wi) => {
-      const firstDay = wk.dates[0];
-      if (firstDay.getMonth() !== lastMonth) {
-        lastMonth = firstDay.getMonth();
-        labels.push({ text: getMonthLabel(firstDay), weekIndex: wi });
-      }
+    // Trim trailing weeks that are entirely in the next month
+    while (
+      weeks.length > 4 &&
+      weeks[weeks.length - 1].every((d) => !d.isCurrentMonth)
+    ) {
+      weeks.pop();
+    }
+
+    return weeks;
+  }, [currentMonth, sessionsByDate, restDaySet, todayKey]);
+
+  const goToPrevMonth = useCallback(() => {
+    setCurrentMonth((prev) => {
+      if (prev.month === 0) return { year: prev.year - 1, month: 11 };
+      return { year: prev.year, month: prev.month - 1 };
     });
-
-    return { weeks: wks, monthLabels: labels };
+    setSelectedDay(null);
   }, []);
 
-  const hasAnyDates = Object.keys(dateCounts).length > 0;
-  const totalSessions = Object.values(dateCounts).reduce((a, b) => a + b, 0);
+  const goToNextMonth = useCallback(() => {
+    setCurrentMonth((prev) => {
+      if (prev.month === 11) return { year: prev.year + 1, month: 0 };
+      return { year: prev.year, month: prev.month + 1 };
+    });
+    setSelectedDay(null);
+  }, []);
+
+  const goToToday = useCallback(() => {
+    const now = new Date();
+    setCurrentMonth({ year: now.getFullYear(), month: now.getMonth() });
+    setSelectedDay(todayKey);
+  }, [todayKey]);
+
+  // Stats for this month
+  const monthStats = useMemo(() => {
+    const { year, month } = currentMonth;
+    let sessionCount = 0;
+    let restCount = 0;
+    let daysWithActivity = 0;
+
+    // Iterate all days in the month
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    for (let d = 1; d <= daysInMonth; d++) {
+      const key = formatDateKey(new Date(year, month, d));
+      const count = sessionsByDate[key]?.length || 0;
+      if (count > 0) {
+        sessionCount += count;
+        daysWithActivity++;
+      }
+      if (restDaySet.has(key)) restCount++;
+    }
+    return { sessionCount, restCount, daysWithActivity };
+  }, [currentMonth, sessionsByDate, restDaySet]);
+
+  const selectedDayInfo = useMemo(() => {
+    if (!selectedDay) return null;
+    for (const week of calendarDays) {
+      for (const day of week) {
+        if (day.dateKey === selectedDay) return day;
+      }
+    }
+    return null;
+  }, [selectedDay, calendarDays]);
+
+  const isCurrentMonthView =
+    currentMonth.year === new Date().getFullYear() &&
+    currentMonth.month === new Date().getMonth();
 
   return (
     <div className="py-4 px-4">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">Activity Calendar</h2>
+      {/* Month header with navigation */}
+      <div className="flex items-center justify-between mb-4">
+        <button
+          onClick={goToPrevMonth}
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a3550] active:scale-90 transition-all touch-manipulation"
+          aria-label="Previous month"
+        >
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
 
-      {/* Stats summary */}
-      {hasAnyDates && (
-        <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg px-3 py-1.5">
-            <span className="text-green-600 dark:text-green-400 text-sm font-bold">{totalSessions}</span>
-            <span className="text-green-600 dark:text-green-400 text-xs">sessions</span>
-          </div>
-          {currentStreak > 0 && (
-            <div className="flex items-center gap-1.5 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800/50 rounded-lg px-3 py-1.5">
-              <span className="text-base leading-none">🔥</span>
-              <span className="text-orange-600 dark:text-orange-400 text-sm font-bold">{currentStreak} day streak</span>
+        <div className="flex flex-col items-center">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+            {MONTH_NAMES[currentMonth.month]} {currentMonth.year}
+          </h2>
+          {!isCurrentMonthView && (
+            <button
+              onClick={goToToday}
+              className="text-[11px] font-semibold text-teal-600 dark:text-teal-400 mt-0.5 hover:underline touch-manipulation"
+            >
+              Go to today
+            </button>
+          )}
+        </div>
+
+        <button
+          onClick={goToNextMonth}
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a3550] active:scale-90 transition-all touch-manipulation"
+          aria-label="Next month"
+        >
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+          </svg>
+        </button>
+      </div>
+
+      {/* Monthly stats bar */}
+      {(monthStats.sessionCount > 0 || monthStats.restCount > 0) && (
+        <div className="flex items-center gap-2 mb-4 flex-wrap">
+          {monthStats.sessionCount > 0 && (
+            <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg px-2.5 py-1">
+              <span className="text-green-600 dark:text-green-400 text-sm font-bold">{monthStats.sessionCount}</span>
+              <span className="text-green-600 dark:text-green-400 text-xs">session{monthStats.sessionCount !== 1 ? 's' : ''}</span>
+            </div>
+          )}
+          {monthStats.daysWithActivity > 0 && (
+            <div className="flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800/50 rounded-lg px-2.5 py-1">
+              <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">{monthStats.daysWithActivity}</span>
+              <span className="text-teal-600 dark:text-teal-400 text-xs">active day{monthStats.daysWithActivity !== 1 ? 's' : ''}</span>
+            </div>
+          )}
+          {monthStats.restCount > 0 && (
+            <div className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800/50 rounded-lg px-2.5 py-1">
+              <span className="text-indigo-600 dark:text-indigo-400 text-sm font-bold">{monthStats.restCount}</span>
+              <span className="text-indigo-600 dark:text-indigo-400 text-xs">rest day{monthStats.restCount !== 1 ? 's' : ''}</span>
             </div>
           )}
         </div>
       )}
 
-      {!hasAnyDates && (
-        <div className="bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-xl p-4 mb-4">
-          <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-1">Start building your heatmap!</p>
-          <p className="text-xs text-teal-600 dark:text-teal-400">Complete sessions to see your activity visualized here.</p>
+      {/* Legend */}
+      <div className="flex items-center gap-3 mb-3 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400" />
+          <span>Training</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full bg-indigo-400 dark:bg-indigo-400" />
+          <span>Rest day</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <div className="w-3 h-3 rounded-full ring-2 ring-teal-400 ring-inset bg-transparent" />
+          <span>Today</span>
+        </div>
+      </div>
+
+      {/* Calendar grid */}
+      <div className="bg-white dark:bg-[#0f2438] rounded-xl border border-gray-200 dark:border-[#1e3a5f] overflow-hidden">
+        {/* Weekday headers */}
+        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-[#1e3a5f]">
+          {WEEKDAY_LABELS.map((label) => (
+            <div
+              key={label}
+              className="text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider py-2"
+            >
+              {label}
+            </div>
+          ))}
+        </div>
+
+        {/* Day cells */}
+        {calendarDays.map((week, wi) => (
+          <div key={wi} className="grid grid-cols-7 border-b border-gray-50 dark:border-[#1a3550] last:border-b-0">
+            {week.map((day) => {
+              const hasTraining = day.sessionCount > 0;
+              const isSelected = selectedDay === day.dateKey;
+
+              return (
+                <button
+                  key={day.dateKey}
+                  onClick={() => setSelectedDay(isSelected ? null : day.dateKey)}
+                  className={`
+                    relative flex flex-col items-center justify-start py-1.5 min-h-[52px]
+                    transition-colors touch-manipulation
+                    ${day.isCurrentMonth ? '' : 'opacity-30'}
+                    ${isSelected ? 'bg-teal-50 dark:bg-teal-900/20' : 'hover:bg-gray-50 dark:hover:bg-[#1a3550]/50'}
+                  `}
+                  aria-label={`${day.dateKey}${hasTraining ? `, ${day.sessionCount} session${day.sessionCount !== 1 ? 's' : ''}` : ''}${day.isRestDay ? ', rest day' : ''}`}
+                >
+                  {/* Day number */}
+                  <span
+                    className={`
+                      text-sm font-medium leading-none mb-1
+                      ${day.isToday
+                        ? 'w-6 h-6 flex items-center justify-center rounded-full bg-teal-500 dark:bg-teal-500 text-white font-bold'
+                        : day.isCurrentMonth
+                          ? 'text-gray-700 dark:text-gray-300'
+                          : 'text-gray-300 dark:text-gray-600'
+                      }
+                    `}
+                  >
+                    {day.date.getDate()}
+                  </span>
+
+                  {/* Activity indicators */}
+                  <div className="flex items-center gap-0.5 flex-wrap justify-center">
+                    {hasTraining && (
+                      <>
+                        {day.sessionDetails.slice(0, 3).map((_, i) => (
+                          <div
+                            key={i}
+                            className="w-[6px] h-[6px] rounded-full bg-green-500 dark:bg-green-400"
+                          />
+                        ))}
+                        {day.sessionCount > 3 && (
+                          <span className="text-[8px] text-green-600 dark:text-green-400 font-bold leading-none">+{day.sessionCount - 3}</span>
+                        )}
+                      </>
+                    )}
+                    {day.isRestDay && (
+                      <div className="w-[6px] h-[6px] rounded-full bg-indigo-400 dark:bg-indigo-400" />
+                    )}
+                  </div>
+
+                  {/* Session label preview (show first session label if space) */}
+                  {hasTraining && day.isCurrentMonth && (
+                    <span className="text-[8px] leading-tight text-green-700 dark:text-green-400 font-medium mt-0.5 max-w-full truncate px-0.5">
+                      {day.sessionDetails[0].label.length > 6
+                        ? day.sessionDetails[0].label.replace(/\s*\/.*/, '').slice(0, 7)
+                        : day.sessionDetails[0].label}
+                    </span>
+                  )}
+                  {day.isRestDay && !hasTraining && day.isCurrentMonth && (
+                    <span className="text-[9px] leading-none mt-0.5">😴</span>
+                  )}
+
+                  {/* Selected indicator */}
+                  {isSelected && (
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-5 h-[2px] rounded-full bg-teal-500 dark:bg-teal-400" />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+
+      {/* Selected day detail panel */}
+      {selectedDayInfo && (
+        <div
+          className="mt-3 bg-white dark:bg-[#0f2438] rounded-xl border border-gray-200 dark:border-[#1e3a5f] p-4"
+          style={{ animation: 'slideDown 0.2s ease-out' }}
+        >
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100">
+              {selectedDayInfo.date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric',
+              })}
+            </h3>
+            <button
+              onClick={() => setSelectedDay(null)}
+              className="text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 min-w-[28px] min-h-[28px] flex items-center justify-center touch-manipulation"
+              aria-label="Close details"
+            >
+              <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+              </svg>
+            </button>
+          </div>
+
+          {selectedDayInfo.sessionCount === 0 && !selectedDayInfo.isRestDay && (
+            <p className="text-sm text-gray-400 dark:text-gray-500 italic">No activity on this day</p>
+          )}
+
+          {selectedDayInfo.isRestDay && (
+            <div className="flex items-center gap-2 mb-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-3 py-2">
+              <span className="text-base">😴</span>
+              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Rest day</span>
+            </div>
+          )}
+
+          {selectedDayInfo.sessionDetails.map((session, i) => (
+            <div
+              key={i}
+              className={`flex items-start gap-3 ${i > 0 ? 'mt-2 pt-2 border-t border-gray-100 dark:border-[#1e3a5f]' : ''}`}
+            >
+              <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0 mt-0.5">
+                <svg className="w-4 h-4 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{session.label}</p>
+                <div className="flex items-center gap-3 mt-0.5 flex-wrap">
+                  {session.pace && (
+                    <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
+                      {session.pace}/500m
+                    </span>
+                  )}
+                  {session.strokeRate && (
+                    <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">
+                      {session.strokeRate} spm
+                    </span>
+                  )}
+                  {!session.pace && !session.strokeRate && (
+                    <span className="text-xs text-gray-400 dark:text-gray-500">Completed</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Legend at top */}
-      <div className="flex items-center gap-1.5 mb-3 text-xs text-gray-500 dark:text-gray-400">
-        <span>Less</span>
-        {INTENSITY_COLORS.map((cls, i) => (
-          <div
-            key={i}
-            className={`rounded-[3px] ${cls}`}
-            style={{ width: 12, height: 12 }}
-          />
-        ))}
-        <span>More</span>
-        <span className="ml-2 text-[10px] text-gray-400 dark:text-gray-500">Tap a cell for details</span>
-      </div>
-
-      <div className="overflow-x-auto pb-2">
-        <div className="inline-flex">
-          {/* Day labels column */}
-          <div className="flex flex-col mr-1" style={{ marginTop: 18 }}>
-            {DAY_LABELS.map((label, i) => (
-              <div
-                key={i}
-                className="text-[10px] text-gray-400 dark:text-gray-500 leading-none"
-                style={{ height: CELL_SIZE + GAP, display: 'flex', alignItems: 'center' }}
-              >
-                {label}
-              </div>
-            ))}
-          </div>
-
-          {/* Grid */}
-          <div>
-            {/* Month labels */}
-            <div className="flex" style={{ height: 16 }}>
-              {monthLabels.map((ml, i) => (
-                <div
-                  key={i}
-                  className="text-[10px] text-gray-400 dark:text-gray-500 absolute"
-                  style={{ left: ml.weekIndex * (CELL_SIZE + GAP), position: 'relative' }}
-                >
-                  {ml.text}
-                </div>
-              ))}
-            </div>
-
-            {/* Cells grid */}
-            <div className="flex gap-[2px]">
-              {weeks.map((week, wi) => (
-                <div key={wi} className="flex flex-col gap-[2px]">
-                  {Array.from({ length: 7 }, (_, dayIdx) => {
-                    const date = week.dates.find((d) => d.getDay() === dayIdx);
-                    if (!date) {
-                      return (
-                        <div
-                          key={dayIdx}
-                          style={{ width: CELL_SIZE, height: CELL_SIZE }}
-                        />
-                      );
-                    }
-                    const dateKey = formatDateKey(date);
-                    const count = dateCounts[dateKey] || 0;
-                    const level = intensityLevel(count);
-                    const isToday = formatDateKey(new Date()) === dateKey;
-
-                    return (
-                      <div
-                        key={dayIdx}
-                        className={`rounded-[3px] ${INTENSITY_COLORS[level]} ${
-                          isToday ? 'ring-1.5 ring-teal-400 ring-offset-1 ring-offset-white dark:ring-offset-[#0c1929]' : ''
-                        } cursor-pointer transition-transform hover:scale-[1.3]`}
-                        style={{ width: CELL_SIZE, height: CELL_SIZE }}
-                        onPointerEnter={() => setTooltip({ date: dateKey, count })}
-                        onPointerLeave={() => setTooltip(null)}
-                        onClick={() => setTooltip(tooltip?.date === dateKey ? null : { date: dateKey, count })}
-                      />
-                    );
-                  })}
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Persistent tooltip */}
-      {tooltip && (
-        <div className="mt-2 bg-gray-50 dark:bg-[#1a3550] border border-gray-200 dark:border-[#2a4a6b] rounded-lg px-3 py-2 inline-flex items-center gap-2 text-sm">
-          <span className="font-medium text-gray-700 dark:text-gray-200">{tooltip.date}</span>
-          <span className="text-gray-500 dark:text-gray-400">
-            {tooltip.count} session{tooltip.count !== 1 ? 's' : ''} completed
-          </span>
+      {/* Empty state */}
+      {monthStats.sessionCount === 0 && monthStats.restCount === 0 && (
+        <div className="mt-4 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-xl p-4">
+          <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-1">No activity this month</p>
+          <p className="text-xs text-teal-600 dark:text-teal-400">Complete sessions from the Training tab to see them here.</p>
         </div>
       )}
     </div>
