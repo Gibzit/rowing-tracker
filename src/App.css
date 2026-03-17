@@ -98,3 +98,9 @@ body {
   70% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
+
+/* Photo scan processing pulse */
+@keyframes scanPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}

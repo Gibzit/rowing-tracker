@@ -15,6 +15,8 @@ interface WeekViewProps {
   onToggleOptional: () => void;
   onAddCustomSession: (label: string, description: string) => void;
   onDeleteCustomSession: (dayNumber: number) => void;
+  apiKey?: string | null;
+  onSetupRequired?: () => void;
 }
 
 export default function WeekView({
@@ -27,6 +29,8 @@ export default function WeekView({
   onToggleOptional,
   onAddCustomSession,
   onDeleteCustomSession,
+  apiKey,
+  onSetupRequired,
 }: WeekViewProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -46,6 +50,8 @@ export default function WeekView({
           onUpdate={(partial) =>
             onUpdateSession(session.weekNumber, session.dayNumber, partial)
           }
+          apiKey={apiKey}
+          onSetupRequired={onSetupRequired}
         />
       ))}
 
@@ -71,6 +77,8 @@ export default function WeekView({
                       ? () => onDeleteCustomSession(session.dayNumber)
                       : undefined
                   }
+                  apiKey={apiKey}
+                  onSetupRequired={onSetupRequired}
                 />
               ))}
               <button

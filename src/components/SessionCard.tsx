@@ -9,6 +9,8 @@ import StrokeRateInput from './StrokeRateInput';
 import SessionTimer from './SessionTimer';
 import CheckCircle from './CheckCircle';
 import SaveToast from './SaveToast';
+import PhotoScanButton from './PhotoScanButton';
+import type { ExtractedData } from '../utils/photoCapture';
 import { validatePace } from '../utils/paceValidation';
 
 interface DraftState {
@@ -48,6 +50,8 @@ interface SessionCardProps {
   onUpdate: (partial: Partial<SessionRecord>) => void;
   isCustom?: boolean;
   onDelete?: () => void;
+  apiKey?: string | null;
+  onSetupRequired?: () => void;
 }
 
 export default function SessionCard({
@@ -57,6 +61,8 @@ export default function SessionCard({
   onUpdate,
   isCustom,
   onDelete,
+  apiKey,
+  onSetupRequired,
 }: SessionCardProps) {
   const [expanded, setExpanded] = useState(false);
   const [draft, setDraft] = useState<DraftState>(() => makeDraft(record));
@@ -103,6 +109,16 @@ export default function SessionCard({
   const handleDiscard = useCallback(() => {
     setDraft(makeDraft(record));
   }, [record]);
+
+  const handlePhotoData = useCallback((data: ExtractedData) => {
+    setDraft((prev) => ({
+      ...prev,
+      pace: data.pace ?? prev.pace,
+      totalTime: data.totalTime ?? prev.totalTime,
+      strokeRate: data.strokeRate ?? prev.strokeRate,
+      intervalTimes: data.intervalPaces ?? prev.intervalTimes,
+    }));
+  }, []);
 
   const cardBg = record.completed
     ? 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800'
@@ -201,6 +217,16 @@ export default function SessionCard({
             className="mt-4 space-y-3 border-t border-gray-100 dark:border-[#1e3a5f] pt-4"
             style={{ animation: 'slideDown 0.2s ease-out' }}
           >
+            {/* Photo scan button */}
+            {onSetupRequired && (
+              <PhotoScanButton
+                descriptor={descriptor}
+                onDataExtracted={handlePhotoData}
+                apiKey={apiKey ?? null}
+                onSetupRequired={onSetupRequired}
+              />
+            )}
+
             {/* Unsaved changes indicator */}
             {hasChanges && (
               <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">

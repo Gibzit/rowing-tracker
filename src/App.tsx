@@ -24,6 +24,8 @@ import AchievementBadges from './components/AchievementBadges';
 import ErrorBoundary from './components/ErrorBoundary';
 import GenerateWeekBanner from './components/GenerateWeekBanner';
 import ProgressGrid from './components/ProgressGrid';
+import ApiKeySettings from './components/ApiKeySettings';
+import { useApiKey } from './hooks/useApiKey';
 
 // Lazy-load non-training views for code splitting
 const ChartsView = lazy(() => import('./components/views/ChartsView'));
@@ -65,7 +67,9 @@ function App() {
   } = useTrainingData();
 
   const { theme, cycleTheme } = useDarkMode();
+  const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const [activeView, setActiveView] = useState<ViewType>('training');
+  const [showApiSettings, setShowApiSettings] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [pbCelebration, setPbCelebration] = useState<{ label: string; pace: string } | null>(null);
   const [celebration, setCelebration] = useState<number | null>(null);
@@ -220,6 +224,8 @@ function App() {
                 onDeleteCustomSession={(dayNumber) =>
                   deleteCustomSession(selectedWeek, dayNumber)
                 }
+                apiKey={apiKey}
+                onSetupRequired={() => setShowApiSettings(true)}
               />
               {all24Complete && (
                 <GenerateWeekBanner
@@ -284,6 +290,15 @@ function App() {
         )}
 
         {!data.onboardingComplete && <Onboarding onComplete={completeOnboarding} />}
+
+        {showApiSettings && (
+          <ApiKeySettings
+            currentKey={apiKey}
+            onSave={setApiKey}
+            onClear={clearApiKey}
+            onClose={() => setShowApiSettings(false)}
+          />
+        )}
       </div>
     </ErrorBoundary>
   );
