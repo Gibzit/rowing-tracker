@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-const STORAGE_KEY = 'rowingTrackerApiKey';
+const STORAGE_KEY = 'rowingTrackerGeminiKey';
 
 function getStoredKey(): string | null {
   try {

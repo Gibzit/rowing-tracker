@@ -40,7 +40,7 @@ export function resizeImage(file: File, maxDim = 1024): Promise<string> {
 }
 
 /**
- * Build a context-aware prompt for Claude based on the session type.
+ * Build a context-aware prompt based on the session type.
  */
 export function buildPrompt(descriptor: SessionDescriptor): string {
   const isInterval = isIntervalSession(descriptor.label);
@@ -79,7 +79,7 @@ ${isInterval ? `- intervalPaces should have exactly ${intervalCount} entries, on
 }
 
 /**
- * Send a photo to Claude Vision API and extract training data.
+ * Send a photo to Google Gemini Flash API and extract training data.
  */
 export async function extractDataFromPhoto(
   base64: string,
@@ -88,42 +88,46 @@ export async function extractDataFromPhoto(
 ): Promise<ExtractedData> {
   const prompt = buildPrompt(descriptor);
 
-  const response = await fetch('https://api.anthropic.com/v1/messages', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-api-key': apiKey,
-      'anthropic-version': '2023-06-01',
-      'anthropic-dangerous-direct-browser-access': 'true',
-    },
-    body: JSON.stringify({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 512,
-      messages: [
-        {
-          role: 'user',
-          content: [
-            {
-              type: 'image',
-              source: {
-                type: 'base64',
-                media_type: 'image/jpeg',
-                data: base64,
+  const response = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [
+          {
+            parts: [
+              {
+                inlineData: {
+                  mimeType: 'image/jpeg',
+                  data: base64,
+                },
               },
-            },
-            {
-              type: 'text',
-              text: prompt,
-            },
-          ],
+              {
+                text: prompt,
+              },
+            ],
+          },
+        ],
+        generationConfig: {
+          maxOutputTokens: 512,
+          temperature: 0.1,
         },
-      ],
-    }),
-  });
+      }),
+    }
+  );
 
   if (!response.ok) {
-    if (response.status === 401) {
-      throw new Error('API key is invalid. Check your key in settings.');
+    if (response.status === 400) {
+      const err = await response.json().catch(() => null);
+      const msg = err?.error?.message || '';
+      if (msg.includes('API_KEY')) {
+        throw new Error('API key is invalid. Check your key in settings.');
+      }
+      throw new Error(`Bad request. Please try again.`);
+    }
+    if (response.status === 403) {
+      throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
     }
     if (response.status === 429) {
       throw new Error('Rate limit reached. Try again in a moment.');
@@ -132,7 +136,7 @@ export async function extractDataFromPhoto(
   }
 
   const result = await response.json();
-  const textContent = result.content?.[0]?.text;
+  const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
   if (!textContent) {
     throw new Error('No response from API. Please try again.');
   }
@@ -141,7 +145,7 @@ export async function extractDataFromPhoto(
 }
 
 /**
- * Parse Claude's JSON response into ExtractedData, handling edge cases.
+ * Parse the API JSON response into ExtractedData, handling edge cases.
  */
 function parseExtractedData(text: string): ExtractedData {
   // Strip markdown code fences if present
@@ -189,26 +193,13 @@ function parseExtractedData(text: string): ExtractedData {
 }
 
 /**
- * Validate an API key by making a minimal API call.
+ * Validate a Gemini API key by listing available models (free, no tokens consumed).
  */
 export async function validateApiKey(apiKey: string): Promise<boolean> {
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 16,
-        messages: [
-          { role: 'user', content: 'Reply with exactly: OK' },
-        ],
-      }),
-    });
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}&pageSize=1`
+    );
     return response.ok;
   } catch {
     return false;

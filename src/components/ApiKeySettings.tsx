@@ -69,8 +69,8 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
         </div>
 
         <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-          Enter your Anthropic API key to enable automatic data extraction from rowing machine photos.
-          Your key is stored only on this device and never sent to any server besides Anthropic.
+          Enter your Google AI API key to enable automatic data extraction from rowing machine photos using Gemini Flash (free tier).
+          Your key is stored only on this device and never sent to any server besides Google.
         </p>
 
         <div className="mb-3">
@@ -84,7 +84,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
               setInputValue(e.target.value);
               setStatus('idle');
             }}
-            placeholder="sk-ant-..."
+            placeholder="AIza..."
             autoComplete="off"
             className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#1a3550] dark:text-gray-100 rounded-xl text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
           />
@@ -115,12 +115,12 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
         )}
 
         <a
-          href="https://console.anthropic.com/settings/keys"
+          href="https://aistudio.google.com/apikey"
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 hover:underline mb-4"
         >
-          Get an API key at console.anthropic.com
+          Get a free API key at aistudio.google.com
           <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
             <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
             <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
