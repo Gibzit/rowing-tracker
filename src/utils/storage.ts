@@ -1,4 +1,5 @@
 import type { SessionDescriptor } from '../data/trainingPlan';
+import type { UnlockedAchievement } from './achievements';
 
 export interface SessionRecord {
   completed: boolean;
@@ -17,6 +18,8 @@ export interface StoredData {
   customSessions: Record<number, SessionDescriptor[]>;
   extraWeeks: SessionDescriptor[];
   onboardingComplete?: boolean;
+  achievements?: UnlockedAchievement[];
+  restDays?: string[]; // ISO date strings (YYYY-MM-DD) when user logged a rest day
 }
 
 const STORAGE_KEY = 'petePlanData';
@@ -40,14 +43,24 @@ export function loadData(): StoredData {
     if (!parsed.onboardingComplete && Object.keys(parsed.sessions || {}).length > 0) {
       parsed.onboardingComplete = true;
     }
+    if (!parsed.achievements) parsed.achievements = [];
+    if (!parsed.restDays) parsed.restDays = [];
     return parsed as StoredData;
   } catch {
     return createDefault();
   }
 }
 
-export function saveData(data: StoredData): void {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+export function saveData(data: StoredData): boolean {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    return true;
+  } catch (e) {
+    if (e instanceof DOMException && e.name === 'QuotaExceededError') {
+      console.error('Storage quota exceeded. Some data may not be saved.');
+    }
+    return false;
+  }
 }
 
 export function sessionKey(week: number, day: number): string {

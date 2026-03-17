@@ -22,7 +22,9 @@ export function useDarkMode() {
 
   const setTheme = useCallback((t: Theme) => {
     setThemeState(t);
-    localStorage.setItem(STORAGE_KEY, t);
+    try {
+      localStorage.setItem(STORAGE_KEY, t);
+    } catch { /* quota exceeded — theme still applies for current session */ }
     applyTheme(t);
   }, []);
 

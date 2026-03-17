@@ -9,9 +9,10 @@ import EmptyState from '../EmptyState';
 interface ComparisonViewProps {
   sessions: Record<string, SessionRecord>;
   plan: SessionDescriptor[];
+  onGoToTraining?: () => void;
 }
 
-export default function ComparisonView({ sessions, plan }: ComparisonViewProps) {
+export default function ComparisonView({ sessions, plan, onGoToTraining }: ComparisonViewProps) {
   const groups = useMemo(() => groupWorkouts(sessions, plan), [sessions, plan]);
   const [selected, setSelected] = useState<string>('');
 
@@ -23,6 +24,8 @@ export default function ComparisonView({ sessions, plan }: ComparisonViewProps) 
         icon="⚖️"
         title="No comparisons yet"
         description="Complete the same workout type at least twice with pace data to compare results here."
+        actionLabel="Go to Training"
+        onAction={onGoToTraining}
       />
     );
   }

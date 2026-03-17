@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface AddWorkoutFormProps {
   onSave: (label: string, description: string) => void;
@@ -11,13 +11,27 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
 
   const canSave = label.trim().length > 0;
 
+  // ESC key to close
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel();
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [onCancel]);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+      style={{ animation: 'backdropFadeIn 0.2s ease-out' }}
       onClick={onCancel}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Add custom workout"
         className="bg-white dark:bg-[#0f2438] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/10"
+        style={{ animation: 'dialogPopIn 0.25s ease-out' }}
         onClick={(e) => e.stopPropagation()}
       >
         <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-4">

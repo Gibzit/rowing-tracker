@@ -47,6 +47,8 @@ export default function WeekSelector({
               key={week}
               ref={isSelected ? activeRef : undefined}
               onClick={() => onSelectWeek(week)}
+              aria-label={`Week ${week}${isComplete ? ', completed' : ''}${isCurrent ? ', current week' : ''}`}
+              aria-current={isSelected ? 'true' : undefined}
               className={classes}
             >
               {week}

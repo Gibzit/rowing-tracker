@@ -1,0 +1,35 @@
+import type { SessionRecord } from './storage';
+import type { SessionDescriptor } from '../data/trainingPlan';
+import type { WorkoutCategory } from './paceUtils';
+import { categorizeWorkout } from './paceUtils';
+
+export interface StrokeRateDataPoint {
+  weekNumber: number;
+  dayNumber: number;
+  label: string;
+  strokeRate: number;
+  category: WorkoutCategory;
+}
+
+export function extractStrokeRateData(
+  sessions: Record<string, SessionRecord>,
+  plan: SessionDescriptor[]
+): StrokeRateDataPoint[] {
+  const points: StrokeRateDataPoint[] = [];
+
+  for (const desc of plan) {
+    const key = `${desc.weekNumber}-${desc.dayNumber}`;
+    const record = sessions[key];
+    if (!record?.strokeRate || !record.completed) continue;
+
+    points.push({
+      weekNumber: desc.weekNumber,
+      dayNumber: desc.dayNumber,
+      label: desc.label,
+      strokeRate: record.strokeRate,
+      category: categorizeWorkout(desc.label),
+    });
+  }
+
+  return points;
+}

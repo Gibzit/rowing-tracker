@@ -9,6 +9,7 @@ import {
   createEmptySession,
   sessionKey,
 } from '../utils/storage';
+import type { UnlockedAchievement } from '../utils/achievements';
 import { getCombinedPlan } from '../utils/combinedPlan';
 import { generateWeekSessions } from '../utils/generateWeek';
 
@@ -130,6 +131,28 @@ export function useTrainingData() {
     setData((prev) => ({ ...prev, onboardingComplete: true }));
   }, []);
 
+  const unlockAchievements = useCallback((newAchievements: UnlockedAchievement[]) => {
+    setData((prev) => ({
+      ...prev,
+      achievements: [...(prev.achievements || []), ...newAchievements],
+    }));
+  }, []);
+
+  const logRestDay = useCallback((date: string) => {
+    setData((prev) => {
+      const existing = prev.restDays || [];
+      if (existing.includes(date)) return prev; // already logged
+      return { ...prev, restDays: [...existing, date] };
+    });
+  }, []);
+
+  const undoRestDay = useCallback((date: string) => {
+    setData((prev) => ({
+      ...prev,
+      restDays: (prev.restDays || []).filter((d) => d !== date),
+    }));
+  }, []);
+
   const totalWeeks = useMemo(() => {
     if (data.extraWeeks.length === 0) return 24;
     return Math.max(24, ...data.extraWeeks.map((s) => s.weekNumber));
@@ -214,5 +237,8 @@ export function useTrainingData() {
     generateNextWeek,
     importData,
     completeOnboarding,
+    unlockAchievements,
+    logRestDay,
+    undoRestDay,
   };
 }

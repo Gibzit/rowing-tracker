@@ -9,30 +9,68 @@ interface PaceInputProps {
 
 export default function PaceInput({ label, value, onChange }: PaceInputProps) {
   const [error, setError] = useState('');
+  const [touched, setTouched] = useState(false);
+
+  const handleChange = (newValue: string) => {
+    onChange(newValue);
+    // Real-time validation after first blur
+    if (touched && newValue) {
+      const result = validatePace(newValue);
+      setError(result.valid ? '' : 'Use format m:ss (e.g., 2:15)');
+    } else {
+      setError('');
+    }
+  };
 
   const handleBlur = () => {
-    const result = validatePace(value);
-    setError(result.valid ? '' : result.error || 'Invalid format');
+    setTouched(true);
+    if (value) {
+      const result = validatePace(value);
+      setError(result.valid ? '' : 'Use format m:ss (e.g., 2:15)');
+    } else {
+      setError('');
+    }
   };
+
+  const isValid = touched && value && !error;
 
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
-      <input
-        type="text"
-        inputMode="text"
-        placeholder="m:ss"
-        value={value}
-        onChange={(e) => {
-          onChange(e.target.value);
-          if (error) setError('');
-        }}
-        onBlur={handleBlur}
-        className={`w-full px-3 py-2 border rounded-xl text-base min-h-[44px] dark:bg-[#0f2438] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors ${
-          error ? 'border-red-400 bg-red-50 dark:bg-red-900/20' : 'border-gray-300 dark:border-[#2a4a6b]'
-        }`}
-      />
+      <div className="relative">
+        <input
+          type="text"
+          inputMode="text"
+          placeholder="m:ss (e.g., 2:15)"
+          value={value}
+          onChange={(e) => handleChange(e.target.value)}
+          onBlur={handleBlur}
+          className={`w-full px-3 py-2 pr-9 border rounded-xl text-base min-h-[44px] dark:bg-[#0f2438] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors ${
+            error
+              ? 'border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20'
+              : 'border-gray-300 dark:border-[#2a4a6b]'
+          }`}
+        />
+        {/* Validation status icon */}
+        {isValid && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+            </svg>
+          </span>
+        )}
+        {error && (
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-red-400">
+            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </span>
+        )}
+      </div>
       {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{error}</p>}
+      {!error && !value && (
+        <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-0.5">Format: minutes:seconds per 500m</p>
+      )}
     </div>
   );
 }

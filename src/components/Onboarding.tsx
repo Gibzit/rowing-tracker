@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface OnboardingProps {
   onComplete: () => void;
@@ -28,8 +28,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
   const slide = slides[currentSlide];
 
+  // ESC key to skip
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onComplete();
+    };
+    document.addEventListener('keydown', handleKey);
+    return () => document.removeEventListener('keydown', handleKey);
+  }, [onComplete]);
+
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0c1929]/95 backdrop-blur-md p-6">
+    <div role="dialog" aria-modal="true" aria-label="Welcome onboarding" className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0c1929]/95 backdrop-blur-md p-6">
       <div className="max-w-sm w-full text-center">
         {!isLast && (
           <button
@@ -51,6 +60,7 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
             <button
               key={i}
               onClick={() => setCurrentSlide(i)}
+              aria-label={`Go to slide ${i + 1}`}
               className={`h-2 rounded-full transition-all duration-200 ${
                 i === currentSlide
                   ? 'bg-teal-400 w-6'

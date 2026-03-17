@@ -5,11 +5,17 @@ export interface StreakResult {
   longestStreak: number;
 }
 
-function getActivityDates(sessions: Record<string, SessionRecord>): Set<string> {
+function getActivityDates(sessions: Record<string, SessionRecord>, restDays?: string[]): Set<string> {
   const dates = new Set<string>();
   for (const record of Object.values(sessions)) {
     if (record.completed && record.completedDate) {
       dates.add(record.completedDate);
+    }
+  }
+  // Rest days count as active days for streak purposes
+  if (restDays) {
+    for (const d of restDays) {
+      dates.add(d);
     }
   }
   return dates;
@@ -60,8 +66,8 @@ function calculateStreakFrom(startDate: Date, activityDates: Set<string>): numbe
   return streak;
 }
 
-export function computeStreaks(sessions: Record<string, SessionRecord>): StreakResult {
-  const activityDates = getActivityDates(sessions);
+export function computeStreaks(sessions: Record<string, SessionRecord>, restDays?: string[]): StreakResult {
+  const activityDates = getActivityDates(sessions, restDays);
   if (activityDates.size === 0) return { currentStreak: 0, longestStreak: 0 };
 
   // Current streak: start from today
