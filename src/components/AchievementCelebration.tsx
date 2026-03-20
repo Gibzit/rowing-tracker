@@ -23,15 +23,15 @@ export default function AchievementCelebration({ achievement, onDone }: Achievem
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm pointer-events-none">
       <div
-        className="bg-white dark:bg-[#0C1926] rounded-2xl p-6 shadow-2xl ring-1 ring-teal-500/20 text-center animate-[pbPop_0.4s_ease-out]"
-        style={{ maxWidth: 280 }}
+        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 shadow-2xl text-center animate-[pbPop_0.4s_ease-out]"
+        style={{ maxWidth: 280, boxShadow: '0 0 40px rgba(250,189,0,0.15)' }}
       >
         <div className="flex justify-center mb-2">
           <AchievementIcon id={achievement.id} className="w-12 h-12" />
         </div>
-        <p className="text-xs font-bold text-teal-600 dark:text-teal-400 mb-1 uppercase tracking-[0.12em]">Achievement Unlocked</p>
-        <p className="text-base font-extrabold text-gray-900 dark:text-gray-100 mb-1">{achievement.name}</p>
-        <p className="text-xs text-gray-500 dark:text-gray-400">{achievement.description}</p>
+        <p className="text-xs font-bold text-[#fabd00] mb-1 uppercase" style={{ letterSpacing: '0.05em' }}>Achievement Unlocked</p>
+        <p className="text-base font-display font-extrabold text-gray-900 dark:text-[#dae2fd] mb-1">{achievement.name}</p>
+        <p className="text-xs text-[#5a6580]">{achievement.description}</p>
       </div>
     </div>
   );

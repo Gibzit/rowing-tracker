@@ -7,16 +7,16 @@ interface OnboardingProps {
 const slides = [
   {
     icon: (
-      <svg className="w-14 h-14 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-14 h-14 text-[#00d2ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M2 12h4l3-9 6 18 3-9h4" />
       </svg>
     ),
-    title: "Welcome to Rowing Tracker",
+    title: "Welcome to Velocity",
     body: 'A 24-week structured rowing program designed to build endurance and improve pace, one session at a time.',
   },
   {
     icon: (
-      <svg className="w-14 h-14 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-14 h-14 text-[#00d2ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M3 3v18h18" />
         <path d="M7 16l4-8 4 4 4-8" />
       </svg>
@@ -26,7 +26,7 @@ const slides = [
   },
   {
     icon: (
-      <svg className="w-14 h-14 text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg className="w-14 h-14 text-[#00d2ff]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" />
         <path d="M12 6v6l4 2" />
       </svg>
@@ -51,12 +51,12 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
   }, [onComplete]);
 
   return (
-    <div role="dialog" aria-modal="true" aria-label="Welcome onboarding" className="fixed inset-0 z-[70] flex items-center justify-center bg-[#06101A]/98 backdrop-blur-md p-6">
+    <div role="dialog" aria-modal="true" aria-label="Welcome onboarding" className="fixed inset-0 z-[70] flex items-center justify-center bg-[#0b1326]/98 backdrop-blur-md p-6">
       <div className="max-w-sm w-full text-center">
         {!isLast && (
           <button
             onClick={onComplete}
-            className="absolute top-6 right-6 text-[11px] font-bold text-gray-500 hover:text-gray-300 transition-colors touch-manipulation uppercase tracking-[0.12em]"
+            className="absolute top-6 right-6 text-[11px] font-semibold text-[#5a6580] hover:text-[#bbc9cf] transition-colors touch-manipulation uppercase" style={{ letterSpacing: '0.05em' }}
           >
             Skip
           </button>
@@ -64,8 +64,8 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
 
         <div key={currentSlide} style={{ animation: 'viewFadeIn 0.3s ease-out' }}>
           <div className="flex justify-center mb-8">{slide.icon}</div>
-          <h2 className="text-xl font-extrabold text-gray-100 mb-3 uppercase tracking-wide">{slide.title}</h2>
-          <p className="text-sm text-gray-400 leading-relaxed mb-8">{slide.body}</p>
+          <h2 className="text-xl font-display font-extrabold text-[#dae2fd] mb-3 uppercase tracking-wide">{slide.title}</h2>
+          <p className="text-sm text-[#bbc9cf] leading-relaxed mb-8">{slide.body}</p>
         </div>
 
         <div className="flex justify-center gap-2 mb-6">
@@ -76,16 +76,17 @@ export default function Onboarding({ onComplete }: OnboardingProps) {
               aria-label={`Go to slide ${i + 1}`}
               className={`h-1.5 rounded-full transition-all duration-200 ${
                 i === currentSlide
-                  ? 'bg-teal-400 w-6'
-                  : 'bg-gray-600 hover:bg-gray-500 w-2'
+                  ? 'w-6'
+                  : 'bg-[#2a3450] hover:bg-[#404b66] w-2'
               }`}
+              style={i === currentSlide ? { background: 'linear-gradient(90deg, #a5e7ff, #00d2ff)' } : undefined}
             />
           ))}
         </div>
 
         <button
           onClick={isLast ? onComplete : () => setCurrentSlide((s) => s + 1)}
-          className="min-h-[44px] px-8 py-3 bg-teal-600 hover:bg-teal-500 text-white font-bold rounded-lg transition-colors touch-manipulation shadow-lg shadow-teal-900/30 uppercase tracking-wide text-sm"
+          className="min-h-[44px] px-8 py-3 btn-primary-gradient font-bold rounded-md transition-all touch-manipulation shadow-[0_0_20px_rgba(0,210,255,0.25)] uppercase tracking-wide text-sm"
         >
           {isLast ? 'Get Started' : 'Next'}
         </button>

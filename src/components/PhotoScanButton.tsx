@@ -96,7 +96,7 @@ export default function PhotoScanButton({
       {status === 'processing' ? (
         <div className="flex items-center justify-center gap-2.5 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-teal-300 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/10">
           <div
-            className="w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"
+            className="w-4 h-4 border-2 border-[#00d2ff] border-t-transparent rounded-full animate-spin"
           />
           <span className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-300" style={{ animation: 'scanPulse 1.5s ease-in-out infinite' }}>
             Analyzing photo...
@@ -117,7 +117,7 @@ export default function PhotoScanButton({
           className={`flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed transition-colors touch-manipulation ${
             apiKey
               ? 'border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 active:scale-[0.98]'
-              : 'border-gray-300 dark:border-[#224058] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#132940]'
+              : 'border-gray-300 dark:border-white/[0.08] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a2640]'
           }`}
         >
           {/* Camera icon */}

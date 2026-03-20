@@ -30,11 +30,11 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
         role="dialog"
         aria-modal="true"
         aria-label="Add custom workout"
-        className="bg-white dark:bg-[#0C1926] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/10"
+        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/[0.06]"
         style={{ animation: 'dialogPopIn 0.25s ease-out' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <h3 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 mb-4 uppercase tracking-wide">
+        <h3 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] mb-4 uppercase tracking-wide">
           Add Custom Workout
         </h3>
 
@@ -48,7 +48,7 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="e.g. 6000m, 4 x 1000m"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-[#224058] dark:bg-[#132940] dark:text-gray-100 rounded-lg text-base min-h-[44px] font-mono focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
               autoFocus
             />
           </div>
@@ -61,7 +61,7 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional notes about the workout..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-[#224058] dark:bg-[#132940] dark:text-gray-100 rounded-lg text-base min-h-[80px] resize-y focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[80px] resize-y focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
             />
           </div>
         </div>
@@ -69,7 +69,7 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
         <div className="flex gap-3 mt-4">
           <button
             onClick={onCancel}
-            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-[#224058] rounded-lg text-gray-700 dark:text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-[#132940] transition-colors touch-manipulation"
+            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-white/[0.08] rounded-lg text-gray-700 dark:text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-[#1a2640] transition-colors touch-manipulation"
           >
             Cancel
           </button>

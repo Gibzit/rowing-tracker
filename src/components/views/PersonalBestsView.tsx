@@ -49,7 +49,7 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
 
   return (
     <div className="py-4 px-4">
-      <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 mb-4 uppercase tracking-wide">Personal Bests</h2>
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] mb-4 uppercase tracking-wide">Personal Bests</h2>
 
       {pbs.length === 0 ? (
         <EmptyState
@@ -73,7 +73,7 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
           {pbs.map((pb) => (
             <div
               key={pb.label}
-              className="bg-white dark:bg-[#0C1926] border border-gray-200 dark:border-[#1A3350] rounded-lg p-4 hover:shadow-md dark:hover:shadow-black/30 transition-shadow"
+              className="bg-white dark:bg-[#0f1b33] border border-gray-200 dark:border-white/[0.06] rounded-lg p-4 hover:shadow-md dark:hover:shadow-black/30 transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -90,14 +90,14 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
                       {pb.label}
                     </span>
                     {pb.sessionCount > 1 && (
-                      <span className="text-[10px] font-bold font-mono bg-gray-100 dark:bg-[#132940] text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded shrink-0">
+                      <span className="text-[10px] font-bold font-mono bg-gray-100 dark:bg-[#1a2640] text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded shrink-0">
                         {pb.sessionCount} sessions
                       </span>
                     )}
                   </div>
-                  <p className="text-2xl font-mono font-bold text-gray-900 dark:text-gray-100 tracking-tight">
+                  <p className="text-2xl font-mono font-bold text-gray-900 dark:text-[#dae2fd] tracking-tight">
                     {pb.paceFormatted}
-                    <span className="text-sm font-normal text-gray-400 dark:text-gray-500 ml-1">/500m</span>
+                    <span className="text-sm font-normal text-gray-400 dark:text-[#5a6580] ml-1">/500m</span>
                   </p>
                 </div>
 
@@ -118,10 +118,10 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
               </div>
 
               {/* Details row */}
-              <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-[#1A3350]">
+              <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-white/[0.06]">
                 {pb.completedDate && (
                   <div className="flex items-center gap-1.5">
-                    <svg className="w-3 h-3 text-gray-400 dark:text-gray-500 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg className="w-3 h-3 text-gray-400 dark:text-[#5a6580] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
                       <line x1="16" y1="2" x2="16" y2="6" />
                       <line x1="8" y1="2" x2="8" y2="6" />
@@ -130,13 +130,13 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
                     <span className="text-xs font-mono font-bold text-gray-600 dark:text-gray-300">
                       {formatActualDate(pb.completedDate)}
                     </span>
-                    <span className="text-[10px] text-gray-400 dark:text-gray-500">
+                    <span className="text-[10px] text-gray-400 dark:text-[#5a6580]">
                       ({formatRelativeDate(pb.completedDate)})
                     </span>
                   </div>
                 )}
                 {pb.avgPaceFormatted && pb.sessionCount > 1 && (
-                  <span className="text-xs text-gray-400 dark:text-gray-500 ml-auto">
+                  <span className="text-xs text-gray-400 dark:text-[#5a6580] ml-auto">
                     Avg: <span className="font-mono font-bold">{pb.avgPaceFormatted}</span>
                   </span>
                 )}

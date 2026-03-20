@@ -34,7 +34,6 @@ export default function WeeklySummary({ weekNumber, sessions, getSession }: Week
       }
     }
 
-    // Denominator = core sessions + any completed optional sessions
     const totalCount = coreCount + completedOptionalCount;
 
     return {
@@ -51,66 +50,50 @@ export default function WeeklySummary({ weekNumber, sessions, getSession }: Week
   const allComplete = stats.completedCount >= stats.totalCount;
 
   return (
-    <div className={`mx-4 mb-3 p-3.5 rounded-xl border transition-colors ${
+    <div className={`mx-5 mb-4 p-4 rounded-xl transition-colors ${
       allComplete
-        ? 'bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800/40'
-        : 'bg-white dark:bg-[#0C1926] border-gray-200 dark:border-[#1A3350]'
+        ? 'bg-green-50 dark:bg-green-950/20'
+        : 'bg-white dark:bg-[#0f1b33]'
     }`}>
-      <div className="flex items-center justify-between mb-2.5">
-        <h3 className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.12em]">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
           Week {weekNumber} Summary
         </h3>
         {allComplete && (
-          <span className="text-[9px] font-bold bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 px-2 py-0.5 rounded uppercase tracking-wider">
+          <span className="text-[9px] font-bold bg-green-500/10 dark:bg-green-400/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
             Complete
           </span>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-y-2 gap-x-4">
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-            <svg className="w-3 h-3 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-          </div>
-          <span className="text-sm font-mono font-bold text-gray-700 dark:text-gray-300">
-            {stats.completedCount}/{stats.totalCount}
-          </span>
+      <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+        <div>
+          <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Sessions</p>
+          <p className="text-lg font-display font-bold text-gray-800 dark:text-[#dae2fd]">
+            {stats.completedCount}<span className="text-sm font-normal text-gray-400 dark:text-[#5a6580]">/{stats.totalCount}</span>
+          </p>
         </div>
         {stats.sessionsWithPace > 0 && (
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center shrink-0">
-              <svg className="w-3 h-3 text-teal-600 dark:text-teal-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              <span className="font-mono font-bold">{stats.sessionsWithPace}</span> paced
-            </span>
+          <div>
+            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Paced</p>
+            <p className="text-lg font-display font-bold text-gray-800 dark:text-[#dae2fd]">
+              {stats.sessionsWithPace}
+            </p>
           </div>
         )}
         {stats.avgPace && (
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center shrink-0">
-              <svg className="w-3 h-3 text-cyan-600 dark:text-cyan-400" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
-              </svg>
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Avg <span className="font-mono font-bold">{stats.avgPace}</span>
-            </span>
+          <div>
+            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Avg Split</p>
+            <p className="text-lg font-mono font-bold text-gray-800 dark:text-[#dae2fd]">
+              {stats.avgPace}<span className="text-sm font-normal text-gray-400 dark:text-[#5a6580]">/500</span>
+            </p>
           </div>
         )}
         {stats.bestPace && (
-          <div className="flex items-center gap-2">
-            <div className="w-5 h-5 rounded bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center shrink-0">
-              <svg className="w-3 h-3 text-amber-600 dark:text-amber-400" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
-              </svg>
-            </div>
-            <span className="text-sm text-gray-600 dark:text-gray-400">
-              Best <span className="font-mono font-bold">{stats.bestPace}</span>
-            </span>
+          <div>
+            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Best Split</p>
+            <p className="text-lg font-mono font-bold text-[#00d2ff]">
+              {stats.bestPace}<span className="text-sm font-normal text-[#5a6580]">/500</span>
+            </p>
           </div>
         )}
       </div>

@@ -11,7 +11,7 @@ interface StreakDisplayProps {
 
 function getWeekBounds(date: Date): { start: string; end: string } {
   const d = new Date(date);
-  const day = d.getDay(); // 0=Sun
+  const day = d.getDay();
   const diffToMon = day === 0 ? -6 : 1 - day;
   const monday = new Date(d);
   monday.setDate(d.getDate() + diffToMon);
@@ -47,7 +47,6 @@ export default function StreakDisplay({
   const today = formatToday();
   const todayIsRestDay = restDays.includes(today);
 
-  // Count rest days used this calendar week (Mon-Sun)
   const { restDaysThisWeek, weeklyQuota } = useMemo(() => {
     const { start, end } = getWeekBounds(new Date());
     const count = restDays.filter((d) => d >= start && d <= end).length;
@@ -60,32 +59,32 @@ export default function StreakDisplay({
   if (currentStreak === 0 && longestStreak === 0 && !todayIsRestDay) return null;
 
   return (
-    <div className="flex gap-2 mb-2">
+    <div className="flex gap-2 mb-3">
       {/* Streak info */}
-      <div className="flex-1 flex items-center gap-1.5 text-sm bg-teal-50 dark:bg-teal-900/10 rounded-lg px-2.5 py-1.5 border border-teal-100 dark:border-teal-900/30">
+      <div className="flex-1 flex items-center gap-1.5 text-sm bg-teal-50 dark:bg-[#00d2ff]/5 rounded-lg px-2.5 py-1.5">
         <span className="text-base leading-none" style={currentStreak >= 7 ? { animation: 'timerPulse 1.5s ease-in-out infinite' } : undefined}>
-          <svg className="w-4 h-4 text-teal-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
+          <svg className="w-4 h-4 text-[#00d2ff]" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
         </span>
-        <span className="font-mono font-bold text-gray-800 dark:text-gray-100 text-sm">
+        <span className="font-display font-bold text-gray-800 dark:text-[#dae2fd] text-sm">
           {currentStreak}
         </span>
-        <span className="text-gray-500 dark:text-gray-400 text-[10px] uppercase tracking-wider font-medium">day{currentStreak !== 1 ? 's' : ''}</span>
+        <span className="text-[#5a6580] text-[10px] uppercase font-medium" style={{ letterSpacing: '0.05em' }}>day{currentStreak !== 1 ? 's' : ''}</span>
         {longestStreak === currentStreak && currentStreak > 0 && (
-          <span className="text-[9px] font-bold text-teal-700 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/40 px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-auto">
+          <span className="text-[9px] font-bold text-[#00d2ff] bg-[#00d2ff]/10 px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-auto">
             Best
           </span>
         )}
         {longestStreak > currentStreak && (
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono ml-auto">
+          <span className="text-[10px] text-[#5a6580] font-mono ml-auto">
             /{longestStreak}
           </span>
         )}
       </div>
 
       {/* Rest day */}
-      <div className="flex items-center gap-1.5 text-sm bg-indigo-50 dark:bg-indigo-900/10 rounded-lg px-2.5 py-1.5 border border-indigo-100 dark:border-indigo-900/20">
-        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
-          Rest <span className="font-mono font-bold text-gray-700 dark:text-gray-200">{remaining}</span>/{weeklyQuota}
+      <div className="flex items-center gap-1.5 text-sm bg-indigo-50 dark:bg-indigo-900/10 rounded-lg px-2.5 py-1.5">
+        <span className="text-[10px] text-[#5a6580] uppercase font-medium" style={{ letterSpacing: '0.05em' }}>
+          Rest <span className="font-mono font-bold text-gray-700 dark:text-[#bbc9cf]">{remaining}</span>/{weeklyQuota}
         </span>
 
         {todayIsRestDay ? (

@@ -43,12 +43,12 @@ export default function ComparisonView({ sessions, plan, onGoToTraining }: Compa
 
   return (
     <div className="py-4 px-4">
-      <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 mb-3 uppercase tracking-wide">Workout Comparison</h2>
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] mb-3 uppercase tracking-wide">Workout Comparison</h2>
 
       <select
         value={activeGroup?.label || ''}
         onChange={(e) => setSelected(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-[#224058] dark:bg-[#0C1926] dark:text-gray-100 rounded-lg text-sm font-mono min-h-[44px] mb-4"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-sm font-mono min-h-[44px] mb-4"
       >
         {groups.map((g) => (
           <option key={g.label} value={g.label}>

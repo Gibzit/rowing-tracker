@@ -18,7 +18,7 @@ export default function ComparisonTable({ group }: ComparisonTableProps) {
             className={`flex items-center justify-between p-3 rounded-lg border ${
               isBest
                 ? 'border-amber-300 dark:border-amber-600 bg-amber-50 dark:bg-amber-900/20'
-                : 'border-gray-200 dark:border-[#1A3350] bg-white dark:bg-[#0C1926]'
+                : 'border-gray-200 dark:border-white/[0.06] bg-white dark:bg-[#0f1b33]'
             }`}
           >
             <div>
@@ -37,7 +37,7 @@ export default function ComparisonTable({ group }: ComparisonTableProps) {
               )}
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-lg font-mono font-bold text-gray-900 dark:text-gray-100">
+              <span className="text-lg font-mono font-bold text-gray-900 dark:text-[#dae2fd]">
                 {entry.paceFormatted}
               </span>
               {delta !== null && delta !== 0 && (

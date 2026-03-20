@@ -36,7 +36,7 @@ const ComparisonView = lazy(() => import('./components/views/ComparisonView'));
 function ViewLoader() {
   return (
     <div className="flex items-center justify-center py-16">
-      <div className="w-6 h-6 border-2 border-teal-500 border-t-transparent rounded-full animate-spin" />
+      <div className="w-6 h-6 border-2 border-[#00d2ff] border-t-transparent rounded-full animate-spin" />
     </div>
   );
 }
@@ -184,7 +184,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="max-w-lg mx-auto bg-[#F8F5F0] dark:bg-[#06101A] min-h-dvh pb-20">
+      <div className="max-w-lg mx-auto bg-gray-50 dark:bg-[#0b1326] min-h-dvh pb-20">
         <Header
           coreCompleted={coreCompleted}
           coreTotal={coreTotal}

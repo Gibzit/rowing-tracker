@@ -14,16 +14,15 @@ export default function ProgressGrid({
   onSelectWeek,
 }: ProgressGridProps) {
   const completedCount = Array.from({ length: totalWeeks }, (_, i) => i + 1).filter(isWeekComplete).length;
-  const pct = totalWeeks > 0 ? Math.round((completedCount / Math.min(totalWeeks, 24)) * 100) : 0;
 
   return (
-    <div className="mx-4 mb-3 p-3 rounded-xl bg-white dark:bg-[#0C1926] border border-gray-200 dark:border-[#1A3350]">
-      <div className="flex items-center justify-between mb-2.5">
-        <h3 className="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.12em]">
+    <div className="mx-5 mb-4 p-4 rounded-xl bg-white dark:bg-[#0f1b33]">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
           Plan Progress
         </h3>
-        <span className="text-[10px] font-mono font-bold text-teal-600 dark:text-teal-400 tracking-wide">
-          {completedCount}/{Math.min(totalWeeks, 24)} wk ({pct}%)
+        <span className="text-[10px] font-mono font-bold text-[#00d2ff] tracking-wide">
+          {completedCount}/{Math.min(totalWeeks, 24)} wk
         </span>
       </div>
 
@@ -33,16 +32,16 @@ export default function ProgressGrid({
           const isCurrent = week === currentWeek;
           const isSelected = week === selectedWeek;
 
-          let cellClasses = 'aspect-square rounded transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
+          let cellClasses = 'aspect-square rounded-md transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
 
           if (isSelected) {
-            cellClasses += ' bg-teal-500 text-white shadow-sm shadow-teal-500/30 ring-2 ring-teal-400/50';
+            cellClasses += ' text-[#060e20] ring-2 ring-[#00d2ff]/40';
           } else if (isComplete) {
-            cellClasses += ' bg-green-500 dark:bg-green-600 text-white';
+            cellClasses += ' bg-green-500/90 dark:bg-green-500/80 text-white';
           } else if (isCurrent) {
-            cellClasses += ' bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 ring-1 ring-teal-400';
+            cellClasses += ' bg-teal-100 dark:bg-[#00d2ff]/10 text-teal-700 dark:text-[#00d2ff] ring-1 ring-[#00d2ff]/40';
           } else {
-            cellClasses += ' bg-gray-100 dark:bg-[#132940] text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-[#1E4560]';
+            cellClasses += ' bg-gray-100 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] hover:bg-gray-200 dark:hover:bg-[#222a3d]';
           }
 
           return (
@@ -50,6 +49,7 @@ export default function ProgressGrid({
               key={week}
               onClick={() => onSelectWeek(week)}
               className={cellClasses}
+              style={isSelected ? { background: 'linear-gradient(135deg, #a5e7ff, #00d2ff)' } : undefined}
               aria-label={`Week ${week}${isComplete ? ', completed' : ''}${isCurrent ? ', current' : ''}${isSelected ? ', selected' : ''}`}
             >
               {week}

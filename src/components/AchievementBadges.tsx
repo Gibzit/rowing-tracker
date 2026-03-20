@@ -13,16 +13,16 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
   const unlockedCount = unlockedIds.size;
 
   return (
-    <div className="mx-4 mb-4">
+    <div className="mx-5 mb-4">
       <button
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-label={`Achievements: ${unlockedCount} of ${ACHIEVEMENTS.length} unlocked`}
-        className="w-full flex items-center gap-2 bg-white dark:bg-[#0C1926] border border-gray-200 dark:border-[#1A3350] rounded-xl px-3 py-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-[#132940] touch-manipulation"
+        className="w-full flex items-center gap-2 bg-white dark:bg-[#0f1b33] rounded-xl px-3 py-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-[#1a2640] touch-manipulation"
       >
         <div className="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
           {unlockedCount === 0 ? (
-            <span className="text-[10px] text-gray-400 dark:text-gray-500 uppercase tracking-wider font-bold">No badges yet</span>
+            <span className="text-[10px] text-[#5a6580] uppercase font-semibold" style={{ letterSpacing: '0.05em' }}>Milestones</span>
           ) : (
             <div className="flex gap-1 overflow-hidden">
               {ACHIEVEMENTS.filter((a) => unlockedIds.has(a.id)).map((a) => (
@@ -33,10 +33,10 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
             </div>
           )}
         </div>
-        <span className="text-[10px] font-mono font-bold text-gray-500 dark:text-gray-400 shrink-0">
+        <span className="text-[10px] font-mono font-bold text-[#5a6580] shrink-0">
           {unlockedCount}/{ACHIEVEMENTS.length}
         </span>
-        <span className="text-gray-400 dark:text-gray-500 text-sm shrink-0" aria-hidden="true">
+        <span className="text-[#5a6580] text-sm shrink-0" aria-hidden="true">
           {expanded ? '\u25B2' : '\u25BC'}
         </span>
       </button>
@@ -48,10 +48,10 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
             return (
               <div
                 key={a.id}
-                className={`flex items-center gap-2.5 p-2.5 rounded-lg border transition-colors ${
+                className={`flex items-center gap-2.5 p-2.5 rounded-lg transition-colors ${
                   unlocked
-                    ? 'bg-white dark:bg-[#0C1926] border-teal-200 dark:border-teal-800/50'
-                    : 'bg-gray-50 dark:bg-[#050C14] border-gray-200 dark:border-[#132940] opacity-50'
+                    ? 'bg-white dark:bg-[#0f1b33]'
+                    : 'bg-gray-50 dark:bg-[#060e20] opacity-50'
                 }`}
               >
                 <span className={`shrink-0 ${unlocked ? '' : 'grayscale opacity-50'}`}>
@@ -59,19 +59,20 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
                 </span>
                 <div className="min-w-0">
                   <p
-                    className={`text-[10px] font-bold leading-tight uppercase tracking-wider ${
+                    className={`text-[10px] font-bold leading-tight uppercase ${
                       unlocked
-                        ? 'text-gray-900 dark:text-gray-100'
-                        : 'text-gray-400 dark:text-gray-600'
+                        ? 'text-gray-900 dark:text-[#dae2fd]'
+                        : 'text-gray-400 dark:text-[#404b66]'
                     }`}
+                    style={{ letterSpacing: '0.05em' }}
                   >
                     {a.name}
                   </p>
                   <p
                     className={`text-[9px] leading-tight mt-0.5 ${
                       unlocked
-                        ? 'text-gray-500 dark:text-gray-400'
-                        : 'text-gray-400 dark:text-gray-600'
+                        ? 'text-[#5a6580]'
+                        : 'text-gray-400 dark:text-[#404b66]'
                     }`}
                   >
                     {a.description}

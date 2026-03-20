@@ -30,7 +30,7 @@ export default function SessionTimer() {
   const isActive = totalDuration > 0;
 
   return (
-    <div className="bg-gray-50 dark:bg-[#132940]/50 rounded-lg p-3">
+    <div className="bg-gray-50 dark:bg-[#1a2640]/50 rounded-lg p-3">
       <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-[0.12em]">Rest Timer</p>
 
       {!isActive && (
@@ -77,7 +77,7 @@ export default function SessionTimer() {
               className={`absolute inset-0 flex items-center justify-center text-sm font-mono font-bold ${
                 isFinished
                   ? 'text-green-600 dark:text-green-400'
-                  : 'text-gray-900 dark:text-gray-100'
+                  : 'text-gray-900 dark:text-[#dae2fd]'
               }`}
             >
               {formatTime(timeRemaining)}

@@ -38,12 +38,16 @@ export default function WeekView({
   const optionalSessions = sessions.filter((s) => s.isOptional);
 
   return (
-    <div className="px-4 py-4">
-      <h2 className="text-lg font-extrabold text-gray-800 dark:text-gray-100 mb-4 uppercase tracking-wide">
-        <span className="text-teal-600 dark:text-teal-400 font-mono">W{weekNumber}</span>
-        <span className="text-gray-300 dark:text-gray-600 mx-2">/</span>
-        <span className="text-sm font-bold text-gray-400 dark:text-gray-500 normal-case">Sessions</span>
-      </h2>
+    <div className="px-5 py-5">
+      <div className="flex items-baseline gap-3 mb-5">
+        <h2 className="font-display text-3xl font-extrabold italic text-gray-800 dark:text-[#dae2fd]">
+          W{weekNumber}
+        </h2>
+        <div className="flex-1 h-px bg-gray-200/50 dark:bg-white/[0.04]" />
+        <span className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
+          Sessions
+        </span>
+      </div>
 
       {coreSessions.map((session) => (
         <SessionCard
@@ -87,7 +91,7 @@ export default function WeekView({
               ))}
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-full min-h-[44px] text-xs font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 py-2 px-4 rounded-lg border border-dashed border-teal-300 dark:border-teal-700 hover:bg-teal-50 dark:hover:bg-teal-900/20 transition-colors mb-3 touch-manipulation"
+                className="w-full min-h-[44px] text-xs font-bold uppercase tracking-wider text-[#5a6580] dark:text-[#5a6580] py-2 px-4 rounded-md border border-dashed border-gray-300/50 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-[#1a2640]/50 hover:text-[#00d2ff] dark:hover:text-[#00d2ff] transition-colors mb-3 touch-manipulation"
               >
                 + Add Custom Workout
               </button>

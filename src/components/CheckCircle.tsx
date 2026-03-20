@@ -36,20 +36,26 @@ export default function CheckCircle({ checked, onChange }: CheckCircleProps) {
         aria-hidden="true"
         style={animating ? { animation: 'checkBounce 0.4s ease-out' } : undefined}
       >
+        <defs>
+          <linearGradient id="checkGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stopColor="#a5e7ff" />
+            <stop offset="100%" stopColor="#00d2ff" />
+          </linearGradient>
+        </defs>
         <circle
           cx="12"
           cy="12"
           r="10"
-          fill={checked ? '#B8941F' : 'none'}
-          stroke={checked ? '#B8941F' : 'currentColor'}
+          fill={checked ? 'url(#checkGrad)' : 'none'}
+          stroke={checked ? '#00d2ff' : 'currentColor'}
           strokeWidth="2"
-          className={checked ? '' : 'text-gray-300 dark:text-gray-600'}
+          className={checked ? '' : 'text-gray-300 dark:text-[#2a3450]'}
         />
         {checked && (
           <path
             d="M7 12.5l3 3 7-7"
             fill="none"
-            stroke="white"
+            stroke="#060e20"
             strokeWidth="2.5"
             strokeLinecap="round"
             strokeLinejoin="round"

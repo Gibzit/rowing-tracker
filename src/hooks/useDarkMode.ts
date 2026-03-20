@@ -14,7 +14,7 @@ function getStoredTheme(): Theme {
 function applyTheme(theme: Theme) {
   document.documentElement.classList.toggle('dark', theme === 'dark');
   const metaTheme = document.querySelector('meta[name="theme-color"]');
-  metaTheme?.setAttribute('content', theme === 'dark' ? '#06101A' : '#9A7B1A');
+  metaTheme?.setAttribute('content', theme === 'dark' ? '#0b1326' : '#9A7B1A');
 }
 
 export function useDarkMode() {

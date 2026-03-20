@@ -22,7 +22,7 @@ export default function WeekSelector({
   }, [selectedWeek]);
 
   return (
-    <div className="overflow-x-auto py-3 px-4 border-b border-gray-100 dark:border-[#1A3350] bg-gray-50/80 dark:bg-[#0C1926] scroll-smooth">
+    <div className="overflow-x-auto py-3 px-4 border-b border-gray-100 dark:border-white/[0.06] bg-gray-50/80 dark:bg-[#0f1b33] scroll-smooth">
       <div className="flex gap-2 min-w-max">
         {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((week) => {
           const isSelected = week === selectedWeek;
@@ -36,7 +36,7 @@ export default function WeekSelector({
           } else if (isComplete) {
             classes += ' bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400';
           } else {
-            classes += ' bg-gray-100 dark:bg-[#132940] text-gray-700 dark:text-gray-300';
+            classes += ' bg-gray-100 dark:bg-[#1a2640] text-gray-700 dark:text-gray-300';
           }
           if (isCurrent && !isSelected) {
             classes += ' ring-2 ring-teal-400';

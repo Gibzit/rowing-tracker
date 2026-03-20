@@ -23,8 +23,8 @@ export default function ChartFilterBar({ active, onChange }: ChartFilterBarProps
           onClick={() => onChange(f.id)}
           className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg whitespace-nowrap transition-colors touch-manipulation ${
             active === f.id
-              ? 'bg-teal-600 text-white'
-              : 'bg-gray-100 dark:bg-[#132940] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#224058]'
+              ? 'bg-[#00d2ff] text-[#060e20] font-bold'
+              : 'bg-gray-100 dark:bg-[#1a2640] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#224058]'
           }`}
         >
           {f.label}

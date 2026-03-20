@@ -51,7 +51,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
 
   return (
     <div className="py-4">
-      <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 px-4 mb-3 uppercase tracking-wide">Pace Trends</h2>
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-4 mb-3 uppercase tracking-wide">Pace Trends</h2>
       <ChartFilterBar active={filter} onChange={setFilter} />
 
       {!hasAnyData ? (
@@ -77,7 +77,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
 
           {filteredSR.length > 0 && (
             <>
-              <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 px-4 mb-3 uppercase tracking-wide mt-6">
+              <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-4 mb-3 uppercase tracking-wide mt-6">
                 Stroke Rate Trends
               </h2>
               <StrokeRateTrendChart data={filteredSR} />

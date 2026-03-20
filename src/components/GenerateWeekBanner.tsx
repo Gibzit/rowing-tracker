@@ -15,7 +15,7 @@ export default function GenerateWeekBanner({ nextWeek, onGenerate }: GenerateWee
         </p>
         <button
           onClick={onGenerate}
-          className="min-h-[44px] px-6 py-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold uppercase tracking-wider rounded-lg transition-colors touch-manipulation"
+          className="min-h-[44px] px-6 py-2 btn-primary-gradient text-xs font-bold uppercase tracking-wider rounded-lg transition-colors touch-manipulation"
         >
           Generate Week {nextWeek}
         </button>

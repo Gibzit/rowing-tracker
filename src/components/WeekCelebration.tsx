@@ -5,7 +5,7 @@ interface WeekCelebrationProps {
   onDone: () => void;
 }
 
-const confettiColors = ['#B8941F', '#D4A843', '#3BAAC8', '#34C06A', '#5B6BAA', '#E09E14'];
+const confettiColors = ['#00d2ff', '#a5e7ff', '#fabd00', '#34c06a', '#5b6baa', '#007ea0'];
 
 export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationProps) {
   useEffect(() => {
@@ -18,7 +18,6 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
       className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
       onClick={onDone}
     >
-      {/* Confetti particles */}
       {confettiColors.map((color, i) => (
         <span
           key={i}
@@ -50,21 +49,20 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
         />
       ))}
 
-      {/* Celebration card */}
       <div
-        className="bg-white dark:bg-[#0C1926] rounded-2xl p-6 shadow-2xl ring-1 ring-teal-500/20 text-center pointer-events-auto"
-        style={{ animation: 'weekCelebrate 0.4s ease-out' }}
+        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 shadow-2xl text-center pointer-events-auto"
+        style={{ animation: 'weekCelebrate 0.4s ease-out', boxShadow: '0 0 40px rgba(0,210,255,0.1)' }}
       >
-        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-3">
+        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-500/10 flex items-center justify-center mx-auto mb-3">
           <svg className="w-6 h-6 text-green-500" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
         </div>
-        <h2 className="text-sm font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+        <h2 className="text-sm font-display font-extrabold text-gray-900 dark:text-[#dae2fd] uppercase tracking-wide">
           Week {weekNumber} Complete
         </h2>
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Great work — keep it going!
+        <p className="text-xs text-[#5a6580] mt-1">
+          Great work -- keep it going!
         </p>
       </div>
     </div>

@@ -141,14 +141,14 @@ export default function SessionCard({
   }, []);
 
   const cardBg = record.completed
-    ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800/50'
-    : 'bg-white dark:bg-[#0C1926] border-gray-200 dark:border-[#1A3350]';
-  const borderStyle = descriptor.isOptional ? 'border-dashed' : 'border-solid';
+    ? 'bg-green-50 dark:bg-green-950/20'
+    : 'bg-white dark:bg-[#0f1b33]';
+  const optionalBorder = descriptor.isOptional ? ' border border-dashed border-gray-200/50 dark:border-white/[0.04]' : '';
 
   return (
     <>
       <div
-        className={`border rounded-xl p-4 mb-3 ${cardBg} ${borderStyle} hover:translate-y-[-1px] transition-all duration-200`}
+        className={`rounded-xl p-4 mb-3 ${cardBg}${optionalBorder} hover:translate-y-[-1px] transition-all duration-200`}
         style={justCompleted ? { animation: 'cardComplete 0.6s ease-out' } : undefined}
       >
         <div
@@ -159,10 +159,10 @@ export default function SessionCard({
 
           <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-2">
-              <span className="font-mono text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider shrink-0">D{descriptor.dayNumber}</span>
+              <span className="font-mono text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase tracking-wider shrink-0">D{descriptor.dayNumber}</span>
               <span
-                className={`font-bold text-sm leading-snug ${
-                  record.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'
+                className={`font-display font-bold text-sm leading-snug ${
+                  record.completed ? 'line-through text-gray-400 dark:text-[#5a6580]' : 'text-gray-800 dark:text-[#dae2fd]'
                 }`}
               >
                 {descriptor.label}
@@ -173,7 +173,7 @@ export default function SessionCard({
                 </span>
               )}
               {descriptor.isOptional && !isCustom && (
-                <span className="text-[9px] font-bold bg-gray-100 dark:bg-[#132940] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded uppercase tracking-wider">
+                <span className="text-[9px] font-bold bg-gray-100 dark:bg-[#1a2640] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded uppercase tracking-wider">
                   opt
                 </span>
               )}
@@ -223,7 +223,7 @@ export default function SessionCard({
                 </svg>
               </button>
             )}
-            <span className="text-gray-400 dark:text-gray-500 text-sm">
+            <span className="text-gray-400 dark:text-[#5a6580] text-sm">
               {expanded ? '\u25B2' : '\u25BC'}
             </span>
           </div>
@@ -232,7 +232,7 @@ export default function SessionCard({
         {expanded && (
           <div
             ref={contentRef}
-            className="mt-4 space-y-3 border-t border-gray-100 dark:border-[#1A3350] pt-4"
+            className="mt-4 space-y-3 border-t border-gray-100 dark:border-white/[0.06] pt-4"
             style={{ animation: 'slideDown 0.2s ease-out' }}
           >
             {/* Photo scan button */}
@@ -280,7 +280,7 @@ export default function SessionCard({
                     }
                   }
                 }}
-                className="w-full px-3 py-2 border border-gray-200 dark:border-[#224058] dark:bg-[#0C1926] dark:text-gray-100 rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
               />
             </div>
 
@@ -304,14 +304,14 @@ export default function SessionCard({
 
             {isInterval && <SessionTimer />}
 
-            <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-[#1A3350]">
+            <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-white/[0.06]">
               <button
                 onClick={handleDiscard}
                 disabled={!hasChanges}
                 className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors touch-manipulation ${
                   hasChanges
-                    ? 'border-gray-300 dark:border-[#224058] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#132940]'
-                    : 'border-gray-200 dark:border-[#1A3350] text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    ? 'border-gray-300 dark:border-white/[0.08] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a2640]'
+                    : 'border-gray-200 dark:border-white/[0.06] text-gray-400 dark:text-[#404b66] cursor-not-allowed'
                 }`}
               >
                 Discard
@@ -319,10 +319,10 @@ export default function SessionCard({
               <button
                 onClick={handleSave}
                 disabled={!hasChanges}
-                className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all touch-manipulation ${
+                className={`flex-1 min-h-[44px] px-4 py-2 rounded-md text-xs font-bold uppercase tracking-wider transition-all touch-manipulation ${
                   hasChanges
-                    ? 'bg-teal-600 hover:bg-teal-500 text-white shadow-sm shadow-teal-600/20'
-                    : 'bg-gray-200 dark:bg-[#132940] text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    ? 'btn-primary-gradient shadow-[0_0_16px_rgba(0,210,255,0.2)]'
+                    : 'bg-gray-200 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] cursor-not-allowed'
                 }`}
               >
                 Save
