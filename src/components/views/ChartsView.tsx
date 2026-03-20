@@ -34,7 +34,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
   );
 
   const legend = (
-    <div className="px-4 mt-2 flex gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+    <div className="px-5 mt-3 flex gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
       <span className="flex items-center gap-1">
         <span className="w-2.5 h-2.5 rounded-full bg-[#B8941F] inline-block" /> Distance
       </span>
@@ -50,8 +50,8 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
   const hasAnyData = filteredPace.length > 0 || filteredSR.length > 0;
 
   return (
-    <div className="py-4">
-      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-4 mb-3 uppercase tracking-wide">Pace Trends</h2>
+    <div className="py-5">
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-5 mb-4 uppercase tracking-wide">Pace Trends</h2>
       <ChartFilterBar active={filter} onChange={setFilter} />
 
       {!hasAnyData ? (
@@ -77,7 +77,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
 
           {filteredSR.length > 0 && (
             <>
-              <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-4 mb-3 uppercase tracking-wide mt-6">
+              <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] px-5 mb-4 uppercase tracking-wide mt-8">
                 Stroke Rate Trends
               </h2>
               <StrokeRateTrendChart data={filteredSR} />

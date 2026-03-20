@@ -16,9 +16,9 @@ export default function ProgressGrid({
   const completedCount = Array.from({ length: totalWeeks }, (_, i) => i + 1).filter(isWeekComplete).length;
 
   return (
-    <div className="mx-5 mb-4 p-4 rounded-xl bg-white dark:bg-[#0f1b33]">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
+    <div className="mx-5 mb-5 p-5 rounded-2xl bg-white dark:bg-[#0f1b33]">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.08em' }}>
           Plan Progress
         </h3>
         <span className="text-[10px] font-mono font-bold text-[#00d2ff] tracking-wide">
@@ -26,13 +26,13 @@ export default function ProgressGrid({
         </span>
       </div>
 
-      <div className="grid grid-cols-12 gap-1.5">
+      <div className="grid grid-cols-12 gap-2">
         {Array.from({ length: Math.min(totalWeeks, 24) }, (_, i) => i + 1).map((week) => {
           const isComplete = isWeekComplete(week);
           const isCurrent = week === currentWeek;
           const isSelected = week === selectedWeek;
 
-          let cellClasses = 'aspect-square rounded-md transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
+          let cellClasses = 'aspect-square rounded-lg transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
 
           if (isSelected) {
             cellClasses += ' text-[#060e20] ring-2 ring-[#00d2ff]/40';

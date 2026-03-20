@@ -80,19 +80,19 @@ export default function BottomNav({ active, onNavigate }: BottomNavProps) {
               aria-selected={isActive}
               aria-label={tab.label}
               onClick={() => onNavigate(tab.id)}
-              className={`flex-1 flex flex-col items-center py-2.5 min-h-[56px] transition-all duration-200 touch-manipulation relative ${
+              className={`flex-1 flex flex-col items-center py-2 min-h-[56px] transition-all duration-200 touch-manipulation relative ${
                 isActive
-                  ? 'text-teal-500 dark:text-[#00d2ff]'
+                  ? 'text-[#060e20] dark:text-[#060e20]'
                   : 'text-gray-400 dark:text-[#5a6580] hover:text-gray-600 dark:hover:text-[#bbc9cf] active:scale-95'
               }`}
             >
               {isActive && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2px] rounded-full" style={{ background: 'linear-gradient(90deg, #a5e7ff, #00d2ff)' }} />
+                <span className="absolute inset-x-2 top-1.5 bottom-1.5 rounded-2xl -z-10" style={{ background: 'linear-gradient(135deg, #a5e7ff, #00d2ff)' }} />
               )}
-              <span className={`transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
+              <span className={`transition-transform duration-200 ${isActive ? 'scale-105' : ''}`}>
                 {tab.icon}
               </span>
-              <span className={`text-[9px] mt-1 font-semibold tracking-[0.05em] uppercase ${isActive ? 'text-teal-500 dark:text-[#00d2ff]' : ''}`}>
+              <span className={`text-[9px] mt-0.5 font-bold tracking-[0.06em] uppercase ${isActive ? '' : ''}`}>
                 {tab.label}
               </span>
             </button>

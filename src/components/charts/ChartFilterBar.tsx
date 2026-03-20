@@ -16,12 +16,12 @@ const filters: { id: FilterOption; label: string }[] = [
 
 export default function ChartFilterBar({ active, onChange }: ChartFilterBarProps) {
   return (
-    <div className="flex gap-2 px-4 py-2 overflow-x-auto">
+    <div className="flex gap-2.5 px-5 py-2.5 overflow-x-auto">
       {filters.map((f) => (
         <button
           key={f.id}
           onClick={() => onChange(f.id)}
-          className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg whitespace-nowrap transition-colors touch-manipulation ${
+          className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-xl whitespace-nowrap transition-colors touch-manipulation ${
             active === f.id
               ? 'bg-[#00d2ff] text-[#060e20] font-bold'
               : 'bg-gray-100 dark:bg-[#1a2640] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#224058]'

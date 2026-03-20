@@ -174,7 +174,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
     currentMonth.month === new Date().getMonth();
 
   return (
-    <div className="py-4 px-4">
+    <div className="py-5 px-5">
       {/* Month header with navigation */}
       <div className="flex items-center justify-between mb-4">
         <button
@@ -188,7 +188,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
         </button>
 
         <div className="flex flex-col items-center">
-          <h2 className="text-lg font-extrabold text-gray-800 dark:text-[#dae2fd] uppercase tracking-wide">
+          <h2 className="text-xl font-display font-extrabold text-gray-800 dark:text-[#dae2fd] uppercase tracking-wide">
             {MONTH_NAMES[currentMonth.month]} {currentMonth.year}
           </h2>
           {!isCurrentMonthView && (
@@ -216,19 +216,19 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       {(monthStats.sessionCount > 0 || monthStats.restCount > 0) && (
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {monthStats.sessionCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 rounded-xl px-3 py-1.5">
               <span className="text-green-600 dark:text-green-400 text-sm font-mono font-bold">{monthStats.sessionCount}</span>
               <span className="text-green-600 dark:text-green-400 text-xs">session{monthStats.sessionCount !== 1 ? 's' : ''}</span>
             </div>
           )}
           {monthStats.daysWithActivity > 0 && (
-            <div className="flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800/50 rounded-lg px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/20 rounded-xl px-3 py-1.5">
               <span className="text-teal-600 dark:text-teal-400 text-sm font-mono font-bold">{monthStats.daysWithActivity}</span>
               <span className="text-teal-600 dark:text-teal-400 text-xs">active day{monthStats.daysWithActivity !== 1 ? 's' : ''}</span>
             </div>
           )}
           {monthStats.restCount > 0 && (
-            <div className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800/50 rounded-lg px-2.5 py-1">
+            <div className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl px-3 py-1.5">
               <span className="text-indigo-600 dark:text-indigo-400 text-sm font-mono font-bold">{monthStats.restCount}</span>
               <span className="text-indigo-600 dark:text-indigo-400 text-xs">rest day{monthStats.restCount !== 1 ? 's' : ''}</span>
             </div>
@@ -253,9 +253,9 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       </div>
 
       {/* Calendar grid */}
-      <div className="bg-white dark:bg-[#0f1b33] rounded-lg border border-gray-200 dark:border-white/[0.06] overflow-hidden">
+      <div className="bg-white dark:bg-[#0f1b33] rounded-2xl overflow-hidden">
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-white/[0.06]">
+        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-white/[0.04]">
           {WEEKDAY_LABELS.map((label) => (
             <div
               key={label}
@@ -348,7 +348,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       {/* Selected day detail panel */}
       {selectedDayInfo && (
         <div
-          className="mt-3 bg-white dark:bg-[#0f1b33] rounded-lg border border-gray-200 dark:border-white/[0.06] p-4"
+          className="mt-3 bg-white dark:bg-[#0f1b33] rounded-2xl p-5"
           style={{ animation: 'slideDown 0.2s ease-out' }}
         >
           <div className="flex items-center justify-between mb-3">
@@ -418,7 +418,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
 
       {/* Empty state */}
       {monthStats.sessionCount === 0 && monthStats.restCount === 0 && (
-        <div className="mt-4 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-lg p-4">
+        <div className="mt-4 bg-teal-50 dark:bg-teal-900/30 rounded-2xl p-5">
           <p className="text-xs font-bold text-teal-700 dark:text-teal-300 mb-1 uppercase tracking-wider">No activity this month</p>
           <p className="text-xs text-teal-600 dark:text-teal-400">Complete sessions from the Training tab to see them here.</p>
         </div>

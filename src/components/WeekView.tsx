@@ -38,13 +38,13 @@ export default function WeekView({
   const optionalSessions = sessions.filter((s) => s.isOptional);
 
   return (
-    <div className="px-5 py-5">
-      <div className="flex items-baseline gap-3 mb-5">
-        <h2 className="font-display text-3xl font-extrabold italic text-gray-800 dark:text-[#dae2fd]">
+    <div className="px-5 py-6">
+      <div className="flex items-baseline gap-3 mb-6">
+        <h2 className="font-display text-4xl font-extrabold italic text-gray-800 dark:text-[#dae2fd]">
           W{weekNumber}
         </h2>
         <div className="flex-1 h-px bg-gray-200/50 dark:bg-white/[0.04]" />
-        <span className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
+        <span className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.08em' }}>
           Sessions
         </span>
       </div>
@@ -91,7 +91,7 @@ export default function WeekView({
               ))}
               <button
                 onClick={() => setShowAddForm(true)}
-                className="w-full min-h-[44px] text-xs font-bold uppercase tracking-wider text-[#5a6580] dark:text-[#5a6580] py-2 px-4 rounded-md border border-dashed border-gray-300/50 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-[#1a2640]/50 hover:text-[#00d2ff] dark:hover:text-[#00d2ff] transition-colors mb-3 touch-manipulation"
+                className="w-full min-h-[44px] text-xs font-bold uppercase tracking-wider text-[#5a6580] dark:text-[#5a6580] py-3 px-4 rounded-2xl border border-dashed border-gray-300/50 dark:border-white/[0.06] hover:bg-gray-50 dark:hover:bg-[#1a2640]/50 hover:text-[#00d2ff] dark:hover:text-[#00d2ff] transition-colors mb-4 touch-manipulation"
               >
                 + Add Custom Workout
               </button>

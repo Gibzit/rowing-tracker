@@ -48,8 +48,8 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
   const pbs = useMemo(() => computePersonalBests(sessions, plan), [sessions, plan]);
 
   return (
-    <div className="py-4 px-4">
-      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] mb-4 uppercase tracking-wide">Personal Bests</h2>
+    <div className="py-5 px-5">
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-[#dae2fd] mb-5 uppercase tracking-wide">Personal Bests</h2>
 
       {pbs.length === 0 ? (
         <EmptyState
@@ -69,11 +69,11 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
           onAction={onGoToTraining}
         />
       ) : (
-        <div className="space-y-3">
+        <div className="space-y-4">
           {pbs.map((pb) => (
             <div
               key={pb.label}
-              className="bg-white dark:bg-[#0f1b33] border border-gray-200 dark:border-white/[0.06] rounded-lg p-4 hover:shadow-md dark:hover:shadow-black/30 transition-shadow"
+              className="bg-white dark:bg-[#0f1b33] rounded-2xl p-5 hover:shadow-md dark:hover:shadow-black/30 transition-shadow"
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -95,9 +95,9 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
                       </span>
                     )}
                   </div>
-                  <p className="text-2xl font-mono font-bold text-gray-900 dark:text-[#dae2fd] tracking-tight">
+                  <p className="text-3xl font-mono font-bold text-gray-900 dark:text-[#dae2fd] tracking-tight">
                     {pb.paceFormatted}
-                    <span className="text-sm font-normal text-gray-400 dark:text-[#5a6580] ml-1">/500m</span>
+                    <span className="text-base font-normal text-gray-400 dark:text-[#5a6580] ml-1">/500m</span>
                   </p>
                 </div>
 
@@ -118,7 +118,7 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
               </div>
 
               {/* Details row */}
-              <div className="flex items-center gap-3 mt-2 pt-2 border-t border-gray-100 dark:border-white/[0.06]">
+              <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
                 {pb.completedDate && (
                   <div className="flex items-center gap-1.5">
                     <svg className="w-3 h-3 text-gray-400 dark:text-[#5a6580] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

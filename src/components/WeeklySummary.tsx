@@ -50,49 +50,49 @@ export default function WeeklySummary({ weekNumber, sessions, getSession }: Week
   const allComplete = stats.completedCount >= stats.totalCount;
 
   return (
-    <div className={`mx-5 mb-4 p-4 rounded-xl transition-colors ${
+    <div className={`mx-5 mb-5 p-5 rounded-2xl transition-colors ${
       allComplete
         ? 'bg-green-50 dark:bg-green-950/20'
         : 'bg-white dark:bg-[#0f1b33]'
     }`}>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-[10px] font-semibold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.05em' }}>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase" style={{ letterSpacing: '0.08em' }}>
           Week {weekNumber} Summary
         </h3>
         {allComplete && (
-          <span className="text-[9px] font-bold bg-green-500/10 dark:bg-green-400/10 text-green-600 dark:text-green-400 px-2 py-0.5 rounded-full uppercase tracking-wider">
+          <span className="text-[9px] font-bold bg-green-500/10 dark:bg-green-400/10 text-green-600 dark:text-green-400 px-2.5 py-1 rounded-full uppercase tracking-wider">
             Complete
           </span>
         )}
       </div>
-      <div className="grid grid-cols-2 gap-y-3 gap-x-4">
+      <div className="grid grid-cols-2 gap-y-4 gap-x-6">
         <div>
-          <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Sessions</p>
-          <p className="text-lg font-display font-bold text-gray-800 dark:text-[#dae2fd]">
-            {stats.completedCount}<span className="text-sm font-normal text-gray-400 dark:text-[#5a6580]">/{stats.totalCount}</span>
+          <p className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase mb-1" style={{ letterSpacing: '0.08em' }}>Sessions</p>
+          <p className="text-2xl font-display font-extrabold text-gray-800 dark:text-[#dae2fd]">
+            {stats.completedCount}<span className="text-base font-normal text-gray-400 dark:text-[#5a6580]">/{stats.totalCount}</span>
           </p>
         </div>
         {stats.sessionsWithPace > 0 && (
           <div>
-            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Paced</p>
-            <p className="text-lg font-display font-bold text-gray-800 dark:text-[#dae2fd]">
+            <p className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase mb-1" style={{ letterSpacing: '0.08em' }}>Paced</p>
+            <p className="text-2xl font-display font-extrabold text-gray-800 dark:text-[#dae2fd]">
               {stats.sessionsWithPace}
             </p>
           </div>
         )}
         {stats.avgPace && (
           <div>
-            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Avg Split</p>
-            <p className="text-lg font-mono font-bold text-gray-800 dark:text-[#dae2fd]">
-              {stats.avgPace}<span className="text-sm font-normal text-gray-400 dark:text-[#5a6580]">/500</span>
+            <p className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase mb-1" style={{ letterSpacing: '0.08em' }}>Avg Split</p>
+            <p className="text-2xl font-mono font-bold text-gray-800 dark:text-[#dae2fd]">
+              {stats.avgPace}<span className="text-base font-normal text-gray-400 dark:text-[#5a6580]">/500</span>
             </p>
           </div>
         )}
         {stats.bestPace && (
           <div>
-            <p className="text-[10px] font-medium text-gray-400 dark:text-[#5a6580] uppercase mb-0.5" style={{ letterSpacing: '0.05em' }}>Best Split</p>
-            <p className="text-lg font-mono font-bold text-[#00d2ff]">
-              {stats.bestPace}<span className="text-sm font-normal text-[#5a6580]">/500</span>
+            <p className="text-[10px] font-bold text-gray-400 dark:text-[#5a6580] uppercase mb-1" style={{ letterSpacing: '0.08em' }}>Best Split</p>
+            <p className="text-2xl font-mono font-bold text-[#00d2ff]">
+              {stats.bestPace}<span className="text-base font-normal text-[#5a6580]">/500</span>
             </p>
           </div>
         )}

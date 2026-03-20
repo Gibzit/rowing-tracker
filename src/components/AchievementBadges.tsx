@@ -13,16 +13,16 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
   const unlockedCount = unlockedIds.size;
 
   return (
-    <div className="mx-5 mb-4">
+    <div className="mx-5 mb-5">
       <button
         onClick={() => setExpanded(!expanded)}
         aria-expanded={expanded}
         aria-label={`Achievements: ${unlockedCount} of ${ACHIEVEMENTS.length} unlocked`}
-        className="w-full flex items-center gap-2 bg-white dark:bg-[#0f1b33] rounded-xl px-3 py-2.5 transition-colors hover:bg-gray-50 dark:hover:bg-[#1a2640] touch-manipulation"
+        className="w-full flex items-center gap-2.5 bg-white dark:bg-[#0f1b33] rounded-2xl px-4 py-3.5 transition-colors hover:bg-gray-50 dark:hover:bg-[#1a2640] touch-manipulation"
       >
-        <div className="flex items-center gap-1 flex-1 min-w-0 overflow-hidden">
+        <div className="flex items-center gap-1.5 flex-1 min-w-0 overflow-hidden">
           {unlockedCount === 0 ? (
-            <span className="text-[10px] text-[#5a6580] uppercase font-semibold" style={{ letterSpacing: '0.05em' }}>Milestones</span>
+            <span className="text-[10px] text-[#5a6580] uppercase font-bold" style={{ letterSpacing: '0.08em' }}>Milestones</span>
           ) : (
             <div className="flex gap-1 overflow-hidden">
               {ACHIEVEMENTS.filter((a) => unlockedIds.has(a.id)).map((a) => (
@@ -42,13 +42,13 @@ export default function AchievementBadges({ achievements }: AchievementBadgesPro
       </button>
 
       {expanded && (
-        <div className="mt-2 grid grid-cols-2 gap-2">
+        <div className="mt-3 grid grid-cols-2 gap-2.5">
           {ACHIEVEMENTS.map((a) => {
             const unlocked = unlockedIds.has(a.id);
             return (
               <div
                 key={a.id}
-                className={`flex items-center gap-2.5 p-2.5 rounded-lg transition-colors ${
+                className={`flex items-center gap-3 p-3 rounded-xl transition-colors ${
                   unlocked
                     ? 'bg-white dark:bg-[#0f1b33]'
                     : 'bg-gray-50 dark:bg-[#060e20] opacity-50'

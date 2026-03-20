@@ -22,15 +22,15 @@ export default function WeekSelector({
   }, [selectedWeek]);
 
   return (
-    <div className="overflow-x-auto py-3 px-4 border-b border-gray-100 dark:border-white/[0.06] bg-gray-50/80 dark:bg-[#0f1b33] scroll-smooth">
-      <div className="flex gap-2 min-w-max">
+    <div className="overflow-x-auto py-3 px-5 bg-gray-50/80 dark:bg-[#0f1b33] scroll-smooth">
+      <div className="flex gap-2.5 min-w-max">
         {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((week) => {
           const isSelected = week === selectedWeek;
           const isCurrent = week === currentWeek;
           const isComplete = isWeekComplete(week);
 
           let classes =
-            'min-w-[44px] h-[44px] rounded-lg text-sm font-mono font-bold transition-all duration-200 flex items-center justify-center';
+            'min-w-[44px] h-[44px] rounded-xl text-sm font-mono font-bold transition-all duration-200 flex items-center justify-center';
           if (isSelected) {
             classes += ' bg-teal-600 text-white shadow-[0_0_10px_rgba(154,123,26,0.3)]';
           } else if (isComplete) {
