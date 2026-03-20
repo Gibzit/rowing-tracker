@@ -7,9 +7,9 @@ interface PaceTrendChartProps {
 }
 
 const CATEGORY_COLORS: Record<string, { stroke: string; fill: string }> = {
-  distance: { stroke: '#14b8a6', fill: '#14b8a6' },
-  interval: { stroke: '#f59e0b', fill: '#f59e0b' },
-  time: { stroke: '#10b981', fill: '#10b981' },
+  distance: { stroke: '#B8941F', fill: '#B8941F' },
+  interval: { stroke: '#2E86AB', fill: '#2E86AB' },
+  time: { stroke: '#45A868', fill: '#45A868' },
 };
 
 const PADDING = { top: 20, right: 20, bottom: 30, left: 50 };
@@ -69,7 +69,7 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
               y2={g.y}
               stroke="currentColor"
               strokeWidth="0.5"
-              className="text-gray-200 dark:text-[#1e3a5f]"
+              className="text-gray-200 dark:text-[#1A3350]"
             />
             <text
               x={PADDING.left - 6}
@@ -92,12 +92,12 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
           y2={CHART_HEIGHT - PADDING.bottom}
           stroke="currentColor"
           strokeWidth="1"
-          className="text-gray-300 dark:text-[#2a4a6b]"
+          className="text-gray-300 dark:text-[#224058]"
         />
 
         {/* Line */}
         {data.length > 1 && (
-          <path d={linePath} fill="none" stroke="#14b8a6" strokeWidth="2" strokeLinejoin="round" />
+          <path d={linePath} fill="none" stroke="#B8941F" strokeWidth="2" strokeLinejoin="round" />
         )}
 
         {/* Data points */}
@@ -157,7 +157,7 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
             transform: 'translateX(-50%)',
           }}
         >
-          <div className="font-medium">{secondsToPace(data[tooltip.index].paceSeconds)}/500m</div>
+          <div className="font-mono font-bold">{secondsToPace(data[tooltip.index].paceSeconds)}/500m</div>
           <div className="opacity-75">
             W{data[tooltip.index].weekNumber} D{data[tooltip.index].dayNumber}: {data[tooltip.index].label}
           </div>

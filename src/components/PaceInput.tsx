@@ -13,7 +13,6 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
 
   const handleChange = (newValue: string) => {
     onChange(newValue);
-    // Real-time validation after first blur
     if (touched && newValue) {
       const result = validatePace(newValue);
       setError(result.valid ? '' : 'Use format m:ss (e.g., 2:15)');
@@ -36,7 +35,7 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{label}</label>
+      <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">{label}</label>
       <div className="relative">
         <input
           type="text"
@@ -45,13 +44,12 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
           value={value}
           onChange={(e) => handleChange(e.target.value)}
           onBlur={handleBlur}
-          className={`w-full px-3 py-2 pr-9 border rounded-xl text-base min-h-[44px] dark:bg-[#0f2438] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors ${
+          className={`w-full px-3 py-2 pr-9 border rounded-lg text-base min-h-[44px] dark:bg-[#0C1926] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors ${
             error
               ? 'border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20'
-              : 'border-gray-300 dark:border-[#2a4a6b]'
+              : 'border-gray-200 dark:border-[#224058]'
           }`}
         />
-        {/* Validation status icon */}
         {isValid && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-green-500">
             <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -67,9 +65,9 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
           </span>
         )}
       </div>
-      {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{error}</p>}
+      {error && <p className="text-red-500 dark:text-red-400 text-[10px] mt-1 font-medium">{error}</p>}
       {!error && !value && (
-        <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-0.5">Format: minutes:seconds per 500m</p>
+        <p className="text-gray-400 dark:text-gray-500 text-[10px] mt-0.5 font-mono">minutes:seconds per 500m</p>
       )}
     </div>
   );

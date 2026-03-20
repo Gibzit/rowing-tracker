@@ -69,7 +69,7 @@ const tabs: { id: ViewType; label: string; icon: ReactNode }[] = [
 
 export default function BottomNav({ active, onNavigate }: BottomNavProps) {
   return (
-    <nav aria-label="Main navigation" className="fixed bottom-0 left-0 right-0 z-50 bg-white/90 dark:bg-[#0c1929]/90 backdrop-blur-lg border-t border-gray-200/80 dark:border-[#1e3a5f]/50 pb-[env(safe-area-inset-bottom)]">
+    <nav aria-label="Main navigation" className="fixed bottom-0 left-0 right-0 z-50 bg-[#F8F5F0]/95 dark:bg-[#06101A]/95 backdrop-blur-lg border-t border-gray-200 dark:border-[#1A3350] pb-[env(safe-area-inset-bottom)]">
       <div role="tablist" className="max-w-lg mx-auto flex">
         {tabs.map((tab) => {
           const isActive = tab.id === active;
@@ -86,14 +86,14 @@ export default function BottomNav({ active, onNavigate }: BottomNavProps) {
                   : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 active:scale-95'
               }`}
             >
-              {/* Active indicator bar at top */}
+              {/* Active indicator — gold bar */}
               {isActive && (
-                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[3px] rounded-full bg-teal-500 dark:bg-teal-400" />
+                <span className="absolute top-0 left-1/2 -translate-x-1/2 w-8 h-[2.5px] rounded-full bg-teal-500 dark:bg-teal-400" />
               )}
               <span className={`transition-transform duration-200 ${isActive ? 'scale-110' : ''}`}>
                 {tab.icon}
               </span>
-              <span className={`text-[10px] mt-1 font-semibold tracking-wide ${isActive ? 'text-teal-600 dark:text-teal-400' : ''}`}>
+              <span className={`text-[9px] mt-1 font-bold tracking-[0.08em] uppercase ${isActive ? 'text-teal-600 dark:text-teal-400' : ''}`}>
                 {tab.label}
               </span>
             </button>

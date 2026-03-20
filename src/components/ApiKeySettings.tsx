@@ -54,27 +54,27 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
         role="dialog"
         aria-modal="true"
         aria-label="Photo Scan Setup"
-        className="bg-white dark:bg-[#0f2438] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/10"
+        className="bg-white dark:bg-[#0C1926] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/10"
         style={{ animation: 'dialogPopIn 0.25s ease-out' }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center gap-2.5 mb-4">
-          <div className="w-9 h-9 rounded-xl bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
+          <div className="w-9 h-9 rounded-lg bg-teal-100 dark:bg-teal-900/30 flex items-center justify-center">
             <svg className="w-5 h-5 text-teal-600 dark:text-teal-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
               <circle cx="12" cy="13" r="4" />
             </svg>
           </div>
-          <h2 className="text-lg font-bold text-gray-800 dark:text-gray-100">Photo Scan Setup</h2>
+          <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 uppercase tracking-wide">Photo Scan Setup</h2>
         </div>
 
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mb-4 leading-relaxed">
           Enter your Google AI API key to enable automatic data extraction from rowing machine photos using Gemini Flash (free tier).
           Your key is stored only on this device and never sent to any server besides Google.
         </p>
 
         <div className="mb-3">
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+          <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">
             API Key
           </label>
           <input
@@ -86,7 +86,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
             }}
             placeholder="AIza..."
             autoComplete="off"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#1a3550] dark:text-gray-100 rounded-xl text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-[#224058] dark:bg-[#132940] dark:text-gray-100 rounded-lg text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
           />
         </div>
 
@@ -118,7 +118,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
           href="https://aistudio.google.com/apikey"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-1 text-xs text-teal-600 dark:text-teal-400 hover:underline mb-4"
+          className="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 hover:underline mb-4"
         >
           Get a free API key at aistudio.google.com
           <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
@@ -131,7 +131,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
           <button
             ref={cancelRef}
             onClick={onClose}
-            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-[#2a4a6b] rounded-xl text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-50 dark:hover:bg-[#1a3550] transition-colors touch-manipulation text-sm"
+            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-[#224058] rounded-lg text-gray-700 dark:text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-[#132940] transition-colors touch-manipulation"
           >
             Cancel
           </button>
@@ -139,7 +139,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
           {currentKey && (
             <button
               onClick={handleClear}
-              className="min-h-[44px] px-4 py-2 border border-red-300 dark:border-red-800 rounded-xl text-red-600 dark:text-red-400 font-medium hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors touch-manipulation text-sm"
+              className="min-h-[44px] px-4 py-2 border border-red-300 dark:border-red-800 rounded-lg text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors touch-manipulation"
             >
               Clear
             </button>
@@ -149,10 +149,10 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
             <button
               onClick={handleTest}
               disabled={!inputValue.trim() || status === 'testing'}
-              className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl font-medium transition-colors touch-manipulation text-sm ${
+              className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors touch-manipulation ${
                 inputValue.trim() && status !== 'testing'
                   ? 'bg-teal-600 hover:bg-teal-700 text-white'
-                  : 'bg-gray-200 dark:bg-[#1a3550] text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                  : 'bg-gray-200 dark:bg-[#132940] text-gray-400 dark:text-gray-500 cursor-not-allowed'
               }`}
             >
               Test Key
@@ -160,7 +160,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
           ) : (
             <button
               onClick={handleSave}
-              className="flex-1 min-h-[44px] px-4 py-2 rounded-xl font-medium bg-green-600 hover:bg-green-700 text-white transition-colors touch-manipulation text-sm"
+              className="flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider bg-green-600 hover:bg-green-700 text-white transition-colors touch-manipulation text-sm"
             >
               Save
             </button>

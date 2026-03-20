@@ -30,8 +30,8 @@ export default function SessionTimer() {
   const isActive = totalDuration > 0;
 
   return (
-    <div className="bg-gray-50 dark:bg-[#1a3550]/50 rounded-lg p-3">
-      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Rest Timer</p>
+    <div className="bg-gray-50 dark:bg-[#132940]/50 rounded-lg p-3">
+      <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-[0.12em]">Rest Timer</p>
 
       {!isActive && (
         <div className="flex gap-2 flex-wrap">
@@ -39,7 +39,7 @@ export default function SessionTimer() {
             <button
               key={p.seconds}
               onClick={() => start(p.seconds)}
-              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-900/60 transition-colors touch-manipulation"
+              className="px-3 py-1.5 text-xs font-bold font-mono rounded-lg bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 hover:bg-teal-200 dark:hover:bg-teal-900/60 transition-colors touch-manipulation"
             >
               {p.label}
             </button>
@@ -58,7 +58,7 @@ export default function SessionTimer() {
                 fill="none"
                 stroke="currentColor"
                 strokeWidth="4"
-                className="text-gray-200 dark:text-[#1e3a5f]"
+                className="text-gray-200 dark:text-[#1A3350]"
               />
               <circle
                 cx="32"
@@ -74,7 +74,7 @@ export default function SessionTimer() {
               />
             </svg>
             <span
-              className={`absolute inset-0 flex items-center justify-center text-sm font-bold ${
+              className={`absolute inset-0 flex items-center justify-center text-sm font-mono font-bold ${
                 isFinished
                   ? 'text-green-600 dark:text-green-400'
                   : 'text-gray-900 dark:text-gray-100'
@@ -88,21 +88,21 @@ export default function SessionTimer() {
             {isRunning ? (
               <button
                 onClick={pause}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 transition-colors touch-manipulation"
+                className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg bg-yellow-100 dark:bg-yellow-900/40 text-yellow-700 dark:text-yellow-300 hover:bg-yellow-200 transition-colors touch-manipulation"
               >
                 Pause
               </button>
             ) : !isFinished ? (
               <button
                 onClick={resume}
-                className="px-3 py-1.5 text-sm font-medium rounded-lg bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 transition-colors touch-manipulation"
+                className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 hover:bg-green-200 transition-colors touch-manipulation"
               >
                 Resume
               </button>
             ) : null}
             <button
               onClick={reset}
-              className="px-3 py-1.5 text-sm font-medium rounded-lg bg-gray-200 dark:bg-[#1e3a5f] text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-[#2a4a6b] transition-colors touch-manipulation"
+              className="px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg bg-gray-200 dark:bg-[#1A3350] text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-[#224058] transition-colors touch-manipulation"
             >
               Reset
             </button>

@@ -5,7 +5,7 @@ interface WeekCelebrationProps {
   onDone: () => void;
 }
 
-const confettiColors = ['#0d9488', '#06b6d4', '#22c55e', '#f59e0b', '#8b5cf6', '#ec4899'];
+const confettiColors = ['#B8941F', '#D4A843', '#3BAAC8', '#34C06A', '#5B6BAA', '#E09E14'];
 
 export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationProps) {
   useEffect(() => {
@@ -52,14 +52,18 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
 
       {/* Celebration card */}
       <div
-        className="bg-white dark:bg-[#0f2438] rounded-2xl p-6 shadow-2xl ring-1 ring-white/10 text-center pointer-events-auto"
+        className="bg-white dark:bg-[#0C1926] rounded-2xl p-6 shadow-2xl ring-1 ring-teal-500/20 text-center pointer-events-auto"
         style={{ animation: 'weekCelebrate 0.4s ease-out' }}
       >
-        <div className="text-4xl mb-2">🎉</div>
-        <h2 className="text-lg font-bold text-gray-900 dark:text-gray-100">
-          Week {weekNumber} Complete!
+        <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/30 flex items-center justify-center mx-auto mb-3">
+          <svg className="w-6 h-6 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+          </svg>
+        </div>
+        <h2 className="text-sm font-extrabold text-gray-900 dark:text-gray-100 uppercase tracking-wide">
+          Week {weekNumber} Complete
         </h2>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
           Great work — keep it going!
         </p>
       </div>

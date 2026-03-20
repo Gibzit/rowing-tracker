@@ -94,30 +94,30 @@ export default function PhotoScanButton({
 
       {/* Main button */}
       {status === 'processing' ? (
-        <div className="flex items-center justify-center gap-2.5 w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 border-dashed border-teal-300 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/10">
+        <div className="flex items-center justify-center gap-2.5 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-teal-300 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/10">
           <div
             className="w-4 h-4 border-2 border-teal-500 border-t-transparent rounded-full animate-spin"
           />
-          <span className="text-sm font-medium text-teal-700 dark:text-teal-300" style={{ animation: 'scanPulse 1.5s ease-in-out infinite' }}>
+          <span className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-300" style={{ animation: 'scanPulse 1.5s ease-in-out infinite' }}>
             Analyzing photo...
           </span>
         </div>
       ) : status === 'success' ? (
-        <div className="flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10">
+        <div className="flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-green-300 dark:border-green-700 bg-green-50/50 dark:bg-green-900/10">
           <svg className="w-4 h-4 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
           </svg>
-          <span className="text-sm font-medium text-green-700 dark:text-green-300">
+          <span className="text-xs font-bold uppercase tracking-wider text-green-700 dark:text-green-300">
             Data extracted! Review below.
           </span>
         </div>
       ) : (
         <button
           onClick={handleClick}
-          className={`flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-xl border-2 border-dashed transition-colors touch-manipulation ${
+          className={`flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed transition-colors touch-manipulation ${
             apiKey
               ? 'border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 active:scale-[0.98]'
-              : 'border-gray-300 dark:border-[#2a4a6b] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a3550]'
+              : 'border-gray-300 dark:border-[#224058] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#132940]'
           }`}
         >
           {/* Camera icon */}
@@ -125,7 +125,7 @@ export default function PhotoScanButton({
             <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
             <circle cx="12" cy="13" r="4" />
           </svg>
-          <span className="text-sm font-semibold">
+          <span className="text-xs font-bold uppercase tracking-wider">
             {apiKey ? 'Scan from Photo' : 'Set up Photo Scan'}
           </span>
         </button>

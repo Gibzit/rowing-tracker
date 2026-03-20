@@ -21,10 +21,10 @@ export default function ChartFilterBar({ active, onChange }: ChartFilterBarProps
         <button
           key={f.id}
           onClick={() => onChange(f.id)}
-          className={`px-3 py-1.5 text-sm font-medium rounded-full whitespace-nowrap transition-colors touch-manipulation ${
+          className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg whitespace-nowrap transition-colors touch-manipulation ${
             active === f.id
               ? 'bg-teal-600 text-white'
-              : 'bg-gray-100 dark:bg-[#1a3550] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#2a4a6b]'
+              : 'bg-gray-100 dark:bg-[#132940] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#224058]'
           }`}
         >
           {f.label}

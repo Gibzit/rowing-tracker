@@ -60,14 +60,14 @@ export default function DataManagement({ data, onImport }: DataManagementProps) 
       <div className="px-4 py-2 flex gap-3 justify-center">
         <button
           onClick={handleExport}
-          className="text-sm text-gray-400 dark:text-gray-500 hover:text-teal-500 dark:hover:text-teal-400 transition-colors touch-manipulation"
+          className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 hover:text-teal-500 dark:hover:text-teal-400 transition-colors touch-manipulation"
         >
           Export backup
         </button>
         <span className="text-gray-300 dark:text-gray-600">|</span>
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="text-sm text-gray-400 dark:text-gray-500 hover:text-teal-500 dark:hover:text-teal-400 transition-colors touch-manipulation"
+          className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 hover:text-teal-500 dark:hover:text-teal-400 transition-colors touch-manipulation"
         >
           Import backup
         </button>

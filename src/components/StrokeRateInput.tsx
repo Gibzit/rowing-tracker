@@ -10,7 +10,7 @@ export default function StrokeRateInput({ value, onChange }: StrokeRateInputProp
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+      <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">
         Stroke Rate (spm)
       </label>
       <div className="relative">
@@ -38,10 +38,10 @@ export default function StrokeRateInput({ value, onChange }: StrokeRateInputProp
             onChange(num);
             setError('');
           }}
-          className={`w-full px-3 py-2 pr-9 border rounded-xl text-base min-h-[44px] dark:bg-[#0f2438] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors ${
+          className={`w-full px-3 py-2 pr-9 border rounded-lg text-base min-h-[44px] dark:bg-[#0C1926] dark:text-gray-100 focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors ${
             error
               ? 'border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20'
-              : 'border-gray-300 dark:border-[#2a4a6b]'
+              : 'border-gray-200 dark:border-[#224058]'
           }`}
         />
         {value !== undefined && !error && (
@@ -59,9 +59,9 @@ export default function StrokeRateInput({ value, onChange }: StrokeRateInputProp
           </span>
         )}
       </div>
-      {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{error}</p>}
+      {error && <p className="text-red-500 dark:text-red-400 text-[10px] mt-1 font-medium">{error}</p>}
       {!error && value === undefined && (
-        <p className="text-gray-400 dark:text-gray-500 text-[11px] mt-0.5">Typical range: 18-36 strokes per minute</p>
+        <p className="text-gray-400 dark:text-gray-500 text-[10px] mt-0.5 font-mono">typical: 18-36 spm</p>
       )}
     </div>
   );

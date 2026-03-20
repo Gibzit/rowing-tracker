@@ -9,6 +9,7 @@ export interface StrokeRateDataPoint {
   label: string;
   strokeRate: number;
   category: WorkoutCategory;
+  completedDate?: string;
 }
 
 export function extractStrokeRateData(
@@ -28,8 +29,17 @@ export function extractStrokeRateData(
       label: desc.label,
       strokeRate: record.strokeRate,
       category: categorizeWorkout(desc.label),
+      completedDate: record.completedDate,
     });
   }
+
+  // Sort by completion date (earliest first), fall back to plan order for undated
+  points.sort((a, b) => {
+    if (a.completedDate && b.completedDate) return a.completedDate.localeCompare(b.completedDate);
+    if (a.completedDate && !b.completedDate) return -1;
+    if (!a.completedDate && b.completedDate) return 1;
+    return 0;
+  });
 
   return points;
 }

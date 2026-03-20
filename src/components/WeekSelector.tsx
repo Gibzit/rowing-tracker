@@ -22,7 +22,7 @@ export default function WeekSelector({
   }, [selectedWeek]);
 
   return (
-    <div className="overflow-x-auto py-3 px-4 border-b border-gray-100 dark:border-[#1e3a5f] bg-gray-50 dark:bg-[#0f2438] scroll-smooth">
+    <div className="overflow-x-auto py-3 px-4 border-b border-gray-100 dark:border-[#1A3350] bg-gray-50/80 dark:bg-[#0C1926] scroll-smooth">
       <div className="flex gap-2 min-w-max">
         {Array.from({ length: totalWeeks }, (_, i) => i + 1).map((week) => {
           const isSelected = week === selectedWeek;
@@ -30,13 +30,13 @@ export default function WeekSelector({
           const isComplete = isWeekComplete(week);
 
           let classes =
-            'min-w-[44px] h-[44px] rounded-xl text-sm font-semibold transition-all duration-200 flex items-center justify-center';
+            'min-w-[44px] h-[44px] rounded-lg text-sm font-mono font-bold transition-all duration-200 flex items-center justify-center';
           if (isSelected) {
-            classes += ' bg-teal-600 text-white shadow-[0_0_10px_rgba(13,148,136,0.3)]';
+            classes += ' bg-teal-600 text-white shadow-[0_0_10px_rgba(154,123,26,0.3)]';
           } else if (isComplete) {
             classes += ' bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400';
           } else {
-            classes += ' bg-gray-100 dark:bg-[#1a3550] text-gray-700 dark:text-gray-300';
+            classes += ' bg-gray-100 dark:bg-[#132940] text-gray-700 dark:text-gray-300';
           }
           if (isCurrent && !isSelected) {
             classes += ' ring-2 ring-teal-400';

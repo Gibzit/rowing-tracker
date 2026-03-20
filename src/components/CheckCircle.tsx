@@ -40,8 +40,8 @@ export default function CheckCircle({ checked, onChange }: CheckCircleProps) {
           cx="12"
           cy="12"
           r="10"
-          fill={checked ? '#16a34a' : 'none'}
-          stroke={checked ? '#16a34a' : 'currentColor'}
+          fill={checked ? '#B8941F' : 'none'}
+          stroke={checked ? '#B8941F' : 'currentColor'}
           strokeWidth="2"
           className={checked ? '' : 'text-gray-300 dark:text-gray-600'}
         />

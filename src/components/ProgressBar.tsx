@@ -8,20 +8,20 @@ export default function ProgressBar({ completed, total }: ProgressBarProps) {
 
   return (
     <div>
-      <div className="flex justify-between text-sm mb-1">
-        <span className="text-gray-600 dark:text-gray-400 font-medium">
+      <div className="flex justify-between text-sm mb-1.5">
+        <span className="text-gray-500 dark:text-gray-400 font-medium tracking-wide text-xs uppercase">
           {completed} / {total} sessions
         </span>
-        <span className={`font-bold ${pct === 100 ? 'text-green-600 dark:text-green-400' : 'text-teal-600 dark:text-teal-400'}`}>
+        <span className={`font-mono font-bold text-sm ${pct === 100 ? 'text-green-600 dark:text-green-400' : 'text-teal-600 dark:text-teal-400'}`}>
           {pct}%
         </span>
       </div>
-      <div className="w-full bg-gray-200 dark:bg-[#1a3550] rounded-full h-2.5 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${completed} of ${total} sessions completed`}>
+      <div className="w-full bg-gray-200 dark:bg-[#132940] rounded-full h-2 overflow-hidden" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={`${completed} of ${total} sessions completed`}>
         <div
-          className={`h-2.5 rounded-full transition-all duration-500 ease-out ${
+          className={`h-2 rounded-full transition-all duration-700 ease-out ${
             pct === 100
-              ? 'bg-gradient-to-r from-green-500 to-emerald-400 shadow-[0_0_10px_rgba(34,197,94,0.5)]'
-              : 'bg-gradient-to-r from-teal-600 to-cyan-500 shadow-[0_0_8px_rgba(13,148,136,0.4)]'
+              ? 'bg-gradient-to-r from-green-500 to-green-400 shadow-[0_0_12px_rgba(27,158,74,0.5)]'
+              : 'bg-gradient-to-r from-teal-600 via-teal-400 to-teal-300 shadow-[0_0_10px_rgba(184,148,31,0.3)]'
           }`}
           style={{ width: `${pct}%` }}
         />

@@ -13,7 +13,7 @@ export default function ResetButton({ onReset }: ResetButtonProps) {
       <div className="px-4 py-6 text-center">
         <button
           onClick={() => setShowConfirm(true)}
-          className="text-sm text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors touch-manipulation"
+          className="text-[10px] font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500 hover:text-red-500 dark:hover:text-red-400 transition-colors touch-manipulation"
         >
           Reset all data
         </button>

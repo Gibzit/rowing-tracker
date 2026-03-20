@@ -60,67 +60,48 @@ export default function StreakDisplay({
   if (currentStreak === 0 && longestStreak === 0 && !todayIsRestDay) return null;
 
   return (
-    <div className="flex flex-col gap-1.5 mb-2">
-      {/* Streak info row */}
-      <div className="flex items-center justify-between text-sm bg-orange-50/50 dark:bg-orange-900/10 rounded-lg px-2.5 py-1.5 border border-orange-100 dark:border-orange-900/20">
-        <div className="flex items-center gap-1.5">
-          <span className="text-base leading-none" style={currentStreak >= 7 ? { animation: 'timerPulse 1.5s ease-in-out infinite' } : undefined}>🔥</span>
-          <span className="font-bold text-gray-800 dark:text-gray-100">
-            {currentStreak} day{currentStreak !== 1 ? 's' : ''}
+    <div className="flex gap-2 mb-2">
+      {/* Streak info */}
+      <div className="flex-1 flex items-center gap-1.5 text-sm bg-teal-50 dark:bg-teal-900/10 rounded-lg px-2.5 py-1.5 border border-teal-100 dark:border-teal-900/30">
+        <span className="text-base leading-none" style={currentStreak >= 7 ? { animation: 'timerPulse 1.5s ease-in-out infinite' } : undefined}>
+          <svg className="w-4 h-4 text-teal-500" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M12.395 2.553a1 1 0 00-1.45-.385c-.345.23-.614.558-.822.88-.214.33-.403.713-.57 1.116-.334.804-.614 1.768-.84 2.734a31.365 31.365 0 00-.613 3.58 2.64 2.64 0 01-.945-1.067c-.328-.68-.398-1.534-.398-2.654A1 1 0 005.05 6.05 6.981 6.981 0 003 11a7 7 0 1011.95-4.95c-.592-.591-.98-.985-1.348-1.467-.363-.476-.724-1.063-1.207-2.03zM12.12 15.12A3 3 0 017 13s.879.5 2.5.5c0-1 .5-4 1.25-4.5.5 1 .786 1.293 1.371 1.879A2.99 2.99 0 0113 13a2.99 2.99 0 01-.879 2.121z" clipRule="evenodd" /></svg>
+        </span>
+        <span className="font-mono font-bold text-gray-800 dark:text-gray-100 text-sm">
+          {currentStreak}
+        </span>
+        <span className="text-gray-500 dark:text-gray-400 text-[10px] uppercase tracking-wider font-medium">day{currentStreak !== 1 ? 's' : ''}</span>
+        {longestStreak === currentStreak && currentStreak > 0 && (
+          <span className="text-[9px] font-bold text-teal-700 dark:text-teal-300 bg-teal-100 dark:bg-teal-900/40 px-1.5 py-0.5 rounded-full uppercase tracking-wider ml-auto">
+            Best
           </span>
-          <span className="text-gray-500 dark:text-gray-400 text-xs">streak</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {longestStreak > currentStreak && (
-            <span className="text-[11px] text-gray-400 dark:text-gray-500 font-medium">
-              Best: {longestStreak}d
-            </span>
-          )}
-          {longestStreak === currentStreak && currentStreak > 0 && (
-            <span className="text-[10px] font-bold text-amber-600 dark:text-amber-400 bg-amber-100 dark:bg-amber-900/30 px-1.5 py-0.5 rounded-full">
-              BEST!
-            </span>
-          )}
-        </div>
+        )}
+        {longestStreak > currentStreak && (
+          <span className="text-[10px] text-gray-400 dark:text-gray-500 font-mono ml-auto">
+            /{longestStreak}
+          </span>
+        )}
       </div>
 
-      {/* Rest day row */}
-      <div className="flex items-center justify-between text-sm bg-indigo-50/50 dark:bg-indigo-900/10 rounded-lg px-2.5 py-1.5 border border-indigo-100 dark:border-indigo-900/20">
-        <div className="flex items-center gap-1.5">
-          <span className="text-base leading-none">😴</span>
-          <span className="text-xs text-gray-500 dark:text-gray-400">
-            Rest days: <span className="font-semibold text-gray-700 dark:text-gray-200">{remaining}</span>/{weeklyQuota} left
-          </span>
-        </div>
+      {/* Rest day */}
+      <div className="flex items-center gap-1.5 text-sm bg-indigo-50 dark:bg-indigo-900/10 rounded-lg px-2.5 py-1.5 border border-indigo-100 dark:border-indigo-900/20">
+        <span className="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wider font-medium">
+          Rest <span className="font-mono font-bold text-gray-700 dark:text-gray-200">{remaining}</span>/{weeklyQuota}
+        </span>
 
         {todayIsRestDay ? (
           <button
             onClick={onUndoRestDay}
-            className="flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 px-2.5 py-1 rounded-full transition-colors active:scale-95 touch-manipulation min-h-[28px]"
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 px-2 py-0.5 rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
           >
-            <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-            </svg>
-            Resting today
+            Resting
           </button>
         ) : canLogRestDay ? (
           <button
             onClick={onLogRestDay}
-            className="flex items-center gap-1 text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 bg-indigo-100/60 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-900/40 px-2.5 py-1 rounded-full transition-colors active:scale-95 touch-manipulation min-h-[28px]"
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100/60 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-900/40 px-2 py-0.5 rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
           >
-            <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
-            </svg>
-            Log rest day
+            +Rest
           </button>
-        ) : todayHasActivity ? (
-          <span className="text-[10px] text-gray-400 dark:text-gray-500 font-medium">
-            Trained today!
-          </span>
-        ) : remaining === 0 ? (
-          <span className="text-[10px] text-amber-600 dark:text-amber-400 font-medium">
-            Week quota used
-          </span>
         ) : null}
       </div>
     </div>

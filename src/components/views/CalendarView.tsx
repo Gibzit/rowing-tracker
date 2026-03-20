@@ -179,7 +179,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       <div className="flex items-center justify-between mb-4">
         <button
           onClick={goToPrevMonth}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a3550] active:scale-90 transition-all touch-manipulation"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#132940] active:scale-90 transition-all touch-manipulation"
           aria-label="Previous month"
         >
           <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -188,13 +188,13 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
         </button>
 
         <div className="flex flex-col items-center">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+          <h2 className="text-lg font-extrabold text-gray-800 dark:text-gray-100 uppercase tracking-wide">
             {MONTH_NAMES[currentMonth.month]} {currentMonth.year}
           </h2>
           {!isCurrentMonthView && (
             <button
               onClick={goToToday}
-              className="text-[11px] font-semibold text-teal-600 dark:text-teal-400 mt-0.5 hover:underline touch-manipulation"
+              className="text-[10px] font-bold uppercase tracking-wider text-teal-600 dark:text-teal-400 mt-0.5 hover:underline touch-manipulation"
             >
               Go to today
             </button>
@@ -203,7 +203,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
 
         <button
           onClick={goToNextMonth}
-          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-xl text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#1a3550] active:scale-90 transition-all touch-manipulation"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-lg text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-[#132940] active:scale-90 transition-all touch-manipulation"
           aria-label="Next month"
         >
           <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
@@ -217,19 +217,19 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
         <div className="flex items-center gap-2 mb-4 flex-wrap">
           {monthStats.sessionCount > 0 && (
             <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800/50 rounded-lg px-2.5 py-1">
-              <span className="text-green-600 dark:text-green-400 text-sm font-bold">{monthStats.sessionCount}</span>
+              <span className="text-green-600 dark:text-green-400 text-sm font-mono font-bold">{monthStats.sessionCount}</span>
               <span className="text-green-600 dark:text-green-400 text-xs">session{monthStats.sessionCount !== 1 ? 's' : ''}</span>
             </div>
           )}
           {monthStats.daysWithActivity > 0 && (
             <div className="flex items-center gap-1.5 bg-teal-50 dark:bg-teal-900/20 border border-teal-200 dark:border-teal-800/50 rounded-lg px-2.5 py-1">
-              <span className="text-teal-600 dark:text-teal-400 text-sm font-bold">{monthStats.daysWithActivity}</span>
+              <span className="text-teal-600 dark:text-teal-400 text-sm font-mono font-bold">{monthStats.daysWithActivity}</span>
               <span className="text-teal-600 dark:text-teal-400 text-xs">active day{monthStats.daysWithActivity !== 1 ? 's' : ''}</span>
             </div>
           )}
           {monthStats.restCount > 0 && (
             <div className="flex items-center gap-1.5 bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-800/50 rounded-lg px-2.5 py-1">
-              <span className="text-indigo-600 dark:text-indigo-400 text-sm font-bold">{monthStats.restCount}</span>
+              <span className="text-indigo-600 dark:text-indigo-400 text-sm font-mono font-bold">{monthStats.restCount}</span>
               <span className="text-indigo-600 dark:text-indigo-400 text-xs">rest day{monthStats.restCount !== 1 ? 's' : ''}</span>
             </div>
           )}
@@ -237,7 +237,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       )}
 
       {/* Legend */}
-      <div className="flex items-center gap-3 mb-3 text-[11px] text-gray-500 dark:text-gray-400 flex-wrap">
+      <div className="flex items-center gap-3 mb-3 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 flex-wrap">
         <div className="flex items-center gap-1">
           <div className="w-3 h-3 rounded-full bg-green-500 dark:bg-green-400" />
           <span>Training</span>
@@ -253,9 +253,9 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       </div>
 
       {/* Calendar grid */}
-      <div className="bg-white dark:bg-[#0f2438] rounded-xl border border-gray-200 dark:border-[#1e3a5f] overflow-hidden">
+      <div className="bg-white dark:bg-[#0C1926] rounded-lg border border-gray-200 dark:border-[#1A3350] overflow-hidden">
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-[#1e3a5f]">
+        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-[#1A3350]">
           {WEEKDAY_LABELS.map((label) => (
             <div
               key={label}
@@ -268,7 +268,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
 
         {/* Day cells */}
         {calendarDays.map((week, wi) => (
-          <div key={wi} className="grid grid-cols-7 border-b border-gray-50 dark:border-[#1a3550] last:border-b-0">
+          <div key={wi} className="grid grid-cols-7 border-b border-gray-50 dark:border-[#132940] last:border-b-0">
             {week.map((day) => {
               const hasTraining = day.sessionCount > 0;
               const isSelected = selectedDay === day.dateKey;
@@ -281,16 +281,16 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
                     relative flex flex-col items-center justify-start py-1.5 min-h-[52px]
                     transition-colors touch-manipulation
                     ${day.isCurrentMonth ? '' : 'opacity-30'}
-                    ${isSelected ? 'bg-teal-50 dark:bg-teal-900/20' : 'hover:bg-gray-50 dark:hover:bg-[#1a3550]/50'}
+                    ${isSelected ? 'bg-teal-50 dark:bg-teal-900/20' : 'hover:bg-gray-50 dark:hover:bg-[#132940]/50'}
                   `}
                   aria-label={`${day.dateKey}${hasTraining ? `, ${day.sessionCount} session${day.sessionCount !== 1 ? 's' : ''}` : ''}${day.isRestDay ? ', rest day' : ''}`}
                 >
                   {/* Day number */}
                   <span
                     className={`
-                      text-sm font-medium leading-none mb-1
+                      text-sm font-mono font-bold leading-none mb-1
                       ${day.isToday
-                        ? 'w-6 h-6 flex items-center justify-center rounded-full bg-teal-500 dark:bg-teal-500 text-white font-bold'
+                        ? 'w-6 h-6 flex items-center justify-center rounded-full bg-teal-500 dark:bg-teal-500 text-white font-mono font-bold'
                         : day.isCurrentMonth
                           ? 'text-gray-700 dark:text-gray-300'
                           : 'text-gray-300 dark:text-gray-600'
@@ -329,7 +329,9 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
                     </span>
                   )}
                   {day.isRestDay && !hasTraining && day.isCurrentMonth && (
-                    <span className="text-[9px] leading-none mt-0.5">😴</span>
+                    <svg className="w-3 h-3 text-indigo-400 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+                    </svg>
                   )}
 
                   {/* Selected indicator */}
@@ -346,11 +348,11 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       {/* Selected day detail panel */}
       {selectedDayInfo && (
         <div
-          className="mt-3 bg-white dark:bg-[#0f2438] rounded-xl border border-gray-200 dark:border-[#1e3a5f] p-4"
+          className="mt-3 bg-white dark:bg-[#0C1926] rounded-lg border border-gray-200 dark:border-[#1A3350] p-4"
           style={{ animation: 'slideDown 0.2s ease-out' }}
         >
           <div className="flex items-center justify-between mb-3">
-            <h3 className="text-sm font-bold text-gray-800 dark:text-gray-100">
+            <h3 className="text-sm font-mono font-bold text-gray-800 dark:text-gray-100">
               {selectedDayInfo.date.toLocaleDateString('en-US', {
                 weekday: 'long',
                 month: 'long',
@@ -374,15 +376,17 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
 
           {selectedDayInfo.isRestDay && (
             <div className="flex items-center gap-2 mb-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg px-3 py-2">
-              <span className="text-base">😴</span>
-              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">Rest day</span>
+              <svg className="w-4 h-4 text-indigo-500 dark:text-indigo-400 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z" />
+              </svg>
+              <span className="text-xs font-bold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider">Rest day</span>
             </div>
           )}
 
           {selectedDayInfo.sessionDetails.map((session, i) => (
             <div
               key={i}
-              className={`flex items-start gap-3 ${i > 0 ? 'mt-2 pt-2 border-t border-gray-100 dark:border-[#1e3a5f]' : ''}`}
+              className={`flex items-start gap-3 ${i > 0 ? 'mt-2 pt-2 border-t border-gray-100 dark:border-[#1A3350]' : ''}`}
             >
               <div className="w-8 h-8 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0 mt-0.5">
                 <svg className="w-4 h-4 text-green-600 dark:text-green-400" viewBox="0 0 20 20" fill="currentColor">
@@ -390,15 +394,15 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
                 </svg>
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{session.label}</p>
+                <p className="text-xs font-bold text-gray-800 dark:text-gray-100 uppercase tracking-wider">{session.label}</p>
                 <div className="flex items-center gap-3 mt-0.5 flex-wrap">
                   {session.pace && (
-                    <span className="text-xs text-teal-600 dark:text-teal-400 font-medium">
+                    <span className="text-xs font-mono font-bold text-teal-600 dark:text-teal-400">
                       {session.pace}/500m
                     </span>
                   )}
                   {session.strokeRate && (
-                    <span className="text-xs text-cyan-600 dark:text-cyan-400 font-medium">
+                    <span className="text-xs font-mono font-bold text-cyan-600 dark:text-cyan-400">
                       {session.strokeRate} spm
                     </span>
                   )}
@@ -414,8 +418,8 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
 
       {/* Empty state */}
       {monthStats.sessionCount === 0 && monthStats.restCount === 0 && (
-        <div className="mt-4 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-xl p-4">
-          <p className="text-sm font-medium text-teal-700 dark:text-teal-300 mb-1">No activity this month</p>
+        <div className="mt-4 bg-teal-50 dark:bg-teal-900/30 border border-teal-200 dark:border-teal-800 rounded-lg p-4">
+          <p className="text-xs font-bold text-teal-700 dark:text-teal-300 mb-1 uppercase tracking-wider">No activity this month</p>
           <p className="text-xs text-teal-600 dark:text-teal-400">Complete sessions from the Training tab to see them here.</p>
         </div>
       )}

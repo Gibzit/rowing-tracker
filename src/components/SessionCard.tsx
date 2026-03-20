@@ -9,6 +9,7 @@ import StrokeRateInput from './StrokeRateInput';
 import SessionTimer from './SessionTimer';
 import CheckCircle from './CheckCircle';
 import SaveToast from './SaveToast';
+import ConfirmDialog from './ConfirmDialog';
 import PhotoScanButton from './PhotoScanButton';
 import type { ExtractedData } from '../utils/photoCapture';
 import { validatePace } from '../utils/paceValidation';
@@ -68,6 +69,7 @@ export default function SessionCard({
   const [draft, setDraft] = useState<DraftState>(() => makeDraft(record));
   const [justCompleted, setJustCompleted] = useState(false);
   const [showToast, setShowToast] = useState<string | null>(null);
+  const [showUncheckConfirm, setShowUncheckConfirm] = useState(false);
   const prevCompletedRef = useRef(record.completed);
   const contentRef = useRef<HTMLDivElement>(null);
   const isInterval = isIntervalSession(descriptor.label);
@@ -100,15 +102,33 @@ export default function SessionCard({
       strokeRate: draft.strokeRate,
       notes: draft.notes,
     });
+    // Auto-mark as completed when saving data
+    if (!record.completed) {
+      onToggleComplete();
+    }
     setExpanded(false);
     // Show save confirmation toast
-    const toastMsg = savedPace ? `Saved: ${savedPace}/500m` : 'Session updated';
+    const toastMsg = savedPace ? `Saved: ${savedPace}/500m` : 'Session saved & completed';
     setShowToast(toastMsg);
-  }, [draft, onUpdate]);
+  }, [draft, onUpdate, record.completed, onToggleComplete]);
 
   const handleDiscard = useCallback(() => {
     setDraft(makeDraft(record));
   }, [record]);
+
+  const handleToggleComplete = useCallback(() => {
+    if (record.completed) {
+      // Show confirmation before unchecking a completed session
+      setShowUncheckConfirm(true);
+    } else {
+      onToggleComplete();
+    }
+  }, [record.completed, onToggleComplete]);
+
+  const handleConfirmUncheck = useCallback(() => {
+    onToggleComplete();
+    setShowUncheckConfirm(false);
+  }, [onToggleComplete]);
 
   const handlePhotoData = useCallback((data: ExtractedData) => {
     setDraft((prev) => ({
@@ -121,55 +141,53 @@ export default function SessionCard({
   }, []);
 
   const cardBg = record.completed
-    ? 'bg-green-50 dark:bg-green-950/40 border-green-200 dark:border-green-800'
-    : 'bg-white dark:bg-[#0f2438] border-gray-200 dark:border-[#1e3a5f]';
+    ? 'bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800/50'
+    : 'bg-white dark:bg-[#0C1926] border-gray-200 dark:border-[#1A3350]';
   const borderStyle = descriptor.isOptional ? 'border-dashed' : 'border-solid';
-  const leftAccent = record.completed
-    ? 'dark:border-l-[3px] dark:border-l-green-500'
-    : 'dark:border-l-[3px] dark:border-l-teal-600';
 
   return (
     <>
       <div
-        className={`border rounded-xl p-4 mb-3 ${cardBg} ${borderStyle} ${leftAccent} dark:shadow-lg dark:shadow-black/20 hover:translate-y-[-1px] transition-all duration-200`}
+        className={`border rounded-xl p-4 mb-3 ${cardBg} ${borderStyle} hover:translate-y-[-1px] transition-all duration-200`}
         style={justCompleted ? { animation: 'cardComplete 0.6s ease-out' } : undefined}
       >
         <div
           className="flex items-start gap-3 cursor-pointer touch-manipulation"
           onClick={() => setExpanded(!expanded)}
         >
-          <CheckCircle checked={record.completed} onChange={onToggleComplete} />
+          <CheckCircle checked={record.completed} onChange={handleToggleComplete} />
 
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
+            <div className="flex items-baseline gap-2">
+              <span className="font-mono text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider shrink-0">D{descriptor.dayNumber}</span>
               <span
-                className={`font-semibold text-base ${
-                  record.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-900 dark:text-gray-100'
+                className={`font-bold text-sm leading-snug ${
+                  record.completed ? 'line-through text-gray-400 dark:text-gray-500' : 'text-gray-800 dark:text-gray-100'
                 }`}
               >
-                Day {descriptor.dayNumber}: {descriptor.label}
+                {descriptor.label}
               </span>
               {isCustom && (
-                <span className="text-[11px] font-medium bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded-full">
+                <span className="text-[9px] font-bold bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-300 px-2 py-0.5 rounded uppercase tracking-wider">
                   custom
                 </span>
               )}
               {descriptor.isOptional && !isCustom && (
-                <span className="text-[11px] font-medium bg-gray-100 dark:bg-[#1a3550] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">
-                  optional
+                <span className="text-[9px] font-bold bg-gray-100 dark:bg-[#132940] text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded uppercase tracking-wider">
+                  opt
                 </span>
               )}
             </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">{descriptor.description}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-relaxed">{descriptor.description}</p>
             {!expanded && (record.pace || record.strokeRate) && (
               <div className="flex gap-2 mt-1.5 flex-wrap">
                 {record.pace && (
-                  <span className="text-[11px] font-medium bg-teal-100 dark:bg-teal-900/40 text-teal-700 dark:text-teal-300 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-mono font-bold bg-teal-50 dark:bg-teal-900/30 text-teal-700 dark:text-teal-300 px-2 py-0.5 rounded">
                     {record.pace}/500m
                   </span>
                 )}
                 {record.strokeRate && (
-                  <span className="text-[11px] font-medium bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded-full">
+                  <span className="text-[10px] font-mono font-bold bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 px-2 py-0.5 rounded">
                     {record.strokeRate} spm
                   </span>
                 )}
@@ -205,7 +223,7 @@ export default function SessionCard({
                 </svg>
               </button>
             )}
-            <span className="text-gray-400 dark:text-gray-500 text-lg">
+            <span className="text-gray-400 dark:text-gray-500 text-sm">
               {expanded ? '\u25B2' : '\u25BC'}
             </span>
           </div>
@@ -214,7 +232,7 @@ export default function SessionCard({
         {expanded && (
           <div
             ref={contentRef}
-            className="mt-4 space-y-3 border-t border-gray-100 dark:border-[#1e3a5f] pt-4"
+            className="mt-4 space-y-3 border-t border-gray-100 dark:border-[#1A3350] pt-4"
             style={{ animation: 'slideDown 0.2s ease-out' }}
           >
             {/* Photo scan button */}
@@ -229,8 +247,8 @@ export default function SessionCard({
 
             {/* Unsaved changes indicator */}
             {hasChanges && (
-              <div className="flex items-center gap-1.5 text-xs text-amber-600 dark:text-amber-400 font-medium">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+              <div className="flex items-center gap-1.5 text-[10px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider">
+                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
                 Unsaved changes
               </div>
             )}
@@ -242,7 +260,7 @@ export default function SessionCard({
             />
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">
                 Total Time
               </label>
               <input
@@ -257,12 +275,12 @@ export default function SessionCard({
                     if (!result.valid && draft.totalTime) {
                       const match = draft.totalTime.match(/^\d{1,3}:\d{2}$/);
                       if (!match) {
-                        // silently accept for now — validation is on pace input
+                        // silently accept for now
                       }
                     }
                   }
                 }}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#0f2438] dark:text-gray-100 rounded-xl text-base min-h-[44px] focus:ring-2 focus:ring-teal-500/50 focus:border-teal-500 outline-none transition-colors"
+                className="w-full px-3 py-2 border border-gray-200 dark:border-[#224058] dark:bg-[#0C1926] dark:text-gray-100 rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-teal-500/30 focus:border-teal-500 outline-none transition-colors"
               />
             </div>
 
@@ -286,14 +304,14 @@ export default function SessionCard({
 
             {isInterval && <SessionTimer />}
 
-            <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-[#1e3a5f]">
+            <div className="flex gap-3 pt-2 border-t border-gray-100 dark:border-[#1A3350]">
               <button
                 onClick={handleDiscard}
                 disabled={!hasChanges}
-                className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-sm font-medium border transition-colors touch-manipulation ${
+                className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider border transition-colors touch-manipulation ${
                   hasChanges
-                    ? 'border-gray-300 dark:border-[#2a4a6b] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#1a3550]'
-                    : 'border-gray-200 dark:border-[#1e3a5f] text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                    ? 'border-gray-300 dark:border-[#224058] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-[#132940]'
+                    : 'border-gray-200 dark:border-[#1A3350] text-gray-400 dark:text-gray-600 cursor-not-allowed'
                 }`}
               >
                 Discard
@@ -301,10 +319,10 @@ export default function SessionCard({
               <button
                 onClick={handleSave}
                 disabled={!hasChanges}
-                className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-sm font-medium transition-all touch-manipulation ${
+                className={`flex-1 min-h-[44px] px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider transition-all touch-manipulation ${
                   hasChanges
-                    ? 'bg-green-600 hover:bg-green-700 text-white shadow-sm shadow-green-600/20'
-                    : 'bg-gray-200 dark:bg-[#1a3550] text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    ? 'bg-teal-600 hover:bg-teal-500 text-white shadow-sm shadow-teal-600/20'
+                    : 'bg-gray-200 dark:bg-[#132940] text-gray-400 dark:text-gray-500 cursor-not-allowed'
                 }`}
               >
                 Save
@@ -316,6 +334,15 @@ export default function SessionCard({
 
       {showToast && (
         <SaveToast message={showToast} onDone={() => setShowToast(null)} />
+      )}
+
+      {showUncheckConfirm && (
+        <ConfirmDialog
+          message="Mark this session as incomplete? Your recorded data (pace, time, etc.) will be kept, but the completion status and date will be removed."
+          onConfirm={handleConfirmUncheck}
+          onCancel={() => setShowUncheckConfirm(false)}
+          confirmLabel="Uncheck"
+        />
       )}
     </>
   );

@@ -34,15 +34,15 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
   );
 
   const legend = (
-    <div className="px-4 mt-2 flex gap-4 text-xs text-gray-500 dark:text-gray-400">
+    <div className="px-4 mt-2 flex gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
       <span className="flex items-center gap-1">
-        <span className="w-2.5 h-2.5 rounded-full bg-teal-500 inline-block" /> Distance
+        <span className="w-2.5 h-2.5 rounded-full bg-[#B8941F] inline-block" /> Distance
       </span>
       <span className="flex items-center gap-1">
-        <span className="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block" /> Interval
+        <span className="w-2.5 h-2.5 rounded-full bg-[#2E86AB] inline-block" /> Interval
       </span>
       <span className="flex items-center gap-1">
-        <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block" /> Time
+        <span className="w-2.5 h-2.5 rounded-full bg-[#45A868] inline-block" /> Time
       </span>
     </div>
   );
@@ -51,12 +51,16 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
 
   return (
     <div className="py-4">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-3">Pace Trends</h2>
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 px-4 mb-3 uppercase tracking-wide">Pace Trends</h2>
       <ChartFilterBar active={filter} onChange={setFilter} />
 
       {!hasAnyData ? (
         <EmptyState
-          icon="📈"
+          icon={
+            <svg className="w-7 h-7 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+            </svg>
+          }
           title="No pace data yet"
           description="Log pace data on your sessions to see trends here."
           actionLabel="Go to Training"
@@ -73,7 +77,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
 
           {filteredSR.length > 0 && (
             <>
-              <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 px-4 mb-3 mt-6">
+              <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 px-4 mb-3 uppercase tracking-wide mt-6">
                 Stroke Rate Trends
               </h2>
               <StrokeRateTrendChart data={filteredSR} />

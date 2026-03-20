@@ -9,6 +9,7 @@ export interface PaceDataPoint {
   label: string;
   paceSeconds: number;
   category: WorkoutCategory;
+  completedDate?: string;
 }
 
 export function paceToSeconds(pace: string): number | null {
@@ -52,8 +53,17 @@ export function extractPaceData(
       label: desc.label,
       paceSeconds,
       category: categorizeWorkout(desc.label),
+      completedDate: record.completedDate,
     });
   }
+
+  // Sort by completion date (earliest first), fall back to plan order for undated
+  points.sort((a, b) => {
+    if (a.completedDate && b.completedDate) return a.completedDate.localeCompare(b.completedDate);
+    if (a.completedDate && !b.completedDate) return -1;
+    if (!a.completedDate && b.completedDate) return 1;
+    return 0; // preserve plan order for undated
+  });
 
   return points;
 }

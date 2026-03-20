@@ -184,7 +184,7 @@ function App() {
 
   return (
     <ErrorBoundary>
-      <div className="max-w-lg mx-auto bg-gradient-to-b from-gray-50 to-white dark:from-[#0c1929] dark:to-[#0c1929] min-h-dvh pb-20">
+      <div className="max-w-lg mx-auto bg-[#F8F5F0] dark:bg-[#06101A] min-h-dvh pb-20">
         <Header
           coreCompleted={coreCompleted}
           coreTotal={coreTotal}

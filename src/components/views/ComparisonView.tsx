@@ -21,7 +21,18 @@ export default function ComparisonView({ sessions, plan, onGoToTraining }: Compa
   if (groups.length === 0) {
     return (
       <EmptyState
-        icon="⚖️"
+        icon={
+          <svg className="w-7 h-7 text-teal-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M16 3h5v5" />
+            <path d="M8 3H3v5" />
+            <path d="M21 3l-7 7" />
+            <path d="M3 3l7 7" />
+            <path d="M16 21h5v-5" />
+            <path d="M8 21H3v-5" />
+            <path d="M21 21l-7-7" />
+            <path d="M3 21l7-7" />
+          </svg>
+        }
         title="No comparisons yet"
         description="Complete the same workout type at least twice with pace data to compare results here."
         actionLabel="Go to Training"
@@ -32,12 +43,12 @@ export default function ComparisonView({ sessions, plan, onGoToTraining }: Compa
 
   return (
     <div className="py-4 px-4">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3">Workout Comparison</h2>
+      <h2 className="text-sm font-extrabold text-gray-800 dark:text-gray-100 mb-3 uppercase tracking-wide">Workout Comparison</h2>
 
       <select
         value={activeGroup?.label || ''}
         onChange={(e) => setSelected(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-[#2a4a6b] dark:bg-[#0f2438] dark:text-gray-100 rounded-lg text-base min-h-[44px] mb-4"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-[#224058] dark:bg-[#0C1926] dark:text-gray-100 rounded-lg text-sm font-mono min-h-[44px] mb-4"
       >
         {groups.map((g) => (
           <option key={g.label} value={g.label}>

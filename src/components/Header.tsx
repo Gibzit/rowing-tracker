@@ -19,11 +19,22 @@ interface HeaderProps {
 
 export default function Header({ coreCompleted, coreTotal, theme, onToggleTheme, currentStreak, longestStreak, restDays, todayHasActivity, onLogRestDay, onUndoRestDay }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-10 bg-gradient-to-br from-white to-gray-50 dark:from-[#0f2942] dark:to-[#134e4a] border-b-2 border-gray-200 dark:border-b-teal-600 px-4 py-3 shadow-sm dark:shadow-md dark:shadow-black/20 backdrop-blur-sm">
-      <div className="flex items-center justify-between mb-2">
+    <header className="sticky top-0 z-10 bg-[#F8F5F0]/95 dark:bg-[#06101A]/95 border-b border-gray-200 dark:border-[#1A3350] px-4 py-3 backdrop-blur-md">
+      <div className="flex items-center justify-between mb-2.5">
         <div className="flex items-center gap-2.5">
-          <img src={import.meta.env.BASE_URL + 'icon.svg'} alt="" className="w-7 h-7 rounded-lg shadow-sm" />
-          <h1 className="text-lg font-bold tracking-tight text-teal-700 dark:text-teal-300">Ido's Rowing Tracker</h1>
+          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-teal-400 to-teal-600 flex items-center justify-center shadow-sm shadow-teal-500/20">
+            <svg className="w-[18px] h-[18px] text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M2 12h4l3-9 6 18 3-9h4" />
+            </svg>
+          </div>
+          <div>
+            <h1 className="text-base font-extrabold tracking-tight text-gray-800 dark:text-gray-100 uppercase" style={{ letterSpacing: '0.04em' }}>
+              Rowing Tracker
+            </h1>
+            <p className="text-[10px] font-medium text-gray-400 dark:text-gray-500 uppercase tracking-[0.15em] -mt-0.5">
+              Ido's Training Log
+            </p>
+          </div>
         </div>
         <ThemeToggle theme={theme} onToggle={onToggleTheme} />
       </div>

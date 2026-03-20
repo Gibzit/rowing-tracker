@@ -16,7 +16,7 @@ export default function IntervalInputs({ count, values, onChange }: IntervalInpu
 
   return (
     <div className="space-y-2">
-      <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Interval Splits</p>
+      <p className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider">Interval Splits</p>
       {Array.from({ length: count }, (_, i) => (
         <PaceInput
           key={i}
