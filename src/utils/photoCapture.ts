@@ -79,16 +79,21 @@ ${isInterval ? `- intervalPaces should have exactly ${intervalCount} entries, on
 }
 
 /**
- * Send a photo to Google Gemini Flash API and extract training data.
+ * Sleep helper for retry backoff.
  */
-export async function extractDataFromPhoto(
-  base64: string,
-  descriptor: SessionDescriptor,
-  apiKey: string
-): Promise<ExtractedData> {
-  const prompt = buildPrompt(descriptor);
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
-  const response = await fetch(
+/**
+ * Send a single request to Gemini and return the Response.
+ */
+async function callGemini(
+  base64: string,
+  prompt: string,
+  apiKey: string
+): Promise<Response> {
+  return fetch(
     `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
     {
       method: 'POST',
@@ -116,32 +121,87 @@ export async function extractDataFromPhoto(
       }),
     }
   );
+}
 
-  if (!response.ok) {
-    if (response.status === 400) {
-      const err = await response.json().catch(() => null);
-      const msg = err?.error?.message || '';
-      if (msg.includes('API_KEY')) {
-        throw new Error('API key is invalid. Check your key in settings.');
+// Track in-flight request to prevent concurrent duplicate calls
+let inflightRequest: Promise<ExtractedData> | null = null;
+
+/**
+ * Send a photo to Google Gemini Flash API and extract training data.
+ * Includes retry with exponential backoff for rate-limit (429) errors
+ * and guards against concurrent duplicate requests.
+ */
+export async function extractDataFromPhoto(
+  base64: string,
+  descriptor: SessionDescriptor,
+  apiKey: string
+): Promise<ExtractedData> {
+  // If a request is already in flight, return the same promise instead of firing another
+  if (inflightRequest) {
+    return inflightRequest;
+  }
+
+  const doRequest = async (): Promise<ExtractedData> => {
+    const prompt = buildPrompt(descriptor);
+    const MAX_RETRIES = 3;
+    const BASE_DELAY_MS = 2000; // start at 2 seconds
+
+    let lastError: Error | null = null;
+
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      // Wait before retrying (skip delay on first attempt)
+      if (attempt > 0) {
+        const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1); // 2s, 4s
+        await sleep(delay);
       }
-      throw new Error(`Bad request. Please try again.`);
-    }
-    if (response.status === 403) {
-      throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
-    }
-    if (response.status === 429) {
-      throw new Error('Rate limit reached. Try again in a moment.');
-    }
-    throw new Error(`API error (${response.status}). Please try again.`);
-  }
 
-  const result = await response.json();
-  const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!textContent) {
-    throw new Error('No response from API. Please try again.');
-  }
+      const response = await callGemini(base64, prompt, apiKey);
 
-  return parseExtractedData(textContent);
+      if (response.ok) {
+        const result = await response.json();
+        const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (!textContent) {
+          throw new Error('No response from API. Please try again.');
+        }
+        return parseExtractedData(textContent);
+      }
+
+      // Non-retryable errors — throw immediately
+      if (response.status === 400) {
+        const err = await response.json().catch(() => null);
+        const msg = err?.error?.message || '';
+        if (msg.includes('API_KEY')) {
+          throw new Error('API key is invalid. Check your key in settings.');
+        }
+        throw new Error('Bad request. Please try again.');
+      }
+      if (response.status === 403) {
+        throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
+      }
+
+      // Retryable: 429 rate limit or 5xx server errors
+      if (response.status === 429 || response.status >= 500) {
+        lastError = new Error(
+          response.status === 429
+            ? 'Rate limit reached. Retrying...'
+            : `Server error (${response.status}). Retrying...`
+        );
+        continue; // retry
+      }
+
+      // Other errors — don't retry
+      throw new Error(`API error (${response.status}). Please try again.`);
+    }
+
+    // All retries exhausted
+    throw lastError ?? new Error('Rate limit reached. Please wait a minute and try again.');
+  };
+
+  inflightRequest = doRequest().finally(() => {
+    inflightRequest = null;
+  });
+
+  return inflightRequest;
 }
 
 /**

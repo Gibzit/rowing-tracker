@@ -19,12 +19,16 @@ export default function PhotoScanButton({
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Ref-based guard to prevent concurrent calls (survives re-renders)
+  const processingRef = useRef(false);
 
   const handleClick = useCallback(() => {
     if (!apiKey) {
       onSetupRequired();
       return;
     }
+    // Prevent opening file picker while already processing
+    if (processingRef.current) return;
     fileInputRef.current?.click();
   }, [apiKey, onSetupRequired]);
 
@@ -34,6 +38,10 @@ export default function PhotoScanButton({
       // Reset the input so the same file can be re-selected
       if (fileInputRef.current) fileInputRef.current.value = '';
       if (!file || !apiKey) return;
+
+      // Guard against concurrent calls (double-tap, multiple onChange events)
+      if (processingRef.current) return;
+      processingRef.current = true;
 
       setStatus('processing');
       setErrorMessage(null);
@@ -64,6 +72,8 @@ export default function PhotoScanButton({
         } else {
           setErrorMessage('Could not process photo. Enter data manually.');
         }
+      } finally {
+        processingRef.current = false;
       }
     },
     [apiKey, descriptor, onDataExtracted]
