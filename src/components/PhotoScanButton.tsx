@@ -17,38 +17,49 @@ export default function PhotoScanButton({
   onSetupRequired,
 }: PhotoScanButtonProps) {
   const [status, setStatus] = useState<'idle' | 'processing' | 'success' | 'error'>('idle');
+  const [statusMessage, setStatusMessage] = useState('Analyzing photo...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
+  // Two file inputs: camera (with capture) and gallery (without capture)
+  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const galleryInputRef = useRef<HTMLInputElement>(null);
   // Ref-based guard to prevent concurrent calls (survives re-renders)
   const processingRef = useRef(false);
 
-  const handleClick = useCallback(() => {
+  const handleCameraClick = useCallback(() => {
     if (!apiKey) {
       onSetupRequired();
       return;
     }
-    // Prevent opening file picker while already processing
     if (processingRef.current) return;
-    fileInputRef.current?.click();
+    cameraInputRef.current?.click();
   }, [apiKey, onSetupRequired]);
 
-  const handleFileChange = useCallback(
-    async (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      // Reset the input so the same file can be re-selected
-      if (fileInputRef.current) fileInputRef.current.value = '';
-      if (!file || !apiKey) return;
+  const handleGalleryClick = useCallback(() => {
+    if (!apiKey) {
+      onSetupRequired();
+      return;
+    }
+    if (processingRef.current) return;
+    galleryInputRef.current?.click();
+  }, [apiKey, onSetupRequired]);
+
+  const processFile = useCallback(
+    async (file: File) => {
+      if (!apiKey) return;
 
       // Guard against concurrent calls (double-tap, multiple onChange events)
       if (processingRef.current) return;
       processingRef.current = true;
 
       setStatus('processing');
+      setStatusMessage('Analyzing photo...');
       setErrorMessage(null);
 
       try {
         const base64 = await resizeImage(file);
-        const data = await extractDataFromPhoto(base64, descriptor, apiKey);
+        const data = await extractDataFromPhoto(base64, descriptor, apiKey, (msg) => {
+          setStatusMessage(msg);
+        });
 
         // Check if we got any useful data
         const hasData = data.pace || data.totalTime || data.strokeRate || data.intervalPaces;
@@ -79,11 +90,22 @@ export default function PhotoScanButton({
     [apiKey, descriptor, onDataExtracted]
   );
 
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      // Reset the input so the same file can be re-selected
+      e.target.value = '';
+      if (!file) return;
+      processFile(file);
+    },
+    [processFile]
+  );
+
   return (
     <div className="mb-1">
-      {/* Hidden file input */}
+      {/* Hidden file inputs — camera forces capture, gallery allows photo library */}
       <input
-        ref={fileInputRef}
+        ref={cameraInputRef}
         type="file"
         accept="image/*"
         capture="environment"
@@ -91,15 +113,23 @@ export default function PhotoScanButton({
         className="hidden"
         aria-hidden="true"
       />
+      <input
+        ref={galleryInputRef}
+        type="file"
+        accept="image/*"
+        onChange={handleFileChange}
+        className="hidden"
+        aria-hidden="true"
+      />
 
-      {/* Main button */}
+      {/* Main buttons */}
       {status === 'processing' ? (
         <div className="flex items-center justify-center gap-2.5 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-teal-300 dark:border-teal-700 bg-teal-50/50 dark:bg-teal-900/10">
           <div
             className="w-4 h-4 border-2 border-[#00d2ff] border-t-transparent rounded-full animate-spin"
           />
           <span className="text-xs font-bold uppercase tracking-wider text-teal-700 dark:text-teal-300" style={{ animation: 'scanPulse 1.5s ease-in-out infinite' }}>
-            Analyzing photo...
+            {statusMessage}
           </span>
         </div>
       ) : status === 'success' ? (
@@ -111,24 +141,51 @@ export default function PhotoScanButton({
             Data extracted! Review below.
           </span>
         </div>
-      ) : (
+      ) : !apiKey ? (
+        /* No API key — single setup button */
         <button
-          onClick={handleClick}
-          className={`flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed transition-colors touch-manipulation ${
-            apiKey
-              ? 'border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 active:scale-[0.98]'
-              : 'border-gray-300 dark:border-white/[0.08] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a2640]'
-          }`}
+          onClick={onSetupRequired}
+          className="flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-gray-300 dark:border-white/[0.08] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a2640] transition-colors touch-manipulation"
         >
-          {/* Camera icon */}
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
             <circle cx="12" cy="13" r="4" />
           </svg>
           <span className="text-xs font-bold uppercase tracking-wider">
-            {apiKey ? 'Scan from Photo' : 'Set up Photo Scan'}
+            Set up Photo Scan
           </span>
         </button>
+      ) : (
+        /* API key configured — two buttons: camera + gallery */
+        <div className="flex gap-2">
+          <button
+            onClick={handleCameraClick}
+            className="flex-1 flex items-center justify-center gap-2 min-h-[44px] px-3 py-2.5 rounded-lg border-2 border-dashed border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 active:scale-[0.98] transition-colors touch-manipulation"
+          >
+            {/* Camera icon */}
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />
+              <circle cx="12" cy="13" r="4" />
+            </svg>
+            <span className="text-xs font-bold uppercase tracking-wider">
+              Take Photo
+            </span>
+          </button>
+          <button
+            onClick={handleGalleryClick}
+            className="flex-1 flex items-center justify-center gap-2 min-h-[44px] px-3 py-2.5 rounded-lg border-2 border-dashed border-teal-300 dark:border-teal-700 text-teal-700 dark:text-teal-300 hover:bg-teal-50 dark:hover:bg-teal-900/20 active:scale-[0.98] transition-colors touch-manipulation"
+          >
+            {/* Gallery/image icon */}
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+            <span className="text-xs font-bold uppercase tracking-wider">
+              Gallery
+            </span>
+          </button>
+        </div>
       )}
 
       {/* Error message */}

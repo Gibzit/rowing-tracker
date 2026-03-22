@@ -32,6 +32,8 @@ const ChartsView = lazy(() => import('./components/views/ChartsView'));
 const PersonalBestsView = lazy(() => import('./components/views/PersonalBestsView'));
 const CalendarView = lazy(() => import('./components/views/CalendarView'));
 const ComparisonView = lazy(() => import('./components/views/ComparisonView'));
+const PlanEditorModal = lazy(() => import('./components/planEditor/PlanEditorModal'));
+const PlanManagerModal = lazy(() => import('./components/planEditor/PlanManagerModal'));
 
 function ViewLoader() {
   return (
@@ -45,6 +47,7 @@ function App() {
   const {
     data,
     combinedPlan,
+    activePlan,
     getSession,
     updateSession,
     toggleComplete,
@@ -64,12 +67,21 @@ function App() {
     all24Complete,
     isWeekComplete,
     generateNextWeek,
+    // Plan management
+    initializePlanSystem,
+    switchPlan,
+    savePlanEdits,
+    createPlan,
+    deletePlan,
+    duplicatePlan,
   } = useTrainingData();
 
   const { theme, cycleTheme } = useDarkMode();
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const [activeView, setActiveView] = useState<ViewType>('training');
   const [showApiSettings, setShowApiSettings] = useState(false);
+  const [showPlanEditor, setShowPlanEditor] = useState(false);
+  const [showPlanManager, setShowPlanManager] = useState(false);
   const [selectedWeek, setSelectedWeek] = useState(currentWeek);
   const [pbCelebration, setPbCelebration] = useState<{ label: string; pace: string } | null>(null);
   const [celebration, setCelebration] = useState<number | null>(null);
@@ -182,6 +194,22 @@ function App() {
     setActiveView('training');
   }, []);
 
+  const handleManagePlans = useCallback(() => {
+    // Initialize the plan system on first use
+    if (!data.plans || data.plans.length === 0) {
+      initializePlanSystem();
+    }
+    setShowPlanManager(true);
+  }, [data.plans, initializePlanSystem]);
+
+  const handleEditPlan = useCallback(() => {
+    // Initialize the plan system on first use
+    if (!data.plans || data.plans.length === 0) {
+      initializePlanSystem();
+    }
+    setShowPlanEditor(true);
+  }, [data.plans, initializePlanSystem]);
+
   return (
     <ErrorBoundary>
       <div className="max-w-lg mx-auto bg-gray-50 dark:bg-[#0b1326] min-h-dvh pb-20">
@@ -196,6 +224,8 @@ function App() {
           todayHasActivity={todayHasActivity}
           onLogRestDay={handleLogRestDay}
           onUndoRestDay={handleUndoRestDay}
+          activePlanName={activePlan?.name}
+          onManagePlans={handleManagePlans}
         />
 
         <ViewTransition viewKey={activeView}>
@@ -226,6 +256,7 @@ function App() {
                 }
                 apiKey={apiKey}
                 onSetupRequired={() => setShowApiSettings(true)}
+                onEditPlan={handleEditPlan}
               />
               {all24Complete && (
                 <GenerateWeekBanner
@@ -298,6 +329,34 @@ function App() {
             onClear={clearApiKey}
             onClose={() => setShowApiSettings(false)}
           />
+        )}
+
+        {/* Plan Editor Modal */}
+        {showPlanEditor && activePlan && (
+          <Suspense fallback={null}>
+            <PlanEditorModal
+              plan={activePlan}
+              sessions={data.sessions}
+              onSave={savePlanEdits}
+              onClose={() => setShowPlanEditor(false)}
+              scrollToWeek={selectedWeek}
+            />
+          </Suspense>
+        )}
+
+        {/* Plan Manager Modal */}
+        {showPlanManager && data.plans && data.activePlanId && (
+          <Suspense fallback={null}>
+            <PlanManagerModal
+              plans={data.plans}
+              activePlanId={data.activePlanId}
+              onSwitchPlan={switchPlan}
+              onCreatePlan={createPlan}
+              onDeletePlan={deletePlan}
+              onDuplicatePlan={duplicatePlan}
+              onClose={() => setShowPlanManager(false)}
+            />
+          </Suspense>
         )}
       </div>
     </ErrorBoundary>

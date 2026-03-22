@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 import type { SessionDescriptor } from '../data/trainingPlan';
-import { isIntervalSession, getIntervalCount } from '../data/trainingPlan';
+import { isIntervalSession, getIntervalCount, parseRestDuration } from '../data/trainingPlan';
 import type { SessionRecord } from '../utils/storage';
 import PaceInput from './PaceInput';
 import IntervalInputs from './IntervalInputs';
@@ -302,7 +302,12 @@ export default function SessionCard({
               onChange={(v) => setDraft((prev) => ({ ...prev, notes: v }))}
             />
 
-            {isInterval && <SessionTimer />}
+            {isInterval && (
+              <SessionTimer
+                totalReps={intervalCount}
+                restDurationSeconds={parseRestDuration(descriptor.label)}
+              />
+            )}
 
             <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
               <button

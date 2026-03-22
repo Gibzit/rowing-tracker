@@ -9,9 +9,33 @@ export interface ExtractedData {
 }
 
 /**
- * Resize an image file to a max dimension, returning a base64 JPEG string (without data URI prefix).
+ * Status callback for UI updates during multi-step extraction.
  */
-export function resizeImage(file: File, maxDim = 1024): Promise<string> {
+export type StatusCallback = (msg: string) => void;
+
+// --- Model fallback chain ---
+// Gemini free tier rate limits are per-model, so we can fall back across models.
+// gemini-2.0-flash-lite:  30 RPM (3x higher than standard — best for avoiding rate limits)
+// gemini-1.5-flash-8b:    15 RPM
+// gemini-2.0-flash:       10 RPM
+const MODEL_CHAIN = [
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash-8b',
+  'gemini-2.0-flash',
+];
+
+// Minimum gap between any two API calls (ms) to avoid self-inflicted rate limiting
+const MIN_REQUEST_GAP_MS = 4000;
+// Retry delays per attempt (index 0 = delay before first retry, etc.)
+const RETRY_DELAYS_MS = [5000, 12000];
+
+let lastRequestTimestamp = 0;
+
+/**
+ * Resize an image file to a max dimension, returning a base64 JPEG string (without data URI prefix).
+ * Reduced to 768px to lower token consumption and avoid token-per-minute limits.
+ */
+export function resizeImage(file: File, maxDim = 768): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -86,15 +110,28 @@ function sleep(ms: number): Promise<void> {
 }
 
 /**
+ * Enforce a minimum gap between API calls to avoid bursting the rate limit.
+ */
+async function waitForCooldown(): Promise<void> {
+  const elapsed = Date.now() - lastRequestTimestamp;
+  if (elapsed < MIN_REQUEST_GAP_MS) {
+    await sleep(MIN_REQUEST_GAP_MS - elapsed);
+  }
+}
+
+/**
  * Send a single request to Gemini and return the Response.
  */
 async function callGemini(
   base64: string,
   prompt: string,
-  apiKey: string
+  apiKey: string,
+  model: string
 ): Promise<Response> {
+  await waitForCooldown();
+  lastRequestTimestamp = Date.now();
   return fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -123,18 +160,80 @@ async function callGemini(
   );
 }
 
+/**
+ * Try a single model with retries. Returns ExtractedData on success,
+ * throws on non-retryable errors, returns null if all retries 429'd.
+ */
+async function tryModel(
+  base64: string,
+  prompt: string,
+  apiKey: string,
+  model: string,
+  onStatus?: StatusCallback
+): Promise<ExtractedData | null> {
+  const maxAttempts = 1 + RETRY_DELAYS_MS.length; // initial + retries
+
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
+    if (attempt > 0) {
+      const delay = RETRY_DELAYS_MS[attempt - 1];
+      onStatus?.(`Rate limited — retrying in ${Math.round(delay / 1000)}s...`);
+      await sleep(delay);
+    }
+
+    const response = await callGemini(base64, prompt, apiKey, model);
+
+    if (response.ok) {
+      const result = await response.json();
+      const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
+      if (!textContent) {
+        throw new Error('No response from API. Please try again.');
+      }
+      return parseExtractedData(textContent);
+    }
+
+    // Non-retryable errors — throw immediately
+    if (response.status === 400) {
+      const err = await response.json().catch(() => null);
+      const msg = err?.error?.message || '';
+      if (msg.includes('API_KEY')) {
+        throw new Error('API key is invalid. Check your key in settings.');
+      }
+      throw new Error('Bad request. Please try again.');
+    }
+    if (response.status === 403) {
+      throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
+    }
+
+    // Retryable: 429 rate limit or 5xx server errors
+    if (response.status === 429 || response.status >= 500) {
+      continue;
+    }
+
+    // Other errors — don't retry
+    throw new Error(`API error (${response.status}). Please try again.`);
+  }
+
+  // All retries exhausted for this model — return null to signal fallback
+  return null;
+}
+
 // Track in-flight request to prevent concurrent duplicate calls
 let inflightRequest: Promise<ExtractedData> | null = null;
 
 /**
- * Send a photo to Google Gemini Flash API and extract training data.
- * Includes retry with exponential backoff for rate-limit (429) errors
- * and guards against concurrent duplicate requests.
+ * Send a photo to Google Gemini API and extract training data.
+ *
+ * Strategy to avoid rate limits:
+ * 1. Uses a model fallback chain (lite → 8b → flash) — rate limits are per-model
+ * 2. Enforces a minimum 4s gap between API calls to prevent bursting
+ * 3. Retries with 5s/12s backoff per model before moving to the next
+ * 4. Guards against concurrent duplicate requests
  */
 export async function extractDataFromPhoto(
   base64: string,
   descriptor: SessionDescriptor,
-  apiKey: string
+  apiKey: string,
+  onStatus?: StatusCallback
 ): Promise<ExtractedData> {
   // If a request is already in flight, return the same promise instead of firing another
   if (inflightRequest) {
@@ -143,58 +242,26 @@ export async function extractDataFromPhoto(
 
   const doRequest = async (): Promise<ExtractedData> => {
     const prompt = buildPrompt(descriptor);
-    const MAX_RETRIES = 3;
-    const BASE_DELAY_MS = 2000; // start at 2 seconds
 
-    let lastError: Error | null = null;
+    for (let i = 0; i < MODEL_CHAIN.length; i++) {
+      const model = MODEL_CHAIN[i];
+      const modelShort = model.replace('gemini-', '').replace('models/', '');
+      onStatus?.(i === 0 ? 'Analyzing photo...' : `Trying ${modelShort}...`);
 
-    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      // Wait before retrying (skip delay on first attempt)
-      if (attempt > 0) {
-        const delay = BASE_DELAY_MS * Math.pow(2, attempt - 1); // 2s, 4s
-        await sleep(delay);
-      }
-
-      const response = await callGemini(base64, prompt, apiKey);
-
-      if (response.ok) {
-        const result = await response.json();
-        const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
-        if (!textContent) {
-          throw new Error('No response from API. Please try again.');
+      try {
+        const result = await tryModel(base64, prompt, apiKey, model, onStatus);
+        if (result !== null) {
+          return result;
         }
-        return parseExtractedData(textContent);
+        // null = rate limited on all retries for this model, try next
+      } catch (err) {
+        // Non-retryable error from tryModel — rethrow
+        throw err;
       }
-
-      // Non-retryable errors — throw immediately
-      if (response.status === 400) {
-        const err = await response.json().catch(() => null);
-        const msg = err?.error?.message || '';
-        if (msg.includes('API_KEY')) {
-          throw new Error('API key is invalid. Check your key in settings.');
-        }
-        throw new Error('Bad request. Please try again.');
-      }
-      if (response.status === 403) {
-        throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
-      }
-
-      // Retryable: 429 rate limit or 5xx server errors
-      if (response.status === 429 || response.status >= 500) {
-        lastError = new Error(
-          response.status === 429
-            ? 'Rate limit reached. Retrying...'
-            : `Server error (${response.status}). Retrying...`
-        );
-        continue; // retry
-      }
-
-      // Other errors — don't retry
-      throw new Error(`API error (${response.status}). Please try again.`);
     }
 
-    // All retries exhausted
-    throw lastError ?? new Error('Rate limit reached. Please wait a minute and try again.');
+    // All models exhausted
+    throw new Error('Rate limit reached on all models. Please wait a minute and try again.');
   };
 
   inflightRequest = doRequest().finally(() => {

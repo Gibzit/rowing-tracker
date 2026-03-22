@@ -15,6 +15,12 @@ export function getIntervalCount(label: string): number {
   return match ? parseInt(match[1], 10) : 0;
 }
 
+/** Parse the rest duration in seconds from an interval label like "6 x 500m / 2min rest". Returns 120 (2min) as fallback. */
+export function parseRestDuration(label: string): number {
+  const match = label.match(/(\d+)\s*min\s*rest/i);
+  return match ? parseInt(match[1], 10) * 60 : 120;
+}
+
 export const TRAINING_PLAN: SessionDescriptor[] = [
   // WEEK 1
   { weekNumber: 1, dayNumber: 1, label: "5000m", description: "Focus on technique, relaxation, and efficiency. Smooth acceleration through the drive, slow and relaxed on the recovery.", isOptional: false },

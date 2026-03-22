@@ -36,10 +36,56 @@ export function playTimerFinished() {
   }
 }
 
-export function vibrate() {
+export function vibrate(pattern?: number[]) {
   try {
-    navigator.vibrate?.([200, 100, 200, 100, 400]);
+    navigator.vibrate?.(pattern ?? [200, 100, 200, 100, 400]);
   } catch {
     // Vibration not supported
+  }
+}
+
+/** Descending tone: signals rest phase has begun */
+export function playRestStart() {
+  try {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const now = ctx.currentTime;
+    beep(660, 0.15, now);
+    beep(660, 0.15, now + 0.2);
+    beep(440, 0.25, now + 0.45);
+  } catch {
+    // Web Audio not supported
+  }
+}
+
+/** Single short beep for 3-2-1 countdown */
+export function playCountdownBeep() {
+  try {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const now = ctx.currentTime;
+    beep(880, 0.08, now);
+  } catch {
+    // Web Audio not supported
+  }
+}
+
+/** Ascending fanfare: signals rest is over, time to row */
+export function playWorkStart() {
+  try {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    const now = ctx.currentTime;
+    beep(660, 0.15, now);
+    beep(880, 0.15, now + 0.2);
+    beep(1100, 0.2, now + 0.45);
+  } catch {
+    // Web Audio not supported
   }
 }
