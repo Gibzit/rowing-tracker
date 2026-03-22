@@ -9,33 +9,18 @@ export interface ExtractedData {
 }
 
 /**
- * Status callback for UI updates during multi-step extraction.
+ * Status callback for UI updates during extraction.
  */
 export type StatusCallback = (msg: string) => void;
 
-// --- Model fallback chain ---
-// Gemini free tier rate limits are per-model, so we can fall back across models.
-// gemini-2.0-flash-lite:  30 RPM (3x higher than standard — best for avoiding rate limits)
-// gemini-1.5-flash-8b:    15 RPM
-// gemini-2.0-flash:       10 RPM
-const MODEL_CHAIN = [
-  'gemini-2.0-flash-lite',
-  'gemini-1.5-flash-8b',
-  'gemini-2.0-flash',
-];
-
-// Minimum gap between any two API calls (ms) to avoid self-inflicted rate limiting
-const MIN_REQUEST_GAP_MS = 4000;
-// Retry delays per attempt (index 0 = delay before first retry, etc.)
-const RETRY_DELAYS_MS = [5000, 12000];
-
-let lastRequestTimestamp = 0;
+const ANTHROPIC_API_URL = 'https://api.anthropic.com/v1/messages';
+const MODEL = 'claude-sonnet-4-20250514';
+const ANTHROPIC_VERSION = '2023-06-01';
 
 /**
  * Resize an image file to a max dimension, returning a base64 JPEG string (without data URI prefix).
- * Reduced to 768px to lower token consumption and avoid token-per-minute limits.
  */
-export function resizeImage(file: File, maxDim = 768): Promise<string> {
+export function resizeImage(file: File, maxDim = 1024): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
@@ -49,7 +34,6 @@ export function resizeImage(file: File, maxDim = 768): Promise<string> {
         return;
       }
       ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      // Get base64 without the "data:image/jpeg;base64," prefix
       const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
       const base64 = dataUrl.split(',')[1];
       resolve(base64);
@@ -103,131 +87,53 @@ ${isInterval ? `- intervalPaces should have exactly ${intervalCount} entries, on
 }
 
 /**
- * Sleep helper for retry backoff.
+ * Send a request to Claude API and return the Response.
  */
-function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
-/**
- * Enforce a minimum gap between API calls to avoid bursting the rate limit.
- */
-async function waitForCooldown(): Promise<void> {
-  const elapsed = Date.now() - lastRequestTimestamp;
-  if (elapsed < MIN_REQUEST_GAP_MS) {
-    await sleep(MIN_REQUEST_GAP_MS - elapsed);
-  }
-}
-
-/**
- * Send a single request to Gemini and return the Response.
- */
-async function callGemini(
+async function callClaude(
   base64: string,
   prompt: string,
-  apiKey: string,
-  model: string
+  apiKey: string
 ): Promise<Response> {
-  await waitForCooldown();
-  lastRequestTimestamp = Date.now();
-  return fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [
-          {
-            parts: [
-              {
-                inlineData: {
-                  mimeType: 'image/jpeg',
-                  data: base64,
-                },
+  return fetch(ANTHROPIC_API_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': ANTHROPIC_VERSION,
+      'anthropic-dangerous-direct-browser-access': 'true',
+    },
+    body: JSON.stringify({
+      model: MODEL,
+      max_tokens: 512,
+      messages: [
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'image',
+              source: {
+                type: 'base64',
+                media_type: 'image/jpeg',
+                data: base64,
               },
-              {
-                text: prompt,
-              },
-            ],
-          },
-        ],
-        generationConfig: {
-          maxOutputTokens: 512,
-          temperature: 0.1,
+            },
+            {
+              type: 'text',
+              text: prompt,
+            },
+          ],
         },
-      }),
-    }
-  );
-}
-
-/**
- * Try a single model with retries. Returns ExtractedData on success,
- * throws on non-retryable errors, returns null if all retries 429'd.
- */
-async function tryModel(
-  base64: string,
-  prompt: string,
-  apiKey: string,
-  model: string,
-  onStatus?: StatusCallback
-): Promise<ExtractedData | null> {
-  const maxAttempts = 1 + RETRY_DELAYS_MS.length; // initial + retries
-
-  for (let attempt = 0; attempt < maxAttempts; attempt++) {
-    if (attempt > 0) {
-      const delay = RETRY_DELAYS_MS[attempt - 1];
-      onStatus?.(`Rate limited — retrying in ${Math.round(delay / 1000)}s...`);
-      await sleep(delay);
-    }
-
-    const response = await callGemini(base64, prompt, apiKey, model);
-
-    if (response.ok) {
-      const result = await response.json();
-      const textContent = result.candidates?.[0]?.content?.parts?.[0]?.text;
-      if (!textContent) {
-        throw new Error('No response from API. Please try again.');
-      }
-      return parseExtractedData(textContent);
-    }
-
-    // Non-retryable errors — throw immediately
-    if (response.status === 400) {
-      const err = await response.json().catch(() => null);
-      const msg = err?.error?.message || '';
-      if (msg.includes('API_KEY')) {
-        throw new Error('API key is invalid. Check your key in settings.');
-      }
-      throw new Error('Bad request. Please try again.');
-    }
-    if (response.status === 403) {
-      throw new Error('API key is invalid or Gemini API not enabled. Check your key in settings.');
-    }
-
-    // Retryable: 429 rate limit or 5xx server errors
-    if (response.status === 429 || response.status >= 500) {
-      continue;
-    }
-
-    // Other errors — don't retry
-    throw new Error(`API error (${response.status}). Please try again.`);
-  }
-
-  // All retries exhausted for this model — return null to signal fallback
-  return null;
+      ],
+    }),
+  });
 }
 
 // Track in-flight request to prevent concurrent duplicate calls
 let inflightRequest: Promise<ExtractedData> | null = null;
 
 /**
- * Send a photo to Google Gemini API and extract training data.
- *
- * Strategy to avoid rate limits:
- * 1. Uses a model fallback chain (lite → 8b → flash) — rate limits are per-model
- * 2. Enforces a minimum 4s gap between API calls to prevent bursting
- * 3. Retries with 5s/12s backoff per model before moving to the next
- * 4. Guards against concurrent duplicate requests
+ * Send a photo to Claude API and extract training data.
+ * Single call — no fallback chain or retries needed (generous rate limits).
  */
 export async function extractDataFromPhoto(
   base64: string,
@@ -242,26 +148,38 @@ export async function extractDataFromPhoto(
 
   const doRequest = async (): Promise<ExtractedData> => {
     const prompt = buildPrompt(descriptor);
+    onStatus?.('Analyzing photo...');
 
-    for (let i = 0; i < MODEL_CHAIN.length; i++) {
-      const model = MODEL_CHAIN[i];
-      const modelShort = model.replace('gemini-', '').replace('models/', '');
-      onStatus?.(i === 0 ? 'Analyzing photo...' : `Trying ${modelShort}...`);
+    const response = await callClaude(base64, prompt, apiKey);
 
-      try {
-        const result = await tryModel(base64, prompt, apiKey, model, onStatus);
-        if (result !== null) {
-          return result;
-        }
-        // null = rate limited on all retries for this model, try next
-      } catch (err) {
-        // Non-retryable error from tryModel — rethrow
-        throw err;
+    if (!response.ok) {
+      if (response.status === 401) {
+        throw new Error('API key is invalid. Check your key in settings.');
       }
+      if (response.status === 429) {
+        throw new Error('Rate limit reached. Please wait a moment and try again.');
+      }
+      if (response.status === 400) {
+        const err = await response.json().catch(() => null);
+        const msg = err?.error?.message || '';
+        if (msg.includes('credit') || msg.includes('billing')) {
+          throw new Error('No API credits. Add billing at console.anthropic.com.');
+        }
+        throw new Error('Bad request. Please try again.');
+      }
+      if (response.status >= 500) {
+        throw new Error('API server error. Please try again.');
+      }
+      throw new Error(`API error (${response.status}). Please try again.`);
     }
 
-    // All models exhausted
-    throw new Error('Rate limit reached on all models. Please wait a minute and try again.');
+    const result = await response.json();
+    const textContent = result.content?.[0]?.text;
+    if (!textContent) {
+      throw new Error('No response from API. Please try again.');
+    }
+
+    return parseExtractedData(textContent);
   };
 
   inflightRequest = doRequest().finally(() => {
@@ -320,14 +238,28 @@ function parseExtractedData(text: string): ExtractedData {
 }
 
 /**
- * Validate a Gemini API key by listing available models (free, no tokens consumed).
+ * Validate an Anthropic API key by making a minimal API call.
+ * Uses a tiny message to check auth — costs essentially nothing.
  */
 export async function validateApiKey(apiKey: string): Promise<boolean> {
   try {
-    const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}&pageSize=1`
-    );
-    return response.ok;
+    const response = await fetch(ANTHROPIC_API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': ANTHROPIC_VERSION,
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: 1,
+        messages: [{ role: 'user', content: 'hi' }],
+      }),
+    });
+    // 200 = valid key, 401 = invalid key
+    // Other statuses (429 rate limit, 500 server) still mean the key itself is valid
+    return response.status !== 401;
   } catch {
     return false;
   }
