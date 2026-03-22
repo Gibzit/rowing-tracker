@@ -1,11 +1,14 @@
 import type { SessionRecord } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
-import { paceToSeconds, secondsToPace } from './paceUtils';
+import { paceToSeconds, secondsToPace, categorizeWorkout } from './paceUtils';
+import type { WorkoutCategory } from './paceUtils';
 
 export interface PersonalBest {
-  label: string;
+  category: WorkoutCategory;
+  categoryLabel: string;
   paceSeconds: number;
   paceFormatted: string;
+  workoutLabel: string; // the specific workout where the PB was set
   weekNumber: number;
   dayNumber: number;
   completedDate?: string;
@@ -15,13 +18,18 @@ export interface PersonalBest {
   sessionCount: number;
 }
 
+const CATEGORY_LABELS: Record<WorkoutCategory, string> = {
+  distance: 'Distance',
+  interval: 'Interval',
+  time: 'Time',
+};
+
 export function computePersonalBests(
   sessions: Record<string, SessionRecord>,
   plan: SessionDescriptor[]
 ): PersonalBest[] {
-  const bestByLabel = new Map<string, PersonalBest>();
-  // Track all paces per label for average calculation
-  const allPacesByLabel = new Map<string, number[]>();
+  const bestByCategory = new Map<WorkoutCategory, PersonalBest>();
+  const allPacesByCategory = new Map<WorkoutCategory, number[]>();
 
   for (const desc of plan) {
     const key = `${desc.weekNumber}-${desc.dayNumber}`;
@@ -31,18 +39,22 @@ export function computePersonalBests(
     const paceSeconds = paceToSeconds(record.pace);
     if (paceSeconds === null) continue;
 
-    // Track all paces
-    if (!allPacesByLabel.has(desc.label)) {
-      allPacesByLabel.set(desc.label, []);
-    }
-    allPacesByLabel.get(desc.label)!.push(paceSeconds);
+    const category = categorizeWorkout(desc.label);
 
-    const existing = bestByLabel.get(desc.label);
+    // Track all paces for this category
+    if (!allPacesByCategory.has(category)) {
+      allPacesByCategory.set(category, []);
+    }
+    allPacesByCategory.get(category)!.push(paceSeconds);
+
+    const existing = bestByCategory.get(category);
     if (!existing || paceSeconds < existing.paceSeconds) {
-      bestByLabel.set(desc.label, {
-        label: desc.label,
+      bestByCategory.set(category, {
+        category,
+        categoryLabel: CATEGORY_LABELS[category],
         paceSeconds,
         paceFormatted: secondsToPace(paceSeconds),
+        workoutLabel: desc.label,
         weekNumber: desc.weekNumber,
         dayNumber: desc.dayNumber,
         completedDate: record.completedDate,
@@ -52,8 +64,8 @@ export function computePersonalBests(
   }
 
   // Enrich with averages and improvement
-  for (const [label, pb] of bestByLabel) {
-    const allPaces = allPacesByLabel.get(label) || [];
+  for (const [category, pb] of bestByCategory) {
+    const allPaces = allPacesByCategory.get(category) || [];
     pb.sessionCount = allPaces.length;
     if (allPaces.length > 0) {
       const avg = allPaces.reduce((a, b) => a + b, 0) / allPaces.length;
@@ -66,7 +78,11 @@ export function computePersonalBests(
     }
   }
 
-  return Array.from(bestByLabel.values()).sort((a, b) => a.label.localeCompare(b.label));
+  // Sort: distance, interval, time
+  const order: WorkoutCategory[] = ['distance', 'interval', 'time'];
+  return order
+    .filter((cat) => bestByCategory.has(cat))
+    .map((cat) => bestByCategory.get(cat)!);
 }
 
 export function isNewPB(
@@ -74,7 +90,8 @@ export function isNewPB(
   newPaceSeconds: number,
   currentBests: PersonalBest[]
 ): boolean {
-  const existing = currentBests.find((pb) => pb.label === label);
+  const category = categorizeWorkout(label);
+  const existing = currentBests.find((pb) => pb.category === category);
   if (!existing) return true;
   return newPaceSeconds < existing.paceSeconds;
 }
