@@ -15,7 +15,7 @@ import type { UnlockedAchievement } from '../utils/achievements';
 import { getCombinedPlan, getActivePlan } from '../utils/combinedPlan';
 import { generateWeekSessions } from '../utils/generateWeek';
 import { getPlanTotalWeeks, addWeekToPlan } from '../utils/planUtils';
-import { PETE_PLAN_ID, createPetePlanTemplate } from '../data/planTemplates';
+import { PETE_PLAN_ID } from '../data/planTemplates';
 
 export function useTrainingData() {
   const [data, setData] = useState<StoredData>(() => loadData());
