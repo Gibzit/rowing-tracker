@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef, useEffect, lazy, Suspense } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect, lazy, Suspense, type ReactNode } from 'react';
 import { useTrainingData } from './hooks/useTrainingData';
 import { useDarkMode } from './hooks/useDarkMode';
 import { paceToSeconds } from './utils/paceUtils';
@@ -16,7 +16,6 @@ import ResetButton from './components/ResetButton';
 import DataManagement from './components/DataManagement';
 import BottomNav from './components/BottomNav';
 import PBCelebration from './components/PBCelebration';
-import ViewTransition from './components/ViewTransition';
 import WeekCelebration from './components/WeekCelebration';
 import Onboarding from './components/Onboarding';
 import AchievementCelebration from './components/AchievementCelebration';
@@ -26,6 +25,20 @@ import GenerateWeekBanner from './components/GenerateWeekBanner';
 import ProgressGrid from './components/ProgressGrid';
 import ApiKeySettings from './components/ApiKeySettings';
 import { useApiKey } from './hooks/useApiKey';
+
+/** Hook to track which views have been visited (for lazy mounting). */
+function useVisitedViews(activeView: ViewType) {
+  const [visited, setVisited] = useState<Set<ViewType>>(() => new Set([activeView]));
+  useEffect(() => {
+    setVisited(prev => {
+      if (prev.has(activeView)) return prev;
+      const next = new Set(prev);
+      next.add(activeView);
+      return next;
+    });
+  }, [activeView]);
+  return visited;
+}
 
 // Lazy-load non-training views for code splitting
 const ChartsView = lazy(() => import('./components/views/ChartsView'));
@@ -39,6 +52,27 @@ function ViewLoader() {
   return (
     <div className="flex items-center justify-center py-16">
       <div className="w-6 h-6 border-2 border-[#00d2ff] border-t-transparent rounded-full animate-spin" />
+    </div>
+  );
+}
+
+/** Tab panel that stays in the DOM once mounted, hidden via display:none when inactive. */
+function TabPanel({ active, children }: { active: boolean; children: ReactNode }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const wasActive = useRef(active);
+
+  useEffect(() => {
+    if (active && !wasActive.current && ref.current) {
+      ref.current.style.animation = 'none';
+      void ref.current.offsetHeight;
+      ref.current.style.animation = 'viewFadeIn 0.15s ease-out';
+    }
+    wasActive.current = active;
+  }, [active]);
+
+  return (
+    <div ref={ref} style={active ? undefined : { display: 'none' }}>
+      {children}
     </div>
   );
 }
@@ -79,6 +113,7 @@ function App() {
   const { theme, cycleTheme } = useDarkMode();
   const { apiKey, setApiKey, clearApiKey } = useApiKey();
   const [activeView, setActiveView] = useState<ViewType>('training');
+  const visitedViews = useVisitedViews(activeView);
   const [showApiSettings, setShowApiSettings] = useState(false);
   const [showPlanEditor, setShowPlanEditor] = useState(false);
   const [showPlanManager, setShowPlanManager] = useState(false);
@@ -228,73 +263,86 @@ function App() {
           onManagePlans={handleManagePlans}
         />
 
-        <ViewTransition viewKey={activeView}>
-          {activeView === 'training' && (
-            <>
-              <ProgressGrid
-                totalWeeks={totalWeeks}
-                currentWeek={currentWeek}
-                selectedWeek={selectedWeek}
-                isWeekComplete={isWeekComplete}
-                onSelectWeek={setSelectedWeek}
-              />
-              <WeeklySummary weekNumber={selectedWeek} sessions={weekSessions} getSession={getSession} />
-              <AchievementBadges achievements={data.achievements || []} />
-              <WeekView
-                weekNumber={selectedWeek}
-                sessions={weekSessions}
-                getSession={getSession}
-                optionalVisible={!!data.optionalVisible[selectedWeek]}
-                onToggleComplete={toggleComplete}
-                onUpdateSession={handleUpdateSession}
-                onToggleOptional={() => toggleOptional(selectedWeek)}
-                onAddCustomSession={(label, description) =>
-                  addCustomSession(selectedWeek, label, description)
-                }
-                onDeleteCustomSession={(dayNumber) =>
-                  deleteCustomSession(selectedWeek, dayNumber)
-                }
-                apiKey={apiKey}
-                onSetupRequired={() => setShowApiSettings(true)}
-                onEditPlan={handleEditPlan}
-              />
-              {all24Complete && (
-                <GenerateWeekBanner
-                  nextWeek={totalWeeks + 1}
-                  onGenerate={() => {
-                    generateNextWeek();
-                    setSelectedWeek(totalWeeks + 1);
-                  }}
-                />
-              )}
-              <DataManagement data={data} onImport={importData} />
-              <ResetButton onReset={resetAll} />
-            </>
+        <TabPanel active={activeView === 'training'}>
+          <ProgressGrid
+            totalWeeks={totalWeeks}
+            currentWeek={currentWeek}
+            selectedWeek={selectedWeek}
+            isWeekComplete={isWeekComplete}
+            onSelectWeek={setSelectedWeek}
+          />
+          <WeeklySummary weekNumber={selectedWeek} sessions={weekSessions} getSession={getSession} />
+          <AchievementBadges achievements={data.achievements || []} />
+          <WeekView
+            weekNumber={selectedWeek}
+            sessions={weekSessions}
+            getSession={getSession}
+            optionalVisible={!!data.optionalVisible[selectedWeek]}
+            onToggleComplete={toggleComplete}
+            onUpdateSession={handleUpdateSession}
+            onToggleOptional={() => toggleOptional(selectedWeek)}
+            onAddCustomSession={(label, description) =>
+              addCustomSession(selectedWeek, label, description)
+            }
+            onDeleteCustomSession={(dayNumber) =>
+              deleteCustomSession(selectedWeek, dayNumber)
+            }
+            apiKey={apiKey}
+            onSetupRequired={() => setShowApiSettings(true)}
+            onEditPlan={handleEditPlan}
+          />
+          {all24Complete && (
+            <GenerateWeekBanner
+              nextWeek={totalWeeks + 1}
+              onGenerate={() => {
+                generateNextWeek();
+                setSelectedWeek(totalWeeks + 1);
+              }}
+            />
           )}
+          <DataManagement data={data} onImport={importData} />
+          <ResetButton onReset={resetAll} />
+        </TabPanel>
 
+        {visitedViews.has('charts') && (
           <Suspense fallback={<ViewLoader />}>
-            {activeView === 'charts' && (
+            <TabPanel active={activeView === 'charts'}>
               <ErrorBoundary>
                 <ChartsView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
               </ErrorBoundary>
-            )}
-            {activeView === 'pbs' && (
+            </TabPanel>
+          </Suspense>
+        )}
+
+        {visitedViews.has('pbs') && (
+          <Suspense fallback={<ViewLoader />}>
+            <TabPanel active={activeView === 'pbs'}>
               <ErrorBoundary>
                 <PersonalBestsView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
               </ErrorBoundary>
-            )}
-            {activeView === 'calendar' && (
+            </TabPanel>
+          </Suspense>
+        )}
+
+        {visitedViews.has('calendar') && (
+          <Suspense fallback={<ViewLoader />}>
+            <TabPanel active={activeView === 'calendar'}>
               <ErrorBoundary>
                 <CalendarView sessions={data.sessions} restDays={restDays} plan={combinedPlan} />
               </ErrorBoundary>
-            )}
-            {activeView === 'compare' && (
+            </TabPanel>
+          </Suspense>
+        )}
+
+        {visitedViews.has('compare') && (
+          <Suspense fallback={<ViewLoader />}>
+            <TabPanel active={activeView === 'compare'}>
               <ErrorBoundary>
                 <ComparisonView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
               </ErrorBoundary>
-            )}
+            </TabPanel>
           </Suspense>
-        </ViewTransition>
+        )}
 
         <BottomNav active={activeView} onNavigate={setActiveView} />
 
