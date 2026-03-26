@@ -15,7 +15,7 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none"
+      className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
       onClick={onDone}
     >
       {confettiColors.map((color, i) => (

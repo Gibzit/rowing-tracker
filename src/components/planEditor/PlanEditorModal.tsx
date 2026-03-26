@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import type { TrainingPlan } from '../../utils/storage';
 import type { SessionRecord } from '../../utils/storage';
+import { sessionKey } from '../../utils/storage';
 import {
   editPlanSession,
   deletePlanSession,
@@ -131,7 +132,7 @@ export default function PlanEditorModal({
       updated = addPlanSession(updated, {
         weekNumber: nextWeek,
         dayNumber: d,
-        label: d <= 3 ? `Session ${d}` : `Session ${d}`,
+        label: `Session ${d}`,
         description: '',
         isOptional: d > 3,
       });
@@ -182,6 +183,7 @@ export default function PlanEditorModal({
             )}
             <button
               onClick={onClose}
+              aria-label="Close plan editor"
               className="min-w-[36px] min-h-[36px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -234,7 +236,7 @@ export default function PlanEditorModal({
               .sort((a, b) => a.dayNumber - b.dayNumber);
             const isExpanded = expandedWeeks.has(week);
             const completedCount = weekSessions.filter(
-              (s) => sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed
+              (s) => sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
             ).length;
 
             return (
@@ -274,7 +276,7 @@ export default function PlanEditorModal({
                           handleDeleteSession(s.weekNumber, s.dayNumber)
                         }
                         hasSessionData={
-                          !!sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed
+                          !!sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
                         }
                       />
                     ))}

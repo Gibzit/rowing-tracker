@@ -57,11 +57,12 @@ export default function ConfirmDialog({
         role="alertdialog"
         aria-modal="true"
         aria-label="Confirmation dialog"
+        aria-describedby="confirm-dialog-message"
         className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/[0.06]"
         style={{ animation: 'dialogPopIn 0.25s ease-out' }}
         onClick={(e) => e.stopPropagation()}
       >
-        <p className="text-gray-800 dark:text-gray-200 text-sm mb-4">{message}</p>
+        <p id="confirm-dialog-message" className="text-gray-800 dark:text-gray-200 text-sm mb-4">{message}</p>
 
         {requireTypedConfirmation && (
           <div className="mb-4">

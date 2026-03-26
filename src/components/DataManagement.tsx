@@ -32,10 +32,32 @@ export default function DataManagement({ data, onImport }: DataManagementProps) 
     const reader = new FileReader();
     reader.onload = () => {
       try {
-        const parsed = JSON.parse(reader.result as string);
+        const raw = reader.result as string;
+        if (raw.length > 10 * 1024 * 1024) {
+          setError('File too large (max 10 MB).');
+          return;
+        }
+        const parsed = JSON.parse(raw);
         if (parsed.version !== 1 || typeof parsed.sessions !== 'object') {
           setError('Invalid backup file format.');
           return;
+        }
+        // Validate session records have expected shapes
+        for (const [key, val] of Object.entries(parsed.sessions)) {
+          if (typeof key !== 'string' || !/^\d+-\d+$/.test(key)) {
+            setError('Invalid session key in backup.');
+            return;
+          }
+          if (val !== null && typeof val !== 'object') {
+            setError('Invalid session data in backup.');
+            return;
+          }
+        }
+        // Truncate oversized string fields to prevent localStorage abuse
+        for (const rec of Object.values(parsed.sessions) as Record<string, unknown>[]) {
+          if (rec && typeof rec.notes === 'string' && rec.notes.length > 10000) {
+            rec.notes = (rec.notes as string).slice(0, 10000);
+          }
         }
         setPendingData(parsed as StoredData);
         setShowConfirm(true);

@@ -109,7 +109,7 @@ export default function PlanSessionRow({
         )}
       </div>
 
-      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
+      <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity shrink-0">
         <button
           onClick={() => onEdit({ isOptional: !session.isOptional })}
           className="min-w-[28px] min-h-[28px] flex items-center justify-center text-[#5a6580] hover:text-[#00d2ff] transition-colors touch-manipulation"

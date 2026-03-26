@@ -13,7 +13,8 @@ export default function ProgressGrid({
   isWeekComplete,
   onSelectWeek,
 }: ProgressGridProps) {
-  const completedCount = Array.from({ length: totalWeeks }, (_, i) => i + 1).filter(isWeekComplete).length;
+  const displayedWeeks = totalWeeks;
+  const completedCount = Array.from({ length: displayedWeeks }, (_, i) => i + 1).filter(isWeekComplete).length;
 
   return (
     <div className="mx-5 mb-5 p-5 rounded-2xl bg-white dark:bg-[#0f1b33]">
@@ -22,12 +23,12 @@ export default function ProgressGrid({
           Plan Progress
         </h3>
         <span className="text-[10px] font-mono font-bold text-[#00d2ff] tracking-wide">
-          {completedCount}/{Math.min(totalWeeks, 24)} wk
+          {completedCount}/{displayedWeeks} wk
         </span>
       </div>
 
       <div className="grid grid-cols-12 gap-2">
-        {Array.from({ length: Math.min(totalWeeks, 24) }, (_, i) => i + 1).map((week) => {
+        {Array.from({ length: displayedWeeks }, (_, i) => i + 1).map((week) => {
           const isComplete = isWeekComplete(week);
           const isCurrent = week === currentWeek;
           const isSelected = week === selectedWeek;

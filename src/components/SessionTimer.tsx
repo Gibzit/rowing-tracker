@@ -61,7 +61,6 @@ function SimpleRestTimer() {
           <TimerRing
             timeRemaining={timeRemaining}
             totalDuration={totalDuration}
-            progress={progress}
             strokeDashoffset={strokeDashoffset}
             ringColor={isFinished ? 'text-green-500' : 'text-teal-500'}
             textColor={
@@ -105,14 +104,12 @@ function SimpleRestTimer() {
 function TimerRing({
   timeRemaining,
   totalDuration,
-  progress: _progress,
   strokeDashoffset,
   ringColor,
   textColor,
 }: {
   timeRemaining: number;
   totalDuration: number;
-  progress: number;
   strokeDashoffset: number;
   ringColor: string;
   textColor: string;
@@ -242,7 +239,6 @@ function IntervalRestTimer({
           <TimerRing
             timeRemaining={timeRemaining}
             totalDuration={restDurationSeconds}
-            progress={progress}
             strokeDashoffset={strokeDashoffset}
             ringColor={ringColor}
             textColor={textColor}
@@ -285,7 +281,6 @@ function IntervalRestTimer({
           <TimerRing
             timeRemaining={0}
             totalDuration={restDurationSeconds}
-            progress={1}
             strokeDashoffset={0}
             ringColor={ringColor}
             textColor="text-amber-500 dark:text-amber-400"

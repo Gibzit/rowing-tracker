@@ -1,4 +1,5 @@
 import type { SessionRecord } from './storage';
+import { sessionKey } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
 import { paceToSeconds, secondsToPace, categorizeWorkout } from './paceUtils';
 import type { WorkoutCategory } from './paceUtils';
@@ -32,7 +33,7 @@ export function computePersonalBests(
   const allPacesByCategory = new Map<WorkoutCategory, number[]>();
 
   for (const desc of plan) {
-    const key = `${desc.weekNumber}-${desc.dayNumber}`;
+    const key = sessionKey(desc.weekNumber, desc.dayNumber);
     const record = sessions[key];
     if (!record?.pace) continue;
 

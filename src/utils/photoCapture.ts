@@ -128,12 +128,10 @@ async function callClaude(
   });
 }
 
-// Track in-flight request to prevent concurrent duplicate calls
-let inflightRequest: Promise<ExtractedData> | null = null;
-
 /**
  * Send a photo to Claude API and extract training data.
  * Single call — no fallback chain or retries needed (generous rate limits).
+ * Callers should guard against concurrent calls at the component level (e.g. via a ref).
  */
 export async function extractDataFromPhoto(
   base64: string,
@@ -141,52 +139,39 @@ export async function extractDataFromPhoto(
   apiKey: string,
   onStatus?: StatusCallback
 ): Promise<ExtractedData> {
-  // If a request is already in flight, return the same promise instead of firing another
-  if (inflightRequest) {
-    return inflightRequest;
+  const prompt = buildPrompt(descriptor);
+  onStatus?.('Analyzing photo...');
+
+  const response = await callClaude(base64, prompt, apiKey);
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      throw new Error('API key is invalid. Check your key in settings.');
+    }
+    if (response.status === 429) {
+      throw new Error('Rate limit reached. Please wait a moment and try again.');
+    }
+    if (response.status === 400) {
+      const err = await response.json().catch(() => null);
+      const msg = err?.error?.message || '';
+      if (msg.includes('credit') || msg.includes('billing')) {
+        throw new Error('No API credits. Add billing at console.anthropic.com.');
+      }
+      throw new Error('Bad request. Please try again.');
+    }
+    if (response.status >= 500) {
+      throw new Error('API server error. Please try again.');
+    }
+    throw new Error(`API error (${response.status}). Please try again.`);
   }
 
-  const doRequest = async (): Promise<ExtractedData> => {
-    const prompt = buildPrompt(descriptor);
-    onStatus?.('Analyzing photo...');
+  const result = await response.json();
+  const textContent = result.content?.[0]?.text;
+  if (!textContent) {
+    throw new Error('No response from API. Please try again.');
+  }
 
-    const response = await callClaude(base64, prompt, apiKey);
-
-    if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error('API key is invalid. Check your key in settings.');
-      }
-      if (response.status === 429) {
-        throw new Error('Rate limit reached. Please wait a moment and try again.');
-      }
-      if (response.status === 400) {
-        const err = await response.json().catch(() => null);
-        const msg = err?.error?.message || '';
-        if (msg.includes('credit') || msg.includes('billing')) {
-          throw new Error('No API credits. Add billing at console.anthropic.com.');
-        }
-        throw new Error('Bad request. Please try again.');
-      }
-      if (response.status >= 500) {
-        throw new Error('API server error. Please try again.');
-      }
-      throw new Error(`API error (${response.status}). Please try again.`);
-    }
-
-    const result = await response.json();
-    const textContent = result.content?.[0]?.text;
-    if (!textContent) {
-      throw new Error('No response from API. Please try again.');
-    }
-
-    return parseExtractedData(textContent);
-  };
-
-  inflightRequest = doRequest().finally(() => {
-    inflightRequest = null;
-  });
-
-  return inflightRequest;
+  return parseExtractedData(textContent);
 }
 
 /**

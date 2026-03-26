@@ -18,7 +18,7 @@ export default function SaveToast({ message, onDone }: SaveToastProps) {
   }, [onDone]);
 
   return (
-    <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-[55] pointer-events-none">
+    <div className="fixed left-1/2 -translate-x-1/2 z-[55] pointer-events-none" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
       <div
         className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-bold px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 uppercase tracking-wider"
         style={{

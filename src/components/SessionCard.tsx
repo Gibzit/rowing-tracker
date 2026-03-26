@@ -12,7 +12,7 @@ import SaveToast from './SaveToast';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoScanButton from './PhotoScanButton';
 import type { ExtractedData } from '../utils/photoCapture';
-import { validatePace } from '../utils/paceValidation';
+
 
 interface DraftState {
   pace: string;
@@ -215,7 +215,7 @@ export default function SessionCard({
                   e.stopPropagation();
                   onDelete();
                 }}
-                className="min-w-[32px] min-h-[32px] flex items-center justify-center text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 transition-colors"
+                className="min-w-[44px] min-h-[44px] flex items-center justify-center text-red-400 hover:text-red-600 dark:text-red-500 dark:hover:text-red-400 transition-colors touch-manipulation"
                 title="Delete custom workout"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -269,17 +269,7 @@ export default function SessionCard({
                 placeholder="mm:ss"
                 value={draft.totalTime}
                 onChange={(e) => setDraft((prev) => ({ ...prev, totalTime: e.target.value }))}
-                onBlur={() => {
-                  if (draft.totalTime) {
-                    const result = validatePace(draft.totalTime);
-                    if (!result.valid && draft.totalTime) {
-                      const match = draft.totalTime.match(/^\d{1,3}:\d{2}$/);
-                      if (!match) {
-                        // silently accept for now
-                      }
-                    }
-                  }
-                }}
+
                 className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
               />
             </div>

@@ -39,7 +39,7 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
       <div className="relative">
         <input
           type="text"
-          inputMode="text"
+          inputMode="decimal"
           placeholder="m:ss (e.g., 2:15)"
           value={value}
           onChange={(e) => handleChange(e.target.value)}

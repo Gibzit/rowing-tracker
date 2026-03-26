@@ -1,4 +1,5 @@
 import type { SessionRecord } from './storage';
+import { sessionKey } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
 import { paceToSeconds, secondsToPace } from './paceUtils';
 
@@ -26,7 +27,7 @@ export function groupWorkouts(
   const groups = new Map<string, { label: string; entries: WorkoutEntry[] }>();
 
   for (const desc of plan) {
-    const key = `${desc.weekNumber}-${desc.dayNumber}`;
+    const key = sessionKey(desc.weekNumber, desc.dayNumber);
     const record = sessions[key];
     if (!record?.pace) continue;
 

@@ -79,6 +79,7 @@ export default function PlanManagerModal({
             </h2>
             <button
               onClick={onClose}
+              aria-label="Close plan manager"
               className="min-w-[36px] min-h-[36px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

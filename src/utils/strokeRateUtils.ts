@@ -1,4 +1,5 @@
 import type { SessionRecord } from './storage';
+import { sessionKey } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
 import type { WorkoutCategory } from './paceUtils';
 import { categorizeWorkout } from './paceUtils';
@@ -19,7 +20,7 @@ export function extractStrokeRateData(
   const points: StrokeRateDataPoint[] = [];
 
   for (const desc of plan) {
-    const key = `${desc.weekNumber}-${desc.dayNumber}`;
+    const key = sessionKey(desc.weekNumber, desc.dayNumber);
     const record = sessions[key];
     if (!record?.strokeRate || !record.completed) continue;
 

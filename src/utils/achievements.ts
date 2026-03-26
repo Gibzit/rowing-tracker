@@ -1,4 +1,5 @@
 import type { StoredData, SessionRecord } from './storage';
+import { sessionKey } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
 import { paceToSeconds } from './paceUtils';
 
@@ -63,7 +64,7 @@ export function checkAchievements(
     const coreSessions = plan.filter((s) => s.weekNumber === w && !s.isOptional);
     if (
       coreSessions.length > 0 &&
-      coreSessions.every((s) => sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed)
+      coreSessions.every((s) => sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed)
     ) {
       earned.push('week-warrior');
       break;
@@ -72,7 +73,7 @@ export function checkAchievements(
 
   // 3. Halfway Hero — 36 core sessions
   const coreCompleted = plan.filter(
-    (s) => !s.isOptional && sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed
+    (s) => !s.isOptional && sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
   ).length;
   if (coreCompleted >= 36) earned.push('halfway-hero');
 
@@ -95,7 +96,7 @@ export function checkAchievements(
 
   // 8. Bonus Hunter — 10 optional sessions
   const optionalCompleted = plan.filter(
-    (s) => s.isOptional && sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed
+    (s) => s.isOptional && sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
   ).length;
   if (optionalCompleted >= 10) earned.push('bonus-hunter');
 
@@ -110,7 +111,7 @@ export function checkAchievements(
     const allInWeek = plan.filter((s) => s.weekNumber === w);
     if (
       allInWeek.length >= 5 &&
-      allInWeek.every((s) => sessions[`${s.weekNumber}-${s.dayNumber}`]?.completed)
+      allInWeek.every((s) => sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed)
     ) {
       earned.push('perfect-week');
       break;

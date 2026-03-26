@@ -369,13 +369,17 @@ export function useTrainingData() {
     return Math.max(24, ...data.extraWeeks.map((s) => s.weekNumber));
   }, [activePlan, data.extraWeeks]);
 
-  const completedOptionalCount = combinedPlan.filter(
-    (s) => s.isOptional && data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
-  ).length;
-  const coreTotal = combinedPlan.filter((s) => !s.isOptional).length + completedOptionalCount;
-  const coreCompleted = combinedPlan.filter(
-    (s) => data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
-  ).length;
+  const { coreTotal, coreCompleted } = useMemo(() => {
+    const completedOptionalCount = combinedPlan.filter(
+      (s) => s.isOptional && data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
+    ).length;
+    return {
+      coreTotal: combinedPlan.filter((s) => !s.isOptional).length + completedOptionalCount,
+      coreCompleted: combinedPlan.filter(
+        (s) => data.sessions[sessionKey(s.weekNumber, s.dayNumber)]?.completed
+      ).length,
+    };
+  }, [data.sessions, combinedPlan]);
 
   const allCoreComplete = useMemo(() => {
     const coreSessions = combinedPlan.filter((s) => !s.isOptional);
