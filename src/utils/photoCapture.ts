@@ -177,7 +177,7 @@ export async function extractDataFromPhoto(
 /**
  * Parse the API JSON response into ExtractedData, handling edge cases.
  */
-function parseExtractedData(text: string): ExtractedData {
+export function parseExtractedData(text: string): ExtractedData {
   // Strip markdown code fences if present
   const cleaned = text.replace(/```json?\s*/g, '').replace(/```\s*/g, '').trim();
 
