@@ -223,108 +223,113 @@ export default function SessionCard({
                 </svg>
               </button>
             )}
-            <span className="text-gray-400 dark:text-[#5a6580] text-sm">
-              {expanded ? '\u25B2' : '\u25BC'}
-            </span>
+            <svg
+              className={`w-4 h-4 text-gray-400 dark:text-[#5a6580] chevron-icon${expanded ? ' chevron-rotated' : ''}`}
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
           </div>
         </div>
 
-        {expanded && (
-          <div
-            ref={contentRef}
-            className="mt-5 space-y-4 border-t border-gray-100 dark:border-white/[0.04] pt-5"
-            style={{ animation: 'slideDown 0.2s ease-out' }}
-          >
-            {/* Photo scan button */}
-            {onSetupRequired && (
-              <PhotoScanButton
-                descriptor={descriptor}
-                onDataExtracted={handlePhotoData}
-                apiKey={apiKey ?? null}
-                onSetupRequired={onSetupRequired}
-              />
-            )}
+        <div className={`card-expandable${expanded ? ' card-expanded' : ''}`}>
+          <div className="card-expandable-inner">
+            <div
+              ref={contentRef}
+              className="card-expandable-content mt-5 space-y-4 border-t border-gray-100 dark:border-white/[0.06] pt-5"
+            >
+              {/* Photo scan button */}
+              {onSetupRequired && (
+                <PhotoScanButton
+                  descriptor={descriptor}
+                  onDataExtracted={handlePhotoData}
+                  apiKey={apiKey ?? null}
+                  onSetupRequired={onSetupRequired}
+                />
+              )}
 
-            {/* Unsaved changes indicator */}
-            {hasChanges && (
-              <div className="flex items-center gap-1.5 text-[10px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider">
-                <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
-                Unsaved changes
+              {/* Unsaved changes indicator */}
+              {hasChanges && (
+                <div className="flex items-center gap-1.5 text-[10px] text-teal-600 dark:text-teal-400 font-bold uppercase tracking-wider">
+                  <span className="w-1.5 h-1.5 rounded-full bg-teal-500 animate-pulse" />
+                  Unsaved changes
+                </div>
+              )}
+
+              <PaceInput
+                label="Average Pace (per 500m)"
+                value={draft.pace}
+                onChange={(v) => setDraft((prev) => ({ ...prev, pace: v }))}
+              />
+
+              <div>
+                <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">
+                  Total Time
+                </label>
+                <input
+                  type="text"
+                  inputMode="text"
+                  placeholder="mm:ss"
+                  value={draft.totalTime}
+                  onChange={(e) => setDraft((prev) => ({ ...prev, totalTime: e.target.value }))}
+
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+                />
               </div>
-            )}
 
-            <PaceInput
-              label="Average Pace (per 500m)"
-              value={draft.pace}
-              onChange={(v) => setDraft((prev) => ({ ...prev, pace: v }))}
-            />
+              {isInterval && (
+                <IntervalInputs
+                  count={intervalCount}
+                  values={draft.intervalTimes}
+                  onChange={(v) => setDraft((prev) => ({ ...prev, intervalTimes: v }))}
+                />
+              )}
 
-            <div>
-              <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">
-                Total Time
-              </label>
-              <input
-                type="text"
-                inputMode="numeric"
-                placeholder="mm:ss"
-                value={draft.totalTime}
-                onChange={(e) => setDraft((prev) => ({ ...prev, totalTime: e.target.value }))}
-
-                className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+              <StrokeRateInput
+                value={draft.strokeRate}
+                onChange={(v) => setDraft((prev) => ({ ...prev, strokeRate: v }))}
               />
-            </div>
 
-            {isInterval && (
-              <IntervalInputs
-                count={intervalCount}
-                values={draft.intervalTimes}
-                onChange={(v) => setDraft((prev) => ({ ...prev, intervalTimes: v }))}
+              <NotesInput
+                value={draft.notes}
+                onChange={(v) => setDraft((prev) => ({ ...prev, notes: v }))}
               />
-            )}
 
-            <StrokeRateInput
-              value={draft.strokeRate}
-              onChange={(v) => setDraft((prev) => ({ ...prev, strokeRate: v }))}
-            />
+              {isInterval && (
+                <SessionTimer
+                  totalReps={intervalCount}
+                  restDurationSeconds={parseRestDuration(descriptor.label)}
+                />
+              )}
 
-            <NotesInput
-              value={draft.notes}
-              onChange={(v) => setDraft((prev) => ({ ...prev, notes: v }))}
-            />
-
-            {isInterval && (
-              <SessionTimer
-                totalReps={intervalCount}
-                restDurationSeconds={parseRestDuration(descriptor.label)}
-              />
-            )}
-
-            <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
-              <button
-                onClick={handleDiscard}
-                disabled={!hasChanges}
-                className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors touch-manipulation ${
-                  hasChanges
-                    ? 'bg-gray-100 dark:bg-[#1a2640] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#222a3d]'
-                    : 'bg-gray-50 dark:bg-[#1a2640]/50 text-gray-400 dark:text-[#404b66] cursor-not-allowed'
-                }`}
-              >
-                Discard
-              </button>
-              <button
-                onClick={handleSave}
-                disabled={!hasChanges}
-                className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all touch-manipulation ${
-                  hasChanges
-                    ? 'btn-primary-gradient shadow-[0_0_16px_rgba(0,210,255,0.2)]'
-                    : 'bg-gray-200 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] cursor-not-allowed'
-                }`}
-              >
-                Save
-              </button>
+              <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
+                <button
+                  onClick={handleDiscard}
+                  disabled={!hasChanges}
+                  className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors touch-manipulation ${
+                    hasChanges
+                      ? 'bg-gray-100 dark:bg-[#1a2640] text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-[#222a3d]'
+                      : 'bg-gray-50 dark:bg-[#1a2640]/50 text-gray-400 dark:text-[#404b66] cursor-not-allowed'
+                  }`}
+                >
+                  Discard
+                </button>
+                <button
+                  onClick={handleSave}
+                  disabled={!hasChanges}
+                  className={`flex-1 min-h-[44px] px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider transition-all touch-manipulation ${
+                    hasChanges
+                      ? 'btn-primary-gradient shadow-[0_0_16px_rgba(0,210,255,0.2)]'
+                      : 'bg-gray-200 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] cursor-not-allowed'
+                  }`}
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
-        )}
+        </div>
       </div>
 
       {showToast && (
