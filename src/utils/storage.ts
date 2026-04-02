@@ -9,6 +9,8 @@ export interface SessionRecord {
   notes: string;
   strokeRate?: number;
   completedDate?: string;
+  rpe?: number;        // 1-10, rate of perceived exertion
+  dragFactor?: number; // 1-10, machine power level setting
 }
 
 export interface PlanSnapshot {
@@ -50,6 +52,7 @@ export interface StoredData {
   plans?: TrainingPlan[];
   /** Session records for inactive plans, keyed by planId */
   planSessions?: Record<string, PlanSessionData>;
+  defaultDragFactor?: number; // 1-10, user's default power level
 }
 
 const STORAGE_KEY = 'petePlanData';

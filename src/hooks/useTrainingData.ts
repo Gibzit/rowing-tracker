@@ -209,6 +209,10 @@ export function useTrainingData() {
     }));
   }, []);
 
+  const setDefaultDragFactor = useCallback((value: number) => {
+    setData((prev) => ({ ...prev, defaultDragFactor: value }));
+  }, []);
+
   // --- Plan management ---
 
   /** Initialize the plan system by migrating existing data into a Pete Plan */
@@ -467,6 +471,7 @@ export function useTrainingData() {
     unlockAchievements,
     logRestDay,
     undoRestDay,
+    setDefaultDragFactor,
     // Plan management
     initializePlanSystem,
     switchPlan,
