@@ -73,7 +73,7 @@ export default function PhotoScanButton({
         setStatus('success');
 
         // Reset to idle after a brief success flash
-        setTimeout(() => setStatus('idle'), 1500);
+        setTimeout(() => setStatus('idle'), 2500);
       } catch (err) {
         setStatus('error');
         if (err instanceof TypeError && err.message === 'Failed to fetch') {

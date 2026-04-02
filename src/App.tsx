@@ -61,7 +61,7 @@ function TabPanel({ active, children }: { active: boolean; children: ReactNode }
     if (active && !wasActive.current && ref.current) {
       ref.current.style.animation = 'none';
       void ref.current.offsetHeight;
-      ref.current.style.animation = 'viewFadeIn 0.15s ease-out';
+      ref.current.style.animation = 'viewFadeIn 0.2s ease-out';
     }
     wasActive.current = active;
   }, [active]);

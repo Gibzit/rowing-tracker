@@ -10,7 +10,7 @@ export default function SaveToast({ message, onDone }: SaveToastProps) {
 
   useEffect(() => {
     const exitTimer = setTimeout(() => setExiting(true), 1500);
-    const removeTimer = setTimeout(onDone, 1900);
+    const removeTimer = setTimeout(onDone, 1750);
     return () => {
       clearTimeout(exitTimer);
       clearTimeout(removeTimer);
@@ -18,11 +18,11 @@ export default function SaveToast({ message, onDone }: SaveToastProps) {
   }, [onDone]);
 
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 z-[55] pointer-events-none" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
+    <div role="status" aria-live="polite" className="fixed left-1/2 -translate-x-1/2 z-[55] pointer-events-none" style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px))' }}>
       <div
         className="bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs font-bold px-4 py-2.5 rounded-lg shadow-lg flex items-center gap-2 uppercase tracking-wider"
         style={{
-          animation: exiting ? 'toastSlideOut 0.3s ease-in forwards' : 'toastSlideIn 0.3s ease-out',
+          animation: exiting ? 'toastSlideOut 0.25s ease-in forwards' : 'toastSlideIn 0.25s ease-out',
         }}
       >
         <svg className="w-3.5 h-3.5 shrink-0" viewBox="0 0 20 20" fill="currentColor">

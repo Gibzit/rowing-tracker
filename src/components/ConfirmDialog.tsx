@@ -50,7 +50,7 @@ export default function ConfirmDialog({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-      style={{ animation: 'backdropFadeIn 0.2s ease-out' }}
+      style={{ animation: 'backdropFadeIn 0.25s ease-out' }}
       onClick={onCancel}
     >
       <div
