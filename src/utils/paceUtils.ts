@@ -11,6 +11,7 @@ export interface PaceDataPoint {
   paceSeconds: number;
   category: WorkoutCategory;
   completedDate?: string;
+  rpe?: number;
 }
 
 export function paceToSeconds(pace: string): number | null {
@@ -55,6 +56,7 @@ export function extractPaceData(
       paceSeconds,
       category: categorizeWorkout(desc.label),
       completedDate: record.completedDate,
+      rpe: record.rpe,
     });
   }
 
