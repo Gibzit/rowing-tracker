@@ -1,3 +1,38 @@
+import { memo } from 'react';
+
+interface WeekCellProps {
+  week: number;
+  isComplete: boolean;
+  isCurrent: boolean;
+  isSelected: boolean;
+  onSelect: (week: number) => void;
+}
+
+const WeekCell = memo(function WeekCell({ week, isComplete, isCurrent, isSelected, onSelect }: WeekCellProps) {
+  let cellClasses = 'aspect-square rounded-lg transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
+
+  if (isSelected) {
+    cellClasses += ' text-[#060e20] ring-2 ring-[#00d2ff]/40';
+  } else if (isComplete) {
+    cellClasses += ' bg-green-500/90 dark:bg-green-500/80 text-white';
+  } else if (isCurrent) {
+    cellClasses += ' bg-teal-100 dark:bg-[#00d2ff]/10 text-teal-700 dark:text-[#00d2ff] ring-1 ring-[#00d2ff]/40';
+  } else {
+    cellClasses += ' bg-gray-100 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] hover:bg-gray-200 dark:hover:bg-[#222a3d]';
+  }
+
+  return (
+    <button
+      onClick={() => onSelect(week)}
+      className={cellClasses}
+      style={isSelected ? { background: 'linear-gradient(135deg, #a5e7ff, #00d2ff)' } : undefined}
+      aria-label={`Week ${week}${isComplete ? ', completed' : ''}${isCurrent ? ', current' : ''}${isSelected ? ', selected' : ''}`}
+    >
+      {week}
+    </button>
+  );
+});
+
 interface ProgressGridProps {
   totalWeeks: number;
   currentWeek: number;
@@ -28,35 +63,16 @@ export default function ProgressGrid({
       </div>
 
       <div className="grid grid-cols-12 gap-2">
-        {Array.from({ length: displayedWeeks }, (_, i) => i + 1).map((week) => {
-          const isComplete = isWeekComplete(week);
-          const isCurrent = week === currentWeek;
-          const isSelected = week === selectedWeek;
-
-          let cellClasses = 'aspect-square rounded-lg transition-all duration-200 cursor-pointer relative flex items-center justify-center text-[9px] font-mono font-bold';
-
-          if (isSelected) {
-            cellClasses += ' text-[#060e20] ring-2 ring-[#00d2ff]/40';
-          } else if (isComplete) {
-            cellClasses += ' bg-green-500/90 dark:bg-green-500/80 text-white';
-          } else if (isCurrent) {
-            cellClasses += ' bg-teal-100 dark:bg-[#00d2ff]/10 text-teal-700 dark:text-[#00d2ff] ring-1 ring-[#00d2ff]/40';
-          } else {
-            cellClasses += ' bg-gray-100 dark:bg-[#1a2640] text-gray-400 dark:text-[#5a6580] hover:bg-gray-200 dark:hover:bg-[#222a3d]';
-          }
-
-          return (
-            <button
-              key={week}
-              onClick={() => onSelectWeek(week)}
-              className={cellClasses}
-              style={isSelected ? { background: 'linear-gradient(135deg, #a5e7ff, #00d2ff)' } : undefined}
-              aria-label={`Week ${week}${isComplete ? ', completed' : ''}${isCurrent ? ', current' : ''}${isSelected ? ', selected' : ''}`}
-            >
-              {week}
-            </button>
-          );
-        })}
+        {Array.from({ length: displayedWeeks }, (_, i) => i + 1).map((week) => (
+          <WeekCell
+            key={week}
+            week={week}
+            isComplete={isWeekComplete(week)}
+            isCurrent={week === currentWeek}
+            isSelected={week === selectedWeek}
+            onSelect={onSelectWeek}
+          />
+        ))}
       </div>
     </div>
   );
