@@ -8,6 +8,7 @@ import ChartFilterBar from '../charts/ChartFilterBar';
 import PaceTrendChart from '../charts/PaceTrendChart';
 import StrokeRateTrendChart from '../charts/StrokeRateTrendChart';
 import EmptyState from '../EmptyState';
+import RacePredictions from '../RacePredictions';
 
 type FilterOption = 'all' | WorkoutCategory;
 
@@ -19,6 +20,7 @@ interface ChartsViewProps {
 
 export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsViewProps) {
   const [filter, setFilter] = useState<FilterOption>('all');
+  const [showRpe, setShowRpe] = useState(false);
 
   const allPaceData = useMemo(() => extractPaceData(sessions, plan), [sessions, plan]);
   const allSRData = useMemo(() => extractStrokeRateData(sessions, plan), [sessions, plan]);
@@ -147,7 +149,19 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
                   </span>
                 </div>
               )}
-              <PaceTrendChart data={filteredPace} />
+              <PaceTrendChart data={filteredPace} showRpe={showRpe} />
+              <div className="flex justify-end mt-2">
+                <button
+                  onClick={() => setShowRpe(!showRpe)}
+                  className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-lg transition-colors touch-manipulation min-h-[44px] ${
+                    showRpe
+                      ? 'bg-teal-50 dark:bg-[#00d2ff]/10 text-teal-700 dark:text-[#00d2ff]'
+                      : 'text-gray-400 dark:text-[#5a6580] hover:text-gray-600 dark:hover:text-gray-300'
+                  }`}
+                >
+                  {showRpe ? 'Hide RPE' : 'Show RPE'}
+                </button>
+              </div>
               {legend}
             </div>
           )}
@@ -209,6 +223,8 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
           )}
         </>
       )}
+
+      <RacePredictions sessions={sessions} plan={plan} />
     </div>
   );
 }
