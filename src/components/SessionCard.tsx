@@ -72,6 +72,8 @@ export default function SessionCard({
   const [showUncheckConfirm, setShowUncheckConfirm] = useState(false);
   const prevCompletedRef = useRef(record.completed);
   const contentRef = useRef<HTMLDivElement>(null);
+  const paceInputRef = useRef<HTMLInputElement>(null);
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
   const isInterval = isIntervalSession(descriptor.label);
   const intervalCount = isInterval ? getIntervalCount(descriptor.label) : 0;
 
@@ -83,6 +85,14 @@ export default function SessionCard({
     }
     prevCompletedRef.current = record.completed;
   }, [record.completed]);
+
+  // Auto-focus pace input after expand animation completes
+  useEffect(() => {
+    if (expanded) {
+      focusTimerRef.current = setTimeout(() => paceInputRef.current?.focus(), 300);
+    }
+    return () => { if (focusTimerRef.current) clearTimeout(focusTimerRef.current); };
+  }, [expanded]);
 
   // Sync draft when card expands or record changes externally (e.g. reset)
   useEffect(() => {
@@ -258,6 +268,7 @@ export default function SessionCard({
               )}
 
               <PaceInput
+                ref={paceInputRef}
                 label="Average Pace (per 500m)"
                 value={draft.pace}
                 onChange={(v) => setDraft((prev) => ({ ...prev, pace: v }))}

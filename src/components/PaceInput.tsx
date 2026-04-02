@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { validatePace } from '../utils/paceValidation';
 
 interface PaceInputProps {
@@ -7,7 +7,7 @@ interface PaceInputProps {
   onChange: (value: string) => void;
 }
 
-export default function PaceInput({ label, value, onChange }: PaceInputProps) {
+const PaceInput = forwardRef<HTMLInputElement, PaceInputProps>(function PaceInput({ label, value, onChange }, ref) {
   const [error, setError] = useState('');
   const [touched, setTouched] = useState(false);
 
@@ -38,8 +38,9 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
       <label className="block text-xs font-bold text-gray-600 dark:text-gray-400 mb-1 uppercase tracking-wider">{label}</label>
       <div className="relative">
         <input
+          ref={ref}
           type="text"
-          inputMode="decimal"
+          inputMode="text"
           placeholder="m:ss (e.g., 2:15)"
           value={value}
           onChange={(e) => handleChange(e.target.value)}
@@ -71,4 +72,6 @@ export default function PaceInput({ label, value, onChange }: PaceInputProps) {
       )}
     </div>
   );
-}
+});
+
+export default PaceInput;
