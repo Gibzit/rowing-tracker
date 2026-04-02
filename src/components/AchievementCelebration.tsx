@@ -23,7 +23,7 @@ export default function AchievementCelebration({ achievement, onDone }: Achievem
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm cursor-pointer" onClick={onDone}>
       <div
-        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 shadow-2xl text-center animate-[pbPop_0.4s_ease-out]"
+        className="bg-white dark:bg-[#1a2640] rounded-2xl p-6 shadow-2xl text-center animate-[pbPop_0.4s_ease-out]"
         style={{ maxWidth: 280, boxShadow: '0 0 40px rgba(250,189,0,0.15)' }}
       >
         <div className="flex justify-center mb-2">

@@ -72,7 +72,7 @@ export default function PlanManagerModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-white/[0.04]">
+        <div className="p-5 border-b border-white/[0.06]">
           <div className="flex items-center justify-between">
             <h2 className="font-display text-lg font-extrabold text-[#dae2fd]">
               Training Plans
@@ -155,11 +155,11 @@ export default function PlanManagerModal({
         </div>
 
         {/* New plan section */}
-        <div className="p-5 border-t border-white/[0.04] space-y-3">
+        <div className="p-5 border-t border-white/[0.06] space-y-3">
           {!showNewMenu ? (
             <button
               onClick={() => setShowNewMenu(true)}
-              className="w-full min-h-[44px] py-3 text-xs font-bold uppercase tracking-wider rounded-xl border border-dashed border-white/[0.08] text-[#5a6580] hover:text-[#00d2ff] hover:border-[#00d2ff]/20 transition-colors touch-manipulation"
+              className="w-full min-h-[44px] py-3 text-xs font-bold uppercase tracking-wider rounded-xl border border-dashed border-white/[0.06] text-[#5a6580] hover:text-[#00d2ff] hover:border-[#00d2ff]/20 transition-colors touch-manipulation"
             >
               + New Plan
             </button>
@@ -192,7 +192,7 @@ export default function PlanManagerModal({
                     value={blankName}
                     onChange={(e) => setBlankName(e.target.value)}
                     placeholder="Plan name"
-                    className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
+                    className="w-full px-3 py-2 border border-white/[0.06] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                     autoFocus
                   />
                   <div>
@@ -205,7 +205,7 @@ export default function PlanManagerModal({
                       max="52"
                       value={blankWeeks}
                       onChange={(e) => setBlankWeeks(e.target.value)}
-                      className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
+                      className="w-full px-3 py-2 border border-white/[0.06] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                     />
                   </div>
                   <div className="flex gap-2">

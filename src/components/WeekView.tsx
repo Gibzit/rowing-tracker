@@ -45,7 +45,7 @@ export default function WeekView({
         <h2 className="font-display text-4xl font-extrabold italic text-gray-800 dark:text-[#dae2fd]">
           W{weekNumber}
         </h2>
-        <div className="flex-1 h-px bg-gray-200/50 dark:bg-white/[0.04]" />
+        <div className="flex-1 h-px bg-gray-200/50 dark:bg-white/[0.06]" />
         {onEditPlan && (
           <button
             onClick={onEditPlan}

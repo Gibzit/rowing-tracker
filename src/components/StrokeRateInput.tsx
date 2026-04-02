@@ -42,7 +42,7 @@ export default function StrokeRateInput({ value, onChange }: StrokeRateInputProp
           className={`w-full px-3 py-2 pr-9 border rounded-lg text-base min-h-[44px] dark:bg-[#0f1b33] dark:text-[#dae2fd] focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors ${
             error
               ? 'border-red-400 dark:border-red-500 bg-red-50 dark:bg-red-900/20'
-              : 'border-gray-200 dark:border-white/[0.08]'
+              : 'border-gray-200 dark:border-white/[0.06]'
           }`}
         />
         {value !== undefined && !error && (

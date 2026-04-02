@@ -145,7 +145,7 @@ export default function PhotoScanButton({
         /* No API key — single setup button */
         <button
           onClick={onSetupRequired}
-          className="flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-gray-300 dark:border-white/[0.08] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a2640] transition-colors touch-manipulation"
+          className="flex items-center justify-center gap-2 w-full min-h-[44px] px-4 py-2.5 rounded-lg border-2 border-dashed border-gray-300 dark:border-white/[0.06] text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-[#1a2640] transition-colors touch-manipulation"
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
             <path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z" />

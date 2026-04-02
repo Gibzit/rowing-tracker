@@ -255,7 +255,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
       {/* Calendar grid */}
       <div className="bg-white dark:bg-[#0f1b33] rounded-2xl overflow-hidden">
         {/* Weekday headers */}
-        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-white/[0.04]">
+        <div className="grid grid-cols-7 border-b border-gray-100 dark:border-white/[0.06]">
           {WEEKDAY_LABELS.map((label) => (
             <div
               key={label}

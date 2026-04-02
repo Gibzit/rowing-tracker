@@ -159,7 +159,7 @@ export default function StrokeRateTrendChart({ data }: StrokeRateTrendChartProps
       {/* Tooltip */}
       {tooltip && data[tooltip.index] && (
         <div
-          className="absolute bg-[#1a2640] dark:bg-[#222a3d] text-[#dae2fd] text-xs rounded-xl px-3 py-2 pointer-events-none shadow-xl z-10 border border-white/[0.06]"
+          className="absolute bg-[#1a2640] dark:bg-[#1a2640] text-[#dae2fd] text-xs rounded-xl px-3 py-2 pointer-events-none shadow-xl z-10 border border-white/[0.06]"
           style={{
             left: `${(tooltip.x / CHART_WIDTH) * 100}%`,
             top: `${(tooltip.y / CHART_HEIGHT) * 100 - 16}%`,

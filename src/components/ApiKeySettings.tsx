@@ -54,7 +54,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
         role="dialog"
         aria-modal="true"
         aria-label="Photo Scan Setup"
-        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/[0.06]"
+        className="bg-white dark:bg-[#1a2640] rounded-2xl p-6 max-w-sm w-full shadow-2xl ring-1 ring-white/[0.06]"
         style={{ animation: 'dialogPopIn 0.25s ease-out' }}
         onClick={(e) => e.stopPropagation()}
       >
@@ -86,7 +86,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
             }}
             placeholder="sk-ant-..."
             autoComplete="off"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-[#00d2ff]/30 focus:border-[#00d2ff]/40 outline-none transition-colors"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-[#00d2ff]/30 focus:border-[#00d2ff]/40 outline-none transition-colors"
           />
         </div>
 
@@ -131,7 +131,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
           <button
             ref={cancelRef}
             onClick={onClose}
-            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-white/[0.08] rounded-lg text-gray-700 dark:text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-[#1a2640] transition-colors touch-manipulation"
+            className="flex-1 min-h-[44px] px-4 py-2 border border-gray-300 dark:border-white/[0.06] rounded-lg text-gray-700 dark:text-gray-300 text-xs font-bold uppercase tracking-wider hover:bg-gray-50 dark:hover:bg-[#222a3d] transition-colors touch-manipulation"
           >
             Cancel
           </button>

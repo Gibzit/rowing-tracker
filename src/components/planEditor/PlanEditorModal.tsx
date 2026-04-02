@@ -156,7 +156,7 @@ export default function PlanEditorModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-5 border-b border-white/[0.04] shrink-0">
+        <div className="p-5 border-b border-white/[0.06] shrink-0">
           <div className="flex items-center justify-between mb-1">
             {editingName ? (
               <input
@@ -264,7 +264,7 @@ export default function PlanEditorModal({
                 </button>
 
                 {isExpanded && (
-                  <div className="px-4 pb-3 border-t border-white/[0.04]">
+                  <div className="px-4 pb-3 border-t border-white/[0.06]">
                     {weekSessions.map((s) => (
                       <PlanSessionRow
                         key={`${s.weekNumber}-${s.dayNumber}`}
@@ -289,14 +289,14 @@ export default function PlanEditorModal({
                           value={newLabel}
                           onChange={(e) => setNewLabel(e.target.value)}
                           placeholder="e.g. 6000m, 4 x 1000m / 3min rest"
-                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
+                          className="w-full px-3 py-2 border border-white/[0.06] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                           autoFocus
                         />
                         <textarea
                           value={newDescription}
                           onChange={(e) => setNewDescription(e.target.value)}
                           placeholder="Description (optional)"
-                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] resize-y focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
+                          className="w-full px-3 py-2 border border-white/[0.06] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] resize-y focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                         />
                         <div className="flex gap-2">
                           <button
@@ -338,7 +338,7 @@ export default function PlanEditorModal({
         </div>
 
         {/* Footer */}
-        <div className="p-5 border-t border-white/[0.04] shrink-0">
+        <div className="p-5 border-t border-white/[0.06] shrink-0">
           <div className="flex gap-3">
             <button
               onClick={onClose}

@@ -153,7 +153,7 @@ export default function SessionCard({
   const cardBg = record.completed
     ? 'bg-green-50 dark:bg-green-950/20'
     : 'bg-white dark:bg-[#0f1b33]';
-  const optionalBorder = descriptor.isOptional ? ' border border-dashed border-gray-200/50 dark:border-white/[0.04]' : '';
+  const optionalBorder = descriptor.isOptional ? ' border border-dashed border-gray-200/50 dark:border-white/[0.06]' : '';
 
   return (
     <>
@@ -285,7 +285,7 @@ export default function SessionCard({
                   value={draft.totalTime}
                   onChange={(e) => setDraft((prev) => ({ ...prev, totalTime: e.target.value }))}
 
-                  className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
+                  className="w-full px-3 py-2 border border-gray-200 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
                 />
               </div>
 
@@ -314,7 +314,7 @@ export default function SessionCard({
                 />
               )}
 
-              <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
+              <div className="flex gap-3 pt-3 border-t border-gray-100 dark:border-white/[0.06]">
                 <button
                   onClick={handleDiscard}
                   disabled={!hasChanges}

@@ -56,7 +56,7 @@ export default function ChartsView({ sessions, plan, onGoToTraining }: ChartsVie
   }, [filteredSR]);
 
   const legend = (
-    <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-[#5a6580] mt-4 pt-4 border-t border-gray-100 dark:border-white/[0.04]">
+    <div className="flex gap-4 text-[10px] font-bold uppercase tracking-wider text-gray-500 dark:text-[#5a6580] mt-4 pt-4 border-t border-gray-100 dark:border-white/[0.06]">
       <span className="flex items-center gap-1.5">
         <span className="w-2.5 h-2.5 rounded-full bg-[#B8941F] inline-block" /> Distance
       </span>

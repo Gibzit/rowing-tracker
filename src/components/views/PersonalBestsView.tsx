@@ -153,7 +153,7 @@ export default function PersonalBestsView({ sessions, plan, onGoToTraining }: Pe
                 )}
 
                 {/* Details row */}
-                <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100 dark:border-white/[0.04]">
+                <div className="flex items-center gap-3 mt-3 pt-3 border-t border-gray-100 dark:border-white/[0.06]">
                   {pb.completedDate && (
                     <div className="flex items-center gap-1.5">
                       <svg className="w-3 h-3 text-gray-400 dark:text-[#5a6580] shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

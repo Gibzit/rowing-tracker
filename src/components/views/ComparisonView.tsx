@@ -49,7 +49,7 @@ export default function ComparisonView({ sessions, plan, onGoToTraining }: Compa
         aria-label="Select workout type to compare"
         value={activeGroup?.label || ''}
         onChange={(e) => setSelected(e.target.value)}
-        className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-sm font-mono min-h-[44px] mb-4"
+        className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-sm font-mono min-h-[44px] mb-4"
       >
         {groups.map((g) => (
           <option key={g.label} value={g.label}>

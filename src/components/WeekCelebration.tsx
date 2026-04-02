@@ -50,7 +50,7 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
       ))}
 
       <div
-        className="bg-white dark:bg-[#0f1b33] rounded-2xl p-6 shadow-2xl text-center pointer-events-auto"
+        className="bg-white dark:bg-[#1a2640] rounded-2xl p-6 shadow-2xl text-center pointer-events-auto"
         style={{ animation: 'weekCelebrate 0.4s ease-out', boxShadow: '0 0 40px rgba(0,210,255,0.1)' }}
       >
         <div className="w-12 h-12 rounded-full bg-green-100 dark:bg-green-500/10 flex items-center justify-center mx-auto mb-3">
