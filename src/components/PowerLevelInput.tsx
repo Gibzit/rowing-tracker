@@ -9,10 +9,15 @@ interface PowerLevelInputProps {
 export default function PowerLevelInput({ value, onChange, isDefault }: PowerLevelInputProps) {
   const handleSelect = useCallback(
     (level: number) => {
-      // Tapping the already-selected value deselects it
-      onChange(value === level ? undefined : level);
+      // Tapping the pre-filled default confirms it (keeps value, clears default styling)
+      // Tapping an already user-selected value deselects it
+      if (value === level && isDefault) {
+        onChange(level); // Re-set same value to confirm (clears isDefault upstream)
+      } else {
+        onChange(value === level ? undefined : level);
+      }
     },
-    [value, onChange]
+    [value, onChange, isDefault]
   );
 
   return (

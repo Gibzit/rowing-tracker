@@ -376,6 +376,8 @@ function App() {
 
         {showDfPrompt !== null && (
           <div
+            role="status"
+            aria-live="polite"
             className="fixed left-4 right-4 z-50"
             style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px) + 3.5rem)', animation: 'toastSlideIn 0.25s ease-out' }}
           >

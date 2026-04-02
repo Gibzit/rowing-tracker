@@ -46,12 +46,19 @@ export default function RpePrompt({ onSelect, onDismiss }: RpePromptProps) {
     if (exiting) onDismiss();
   }, [exiting, onDismiss]);
 
+  const selectTimerRef = useRef<ReturnType<typeof setTimeout>>();
+
+  // Clean up select timer on unmount
+  useEffect(() => {
+    return () => { if (selectTimerRef.current) clearTimeout(selectTimerRef.current); };
+  }, []);
+
   const handleSelect = useCallback(
     (rpe: number) => {
       setSelected(rpe);
       if (timerRef.current) clearTimeout(timerRef.current);
       // Brief highlight, then save and exit
-      setTimeout(() => {
+      selectTimerRef.current = setTimeout(() => {
         onSelect(rpe);
       }, 200);
     },
@@ -61,6 +68,8 @@ export default function RpePrompt({ onSelect, onDismiss }: RpePromptProps) {
   return (
     <div
       ref={containerRef}
+      role="status"
+      aria-live="polite"
       className="mx-5 mb-4 p-4 rounded-2xl bg-white dark:bg-[#0f1b33] border border-gray-100 dark:border-white/[0.06]"
       style={{
         animation: exiting

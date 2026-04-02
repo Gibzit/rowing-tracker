@@ -17,9 +17,10 @@ function formatTime(totalSeconds: number): string {
 }
 
 function formatPace(paceSeconds: number): string {
-  const minutes = Math.floor(paceSeconds / 60);
-  const secs = Math.floor(paceSeconds % 60);
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  const rounded = Math.round(paceSeconds * 10) / 10;
+  const minutes = Math.floor(rounded / 60);
+  const secs = rounded % 60;
+  return `${minutes}:${secs.toFixed(1).padStart(4, '0')}`;
 }
 
 function PredictionCard({ label, prediction }: { label: string; prediction: RacePrediction | null }) {
