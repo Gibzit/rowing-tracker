@@ -12,6 +12,8 @@ import SaveToast from './SaveToast';
 import ConfirmDialog from './ConfirmDialog';
 import PhotoScanButton from './PhotoScanButton';
 import type { ExtractedData } from '../utils/photoCapture';
+import PowerLevelInput from './PowerLevelInput';
+import RpePrompt from './RpePrompt';
 
 
 interface DraftState {
@@ -20,9 +22,10 @@ interface DraftState {
   intervalTimes: string[];
   strokeRate?: number;
   notes: string;
+  dragFactor?: number;
 }
 
-function makeDraft(record: SessionRecord, intervalCount: number): DraftState {
+function makeDraft(record: SessionRecord, intervalCount: number, defaultDragFactor?: number): DraftState {
   return {
     pace: record.pace,
     totalTime: record.totalTime,
@@ -31,14 +34,18 @@ function makeDraft(record: SessionRecord, intervalCount: number): DraftState {
       : Array.from({ length: intervalCount }, (_, i) => record.intervalTimes[i] || ''),
     strokeRate: record.strokeRate,
     notes: record.notes,
+    dragFactor: record.dragFactor ?? defaultDragFactor,
   };
 }
 
-function isDraftChanged(draft: DraftState, record: SessionRecord): boolean {
+function isDraftChanged(draft: DraftState, record: SessionRecord, defaultDragFactor?: number): boolean {
   if (draft.pace !== record.pace) return true;
   if (draft.totalTime !== record.totalTime) return true;
   if (draft.notes !== record.notes) return true;
   if (draft.strokeRate !== record.strokeRate) return true;
+  // dragFactor: pre-filled default doesn't count as a change
+  if (record.dragFactor !== undefined && draft.dragFactor !== record.dragFactor) return true;
+  if (record.dragFactor === undefined && draft.dragFactor !== undefined && draft.dragFactor !== defaultDragFactor) return true;
   if (draft.intervalTimes.length !== record.intervalTimes.length) return true;
   for (let i = 0; i < draft.intervalTimes.length; i++) {
     if (draft.intervalTimes[i] !== record.intervalTimes[i]) return true;
@@ -55,6 +62,7 @@ interface SessionCardProps {
   onDelete?: () => void;
   apiKey?: string | null;
   onSetupRequired?: () => void;
+  defaultDragFactor?: number;
 }
 
 export default function SessionCard({
@@ -66,14 +74,16 @@ export default function SessionCard({
   onDelete,
   apiKey,
   onSetupRequired,
+  defaultDragFactor,
 }: SessionCardProps) {
   const isInterval = isIntervalSession(descriptor.label);
   const intervalCount = isInterval ? getIntervalCount(descriptor.label) : 0;
   const [expanded, setExpanded] = useState(false);
-  const [draft, setDraft] = useState<DraftState>(() => makeDraft(record, intervalCount));
+  const [draft, setDraft] = useState<DraftState>(() => makeDraft(record, intervalCount, defaultDragFactor));
   const [justCompleted, setJustCompleted] = useState(false);
   const [showToast, setShowToast] = useState<string | null>(null);
   const [showUncheckConfirm, setShowUncheckConfirm] = useState(false);
+  const [showRpePrompt, setShowRpePrompt] = useState(false);
   const prevCompletedRef = useRef(record.completed);
   const contentRef = useRef<HTMLDivElement>(null);
   const paceInputRef = useRef<HTMLInputElement>(null);
@@ -99,11 +109,11 @@ export default function SessionCard({
   // Sync draft when card expands or record changes externally (e.g. reset)
   useEffect(() => {
     if (expanded) {
-      setDraft(makeDraft(record, intervalCount));
+      setDraft(makeDraft(record, intervalCount, defaultDragFactor));
     }
   }, [expanded]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const hasChanges = expanded && isDraftChanged(draft, record);
+  const hasChanges = expanded && isDraftChanged(draft, record, defaultDragFactor);
 
   const handleSave = useCallback(() => {
     const savedPace = draft.pace;
@@ -112,6 +122,7 @@ export default function SessionCard({
       totalTime: draft.totalTime,
       intervalTimes: draft.intervalTimes,
       strokeRate: draft.strokeRate,
+      dragFactor: draft.dragFactor,
       notes: draft.notes,
     });
     // Auto-mark as completed when saving data
@@ -119,14 +130,17 @@ export default function SessionCard({
       onToggleComplete();
     }
     setExpanded(false);
+    if (!record.rpe) {
+      setShowRpePrompt(true);
+    }
     // Show save confirmation toast
     const toastMsg = savedPace ? `Saved: ${savedPace}/500m` : 'Session saved & completed';
     setShowToast(toastMsg);
-  }, [draft, onUpdate, record.completed, onToggleComplete]);
+  }, [draft, onUpdate, record.completed, record.rpe, onToggleComplete]);
 
   const handleDiscard = useCallback(() => {
-    setDraft(makeDraft(record, intervalCount));
-  }, [record, intervalCount]);
+    setDraft(makeDraft(record, intervalCount, defaultDragFactor));
+  }, [record, intervalCount, defaultDragFactor]);
 
   const handleToggleComplete = useCallback(() => {
     if (record.completed) {
@@ -193,7 +207,7 @@ export default function SessionCard({
               )}
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">{descriptor.description}</p>
-            {!expanded && (record.pace || record.strokeRate) && (
+            {!expanded && (record.pace || record.strokeRate || record.rpe || record.dragFactor) && (
               <div className="flex gap-2 mt-2 flex-wrap">
                 {record.pace && (
                   <span className="text-[10px] font-mono font-bold bg-teal-50 dark:bg-[#00d2ff]/10 text-teal-700 dark:text-[#00d2ff] px-2.5 py-1 rounded-lg">
@@ -203,6 +217,22 @@ export default function SessionCard({
                 {record.strokeRate && (
                   <span className="text-[10px] font-mono font-bold bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-300 px-2.5 py-1 rounded-lg">
                     {record.strokeRate} spm
+                  </span>
+                )}
+                {record.rpe && (
+                  <span className={`text-[10px] font-mono font-bold px-2.5 py-1 rounded-lg ${
+                    record.rpe <= 3
+                      ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400'
+                      : record.rpe <= 6
+                        ? 'bg-amber-100 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400'
+                        : 'bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400'
+                  }`}>
+                    RPE {record.rpe}
+                  </span>
+                )}
+                {record.dragFactor && (
+                  <span className="text-[10px] font-mono font-bold bg-gray-100 dark:bg-[#1a2640] text-gray-600 dark:text-gray-400 px-2.5 py-1 rounded-lg">
+                    PWR {record.dragFactor}
                   </span>
                 )}
               </div>
@@ -306,6 +336,12 @@ export default function SessionCard({
                 onChange={(v) => setDraft((prev) => ({ ...prev, strokeRate: v }))}
               />
 
+              <PowerLevelInput
+                value={draft.dragFactor}
+                onChange={(v) => setDraft((prev) => ({ ...prev, dragFactor: v }))}
+                isDefault={record.dragFactor === undefined && draft.dragFactor === defaultDragFactor}
+              />
+
               <NotesInput
                 value={draft.notes}
                 onChange={(v) => setDraft((prev) => ({ ...prev, notes: v }))}
@@ -349,6 +385,16 @@ export default function SessionCard({
 
       {showToast && (
         <SaveToast message={showToast} onDone={() => setShowToast(null)} />
+      )}
+
+      {showRpePrompt && (
+        <RpePrompt
+          onSelect={(rpe) => {
+            onUpdate({ rpe });
+            setShowRpePrompt(false);
+          }}
+          onDismiss={() => setShowRpePrompt(false)}
+        />
       )}
 
       {showUncheckConfirm && (

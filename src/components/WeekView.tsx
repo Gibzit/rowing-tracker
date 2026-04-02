@@ -18,6 +18,7 @@ interface WeekViewProps {
   apiKey?: string | null;
   onSetupRequired?: () => void;
   onEditPlan?: () => void;
+  defaultDragFactor?: number;
 }
 
 export default function WeekView({
@@ -33,6 +34,7 @@ export default function WeekView({
   apiKey,
   onSetupRequired,
   onEditPlan,
+  defaultDragFactor,
 }: WeekViewProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -74,6 +76,7 @@ export default function WeekView({
           }
           apiKey={apiKey}
           onSetupRequired={onSetupRequired}
+          defaultDragFactor={defaultDragFactor}
         />
       ))}
 
@@ -101,6 +104,7 @@ export default function WeekView({
                   }
                   apiKey={apiKey}
                   onSetupRequired={onSetupRequired}
+                  defaultDragFactor={defaultDragFactor}
                 />
               ))}
               <button
