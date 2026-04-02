@@ -25,6 +25,10 @@ defaultDragFactor?: number; // 1-10, integer. User's default power level.
 
 Lives in `StoredData` (not a separate localStorage key) so it's included in data export/import backups. No storage version bump needed — new fields are optional and backwards-compatible.
 
+### Hook Changes
+
+Add `setDefaultDragFactor(value: number) => void` to `useTrainingData` that patches `StoredData.defaultDragFactor` and persists. Expose `data.defaultDragFactor` and `setDefaultDragFactor` from the hook. Pass both down through `App -> WeekView -> SessionCard` as new props.
+
 ---
 
 ## 2. RPE Input — Post-Save Prompt
@@ -40,7 +44,7 @@ Lives in `StoredData` (not a separate localStorage key) so it's included in data
 
 ### The 1-10 Scale
 
-- Horizontal row of 10 tappable circles, each 44px minimum (touch target compliance)
+- Horizontal row of 10 tappable circles. Visible circle diameter ~28-32px, but each has a 44px minimum touch target achieved via padding/negative margins (10 × 32px = 320px fits comfortably on a 375px viewport; the 44px touch areas overlap slightly which is acceptable for adjacent targets)
 - Color gradient: **green** (1-3), **amber** (4-6), **red** (7-10)
 - End labels only: "Easy" on left, "Max" on right
 - Tapping highlights the selected number with a brief scale animation, then the prompt dismisses
@@ -58,11 +62,12 @@ Once saved, RPE shows as a small badge on the collapsed card alongside existing 
 
 ### Implementation Notes
 
-- The RPE prompt is a new component rendered by SessionCard, positioned below the card in the DOM
-- It appears only after a successful save (triggered by `handleSave`)
-- Uses `slideDown` / `slideUp` keyframe animations (already exist in App.css)
+- The RPE prompt is a new component rendered by SessionCard, positioned below the card's main `<div>` in the fragment (same level as SaveToast and ConfirmDialog)
+- `SessionCard` tracks a `showRpePrompt: boolean` state. `handleSave` sets it to `true` after `setExpanded(false)`. It resets to `false` when the prompt saves, dismisses, or auto-dismisses
+- The prompt appears only after a successful save — not on re-renders or when `record.rpe` already exists
+- Animation: `animation: slideDown 0.25s ease-out` on mount. On dismiss, apply `animation: slideUp 0.2s ease-in forwards` (the `forwards` keeps it at opacity 0), then remove from DOM after animation ends via `onAnimationEnd`
 - The prompt receives the session's week/day key and calls `onUpdate({ rpe: value })` directly
-- Auto-dismiss uses a `setTimeout` with cleanup on unmount
+- Auto-dismiss uses a `setTimeout(8000)` with cleanup on unmount
 
 ---
 
@@ -80,15 +85,9 @@ Once saved, RPE shows as a small badge on the collapsed card alongside existing 
 ### Default Setting
 
 - When the user saves a session with a power level for the first time and no `defaultDragFactor` exists, a toast-like prompt appears: **"Use [N] as your default power level?"** with **Yes / No** buttons
-- Tapping Yes sets `defaultDragFactor` in StoredData
+- Tapping Yes sets `defaultDragFactor` in StoredData via `setDefaultDragFactor`
 - This is a one-time setup flow that happens naturally during use
-- The default can later be changed by saving a session with a different power level — the prompt reappears if the value differs from the current default (but only once per new value, tracked via a session flag to avoid nagging)
-
-Actually, to keep it simpler: the default-setting prompt only appears on the very first save with a power level when no default exists. After that, the user just overrides per session without being prompted. If they want to change the default, they can long-press the Power Level label to edit it (with a hint on first use).
-
-Simplification: skip the long-press. The default only gets set once via the first-save prompt. If the user wants to change it, they can clear their current default through a small "Reset default" option in the data management section at the bottom of the Session tab. This avoids hidden gestures.
-
-**Final approach:** First-save prompt only. No subsequent prompts. No long-press. No reset UI. If the user wants a different default, they can just always override it per session — the pre-fill is a convenience, not a constraint. The simplest approach is the right one.
+- First-save prompt only — no subsequent prompts, no long-press, no reset UI. If the user wants a different power level on a session, they override it per session. The pre-fill is a convenience, not a constraint
 
 ### Collapsed Card Badge
 
@@ -99,6 +98,12 @@ Simplification: skip the long-press. The default only gets set once via the firs
 ### DraftState Change
 
 Add `dragFactor?: number` to the `DraftState` interface in SessionCard. The `makeDraft` function populates it from `record.dragFactor ?? defaultDragFactor ?? undefined`.
+
+**Important: `isDraftChanged` guard.** The pre-filled default must not trigger "Unsaved changes." Update `isDraftChanged` so that `dragFactor` is only considered changed when `record.dragFactor !== undefined` — i.e., if the record has no saved drag factor, a pre-filled default does not count as a user change. The comparison: `if (record.dragFactor !== undefined && draft.dragFactor !== record.dragFactor) return true;` and `if (record.dragFactor === undefined && draft.dragFactor !== undefined && draft.dragFactor !== defaultDragFactor) return true;`. This ensures that only deliberate user changes (tapping a different circle) trigger the unsaved indicator.
+
+### Default Setting Detection
+
+In `App.tsx`'s `handleUpdateSession`, after calling `updateSession`, check: if `partial.dragFactor !== undefined && !data.defaultDragFactor` → show the default-setting prompt. This mirrors the existing PB detection pattern in `handleUpdateSession`.
 
 ---
 
@@ -120,10 +125,13 @@ Given a known performance at one distance, this predicts the time at another dis
 
 ### Data Source
 
-Uses the same best-pace-per-category data that `PersonalBestsView` already computes. For each completed session with pace data:
+For each completed session with pace data:
 1. Determine the session's distance (parse from label: "5000m" -> 5000, "6 x 500m" -> 3000, "20min" -> estimate from pace and time)
-2. Apply Paul's Law to predict 2k and 5k times
-3. Use the prediction from the session that yields the fastest predicted time (this is the user's best indicator)
+2. Determine the session's total time: use `record.totalTime` directly (parsed to seconds). For interval sessions this is critical — `record.pace` is the average split pace, but Paul's Law needs actual elapsed time over the total distance. If `record.totalTime` is absent, fall back to `paceSeconds * (distance / 500)` as an approximation.
+3. Apply Paul's Law to predict 2k and 5k times
+4. Use the prediction from the session that yields the fastest predicted time (this is the user's best indicator)
+
+Note: this requires `pacePredictor.ts` to read from `SessionRecord` directly (not from the `PersonalBest` type, which only stores `paceSeconds` without `totalTime`).
 
 ### Distance Parsing
 
@@ -150,8 +158,7 @@ Two cards side by side:
 **Empty state:** "Complete a session with pace data to see race predictions" — with the same icon + message pattern used in PBs and Compare empty states.
 
 **Edge cases:**
-- If the source session IS a 2k, the 2k prediction is just the actual time (labeled "Actual" instead of "Predicted")
-- If the source session IS a 5k, same treatment for the 5k card
+- If the source session's parsed distance equals exactly 2000m, the 2k card shows the actual time (labeled "Actual" instead of "Predicted"). Label parsing: "2000m" -> 2000, "4 x 500m" -> 2000. Same logic applies for 5000m and the 5k card.
 - If only one session exists, both predictions come from it
 - Predictions update automatically when new sessions are logged
 
@@ -179,9 +186,9 @@ When enabled:
 ### Implementation
 
 - The toggle state is local to ChartsView (no persistence needed)
-- PaceTrendChart receives an optional `showRpe: boolean` prop and the RPE data
-- The RPE data is extracted alongside pace data in `extractPaceData()` — add `rpe` to the returned data points
-- Rendering: a second pass over data points that have RPE, drawing colored circles on top
+- Add `rpe?: number` to the `PaceDataPoint` interface in `src/utils/paceUtils.ts`. `extractPaceData()` populates it from `SessionRecord.rpe`
+- `PaceTrendChart` receives a single new prop: `showRpe: boolean`. No separate RPE array — RPE lives on each `PaceDataPoint` already
+- Rendering: when `showRpe` is true, a second SVG pass over data points that have `rpe` draws colored circles on top
 
 ---
 
@@ -203,7 +210,7 @@ When enabled:
 | `src/utils/storage.ts` | Add `rpe`, `dragFactor` to SessionRecord; `defaultDragFactor` to StoredData |
 | `src/components/SessionCard.tsx` | Add PowerLevelInput to expanded form, RpePrompt after save, dragFactor in DraftState, badges for RPE and PWR |
 | `src/components/views/ChartsView.tsx` | Add RacePredictions section, RPE toggle, pass RPE data to chart |
-| `src/components/PaceTrendChart.tsx` | Accept `showRpe` prop, render RPE dot overlay, include RPE in tooltip |
+| `src/components/charts/PaceTrendChart.tsx` | Accept `showRpe` prop, render RPE dot overlay, include RPE in tooltip |
 | `src/components/WeekView.tsx` | Pass `defaultDragFactor` through to SessionCard |
 | `src/App.tsx` | Pass `defaultDragFactor` and setter to WeekView, handle default-setting prompt |
 
