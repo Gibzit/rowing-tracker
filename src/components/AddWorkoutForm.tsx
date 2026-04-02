@@ -48,7 +48,7 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
               value={label}
               onChange={(e) => setLabel(e.target.value)}
               placeholder="e.g. 6000m, 4 x 1000m"
-              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
               autoFocus
             />
           </div>
@@ -61,7 +61,7 @@ export default function AddWorkoutForm({ onSave, onCancel }: AddWorkoutFormProps
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Optional notes about the workout..."
-              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[80px] resize-y focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.08] dark:bg-[#1a2640] dark:text-[#dae2fd] rounded-lg text-base min-h-[80px] resize-y focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
             />
           </div>
         </div>

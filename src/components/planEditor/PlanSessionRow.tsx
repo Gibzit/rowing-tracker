@@ -51,7 +51,7 @@ export default function PlanSessionRow({
             type="text"
             value={label}
             onChange={(e) => setLabel(e.target.value)}
-            className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+            className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
             autoFocus
           />
         </div>
@@ -62,7 +62,7 @@ export default function PlanSessionRow({
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[60px] resize-y focus:ring-2 focus:ring-[#00d2ff]/20 focus:border-[#00d2ff]/40 outline-none transition-colors"
+            className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[60px] resize-y focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
           />
         </div>
         <div className="flex gap-2">
