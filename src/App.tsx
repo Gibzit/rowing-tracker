@@ -104,6 +104,7 @@ function App() {
     createPlan,
     deletePlan,
     duplicatePlan,
+    setDefaultDragFactor,
   } = useTrainingData();
 
   const { theme, cycleTheme } = useDarkMode();
@@ -117,6 +118,7 @@ function App() {
   const [pbCelebration, setPbCelebration] = useState<{ label: string; pace: string } | null>(null);
   const [celebration, setCelebration] = useState<number | null>(null);
   const [achievementQueue, setAchievementQueue] = useState<AchievementDef[]>([]);
+  const [showDfPrompt, setShowDfPrompt] = useState<number | null>(null);
 
   // Track week completion to trigger celebration
   const weekComplete = isWeekComplete(selectedWeek);
@@ -220,8 +222,12 @@ function App() {
         }
       }
       updateSession(week, day, partial);
+      // First-save default drag factor prompt
+      if (partial.dragFactor !== undefined && !data.defaultDragFactor) {
+        setShowDfPrompt(partial.dragFactor);
+      }
     },
-    [updateSession, currentPBs, combinedPlan]
+    [updateSession, currentPBs, combinedPlan, data.defaultDragFactor]
   );
 
   const handleGoToTraining = useCallback(() => {
@@ -289,6 +295,7 @@ function App() {
             apiKey={apiKey}
             onSetupRequired={() => setShowApiSettings(true)}
             onEditPlan={handleEditPlan}
+            defaultDragFactor={data.defaultDragFactor}
           />
           {all24Complete && (
             <GenerateWeekBanner
@@ -365,6 +372,34 @@ function App() {
             achievement={achievementQueue[0]}
             onDone={handleAchievementDone}
           />
+        )}
+
+        {showDfPrompt !== null && (
+          <div
+            className="fixed left-4 right-4 z-50"
+            style={{ bottom: 'calc(6rem + env(safe-area-inset-bottom, 0px) + 3.5rem)', animation: 'toastSlideIn 0.25s ease-out' }}
+          >
+            <div className="max-w-md mx-auto bg-white dark:bg-[#1a2640] rounded-2xl p-4 shadow-lg border border-gray-200 dark:border-white/[0.06] flex items-center gap-3">
+              <p className="flex-1 text-sm text-gray-700 dark:text-gray-200">
+                Use <strong>{showDfPrompt}</strong> as your default power level?
+              </p>
+              <button
+                onClick={() => {
+                  setDefaultDragFactor(showDfPrompt!);
+                  setShowDfPrompt(null);
+                }}
+                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider btn-primary-gradient min-h-[44px] touch-manipulation"
+              >
+                Yes
+              </button>
+              <button
+                onClick={() => setShowDfPrompt(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 dark:bg-[#0f1b33] text-gray-600 dark:text-gray-400 min-h-[44px] touch-manipulation"
+              >
+                No
+              </button>
+            </div>
+          </div>
         )}
 
         {!data.onboardingComplete && <Onboarding onComplete={completeOnboarding} />}
