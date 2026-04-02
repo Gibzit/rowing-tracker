@@ -24,6 +24,10 @@ import ErrorBoundary from './components/ErrorBoundary';
 import GenerateWeekBanner from './components/GenerateWeekBanner';
 import ProgressGrid from './components/ProgressGrid';
 import ApiKeySettings from './components/ApiKeySettings';
+import ChartsSkeleton from './components/skeletons/ChartsSkeleton';
+import PBsSkeleton from './components/skeletons/PBsSkeleton';
+import CalendarSkeleton from './components/skeletons/CalendarSkeleton';
+import CompareSkeleton from './components/skeletons/CompareSkeleton';
 import { useApiKey } from './hooks/useApiKey';
 
 /** Hook to track which views have been visited (for lazy mounting). */
@@ -47,14 +51,6 @@ const CalendarView = lazy(() => import('./components/views/CalendarView'));
 const ComparisonView = lazy(() => import('./components/views/ComparisonView'));
 const PlanEditorModal = lazy(() => import('./components/planEditor/PlanEditorModal'));
 const PlanManagerModal = lazy(() => import('./components/planEditor/PlanManagerModal'));
-
-function ViewLoader() {
-  return (
-    <div className="flex items-center justify-center py-16">
-      <div className="w-6 h-6 border-2 border-[#00d2ff] border-t-transparent rounded-full animate-spin" />
-    </div>
-  );
-}
 
 /** Tab panel that stays in the DOM once mounted, hidden via display:none when inactive. */
 function TabPanel({ active, children }: { active: boolean; children: ReactNode }) {
@@ -305,7 +301,7 @@ function App() {
         </TabPanel>
 
         {visitedViews.has('charts') && (
-          <Suspense fallback={<ViewLoader />}>
+          <Suspense fallback={<ChartsSkeleton />}>
             <TabPanel active={activeView === 'charts'}>
               <ErrorBoundary>
                 <ChartsView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
@@ -315,7 +311,7 @@ function App() {
         )}
 
         {visitedViews.has('pbs') && (
-          <Suspense fallback={<ViewLoader />}>
+          <Suspense fallback={<PBsSkeleton />}>
             <TabPanel active={activeView === 'pbs'}>
               <ErrorBoundary>
                 <PersonalBestsView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
@@ -325,7 +321,7 @@ function App() {
         )}
 
         {visitedViews.has('calendar') && (
-          <Suspense fallback={<ViewLoader />}>
+          <Suspense fallback={<CalendarSkeleton />}>
             <TabPanel active={activeView === 'calendar'}>
               <ErrorBoundary>
                 <CalendarView sessions={data.sessions} restDays={restDays} plan={combinedPlan} />
@@ -335,7 +331,7 @@ function App() {
         )}
 
         {visitedViews.has('compare') && (
-          <Suspense fallback={<ViewLoader />}>
+          <Suspense fallback={<CompareSkeleton />}>
             <TabPanel active={activeView === 'compare'}>
               <ErrorBoundary>
                 <ComparisonView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
