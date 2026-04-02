@@ -4,6 +4,13 @@ import { secondsToPace } from '../../utils/paceUtils';
 
 interface PaceTrendChartProps {
   data: PaceDataPoint[];
+  showRpe?: boolean;
+}
+
+function rpeOverlayColor(rpe: number): string {
+  if (rpe <= 3) return '#34c06a'; // green
+  if (rpe <= 6) return '#fabd00'; // amber
+  return '#ef4444';               // red
 }
 
 const CATEGORY_COLORS: Record<string, { stroke: string; fill: string }> = {
@@ -16,7 +23,7 @@ const PADDING = { top: 20, right: 20, bottom: 30, left: 50 };
 const CHART_WIDTH = 340;
 const CHART_HEIGHT = 220;
 
-export default function PaceTrendChart({ data }: PaceTrendChartProps) {
+export default function PaceTrendChart({ data, showRpe = false }: PaceTrendChartProps) {
   const [tooltip, setTooltip] = useState<{ index: number; x: number; y: number } | null>(null);
 
   if (data.length === 0) return null;
@@ -141,6 +148,25 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
           );
         })}
 
+        {/* RPE dot overlay */}
+        {showRpe && data.map((point, i) => {
+          if (!point.rpe) return null;
+          const x = xScale(i);
+          const y = yScale(point.paceSeconds);
+          return (
+            <circle
+              key={`rpe-${i}`}
+              cx={x}
+              cy={y}
+              r={6}
+              fill={rpeOverlayColor(point.rpe)}
+              opacity={0.85}
+              stroke="white"
+              strokeWidth={1.5}
+            />
+          );
+        })}
+
         {/* Touch targets (invisible larger circles) */}
         {data.map((d, i) => (
           <circle
@@ -171,6 +197,9 @@ export default function PaceTrendChart({ data }: PaceTrendChartProps) {
           <div className="text-[#5a6580] text-[10px] mt-0.5">
             W{data[tooltip.index].weekNumber} D{data[tooltip.index].dayNumber}
           </div>
+          {data[tooltip.index]?.rpe && (
+            <span className="text-[10px] font-mono">RPE {data[tooltip.index].rpe}</span>
+          )}
         </div>
       )}
     </div>
