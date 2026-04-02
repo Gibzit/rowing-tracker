@@ -180,25 +180,28 @@ function App() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    const alreadyUnlocked = new Set((data.achievements || []).map((a) => a.id));
-    const newlyEarned = earnedAchievements.filter(
-      (id) => !alreadyUnlocked.has(id) && !achievementReportedRef.current.has(id)
-    );
+    const timer = setTimeout(() => {
+      const alreadyUnlocked = new Set((data.achievements || []).map((a) => a.id));
+      const newlyEarned = earnedAchievements.filter(
+        (id) => !alreadyUnlocked.has(id) && !achievementReportedRef.current.has(id)
+      );
 
-    if (newlyEarned.length > 0) {
-      newlyEarned.forEach((id) => achievementReportedRef.current.add(id));
+      if (newlyEarned.length > 0) {
+        newlyEarned.forEach((id) => achievementReportedRef.current.add(id));
 
-      // Persist the new achievements
-      const newUnlocks: UnlockedAchievement[] = newlyEarned.map((id) => ({
-        id,
-        unlockedDate: new Date().toISOString().split('T')[0],
-      }));
-      unlockAchievements(newUnlocks);
+        // Persist the new achievements
+        const newUnlocks: UnlockedAchievement[] = newlyEarned.map((id) => ({
+          id,
+          unlockedDate: new Date().toISOString().split('T')[0],
+        }));
+        unlockAchievements(newUnlocks);
 
-      // Queue celebrations
-      const defs = newlyEarned.map((id) => getAchievementDef(id));
-      setAchievementQueue((prev) => [...prev, ...defs]);
-    }
+        // Queue celebrations
+        const defs = newlyEarned.map((id) => getAchievementDef(id));
+        setAchievementQueue((prev) => [...prev, ...defs]);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }, [earnedAchievements, data.achievements, unlockAchievements]);
 
   const handleAchievementDone = useCallback(() => {

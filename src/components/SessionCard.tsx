@@ -67,8 +67,10 @@ export default function SessionCard({
   apiKey,
   onSetupRequired,
 }: SessionCardProps) {
+  const isInterval = isIntervalSession(descriptor.label);
+  const intervalCount = isInterval ? getIntervalCount(descriptor.label) : 0;
   const [expanded, setExpanded] = useState(false);
-  const [draft, setDraft] = useState<DraftState>(() => makeDraft(record));
+  const [draft, setDraft] = useState<DraftState>(() => makeDraft(record, intervalCount));
   const [justCompleted, setJustCompleted] = useState(false);
   const [showToast, setShowToast] = useState<string | null>(null);
   const [showUncheckConfirm, setShowUncheckConfirm] = useState(false);
@@ -76,8 +78,6 @@ export default function SessionCard({
   const contentRef = useRef<HTMLDivElement>(null);
   const paceInputRef = useRef<HTMLInputElement>(null);
   const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const isInterval = isIntervalSession(descriptor.label);
-  const intervalCount = isInterval ? getIntervalCount(descriptor.label) : 0;
 
   useEffect(() => {
     if (record.completed && !prevCompletedRef.current) {
@@ -99,7 +99,7 @@ export default function SessionCard({
   // Sync draft when card expands or record changes externally (e.g. reset)
   useEffect(() => {
     if (expanded) {
-      setDraft(makeDraft(record));
+      setDraft(makeDraft(record, intervalCount));
     }
   }, [expanded]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -125,8 +125,8 @@ export default function SessionCard({
   }, [draft, onUpdate, record.completed, onToggleComplete]);
 
   const handleDiscard = useCallback(() => {
-    setDraft(makeDraft(record));
-  }, [record]);
+    setDraft(makeDraft(record, intervalCount));
+  }, [record, intervalCount]);
 
   const handleToggleComplete = useCallback(() => {
     if (record.completed) {
