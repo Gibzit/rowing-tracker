@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface WeekCelebrationProps {
   weekNumber: number;
@@ -8,6 +8,10 @@ interface WeekCelebrationProps {
 const confettiColors = ['#00d2ff', '#a5e7ff', '#fabd00', '#34c06a', '#5b6baa', '#007ea0'];
 
 export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationProps) {
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { overlayRef.current?.focus(); }, []);
+
   useEffect(() => {
     const timer = setTimeout(onDone, 2500);
     return () => clearTimeout(timer);
@@ -15,8 +19,13 @@ export default function WeekCelebration({ weekNumber, onDone }: WeekCelebrationP
 
   return (
     <div
+      ref={overlayRef}
       className="fixed inset-0 z-50 flex items-center justify-center cursor-pointer"
       onClick={onDone}
+      onKeyDown={(e) => { if (e.key === 'Escape' || e.key === 'Enter') onDone(); }}
+      tabIndex={0}
+      role="alertdialog"
+      aria-label="Celebration"
     >
       {confettiColors.map((color, i) => (
         <span

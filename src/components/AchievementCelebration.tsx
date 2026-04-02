@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { AchievementDef } from '../utils/achievements';
 import AchievementIcon from './AchievementIcon';
 
@@ -9,6 +9,9 @@ interface AchievementCelebrationProps {
 
 export default function AchievementCelebration({ achievement, onDone }: AchievementCelebrationProps) {
   const [visible, setVisible] = useState(true);
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => { overlayRef.current?.focus(); }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -21,7 +24,15 @@ export default function AchievementCelebration({ achievement, onDone }: Achievem
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm cursor-pointer" onClick={onDone}>
+    <div
+      ref={overlayRef}
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm cursor-pointer"
+      onClick={onDone}
+      onKeyDown={(e) => { if (e.key === 'Escape' || e.key === 'Enter') onDone(); }}
+      tabIndex={0}
+      role="alertdialog"
+      aria-label="Celebration"
+    >
       <div
         className="bg-white dark:bg-[#1a2640] rounded-2xl p-6 shadow-2xl text-center animate-[pbPop_0.4s_ease-out]"
         style={{ maxWidth: 280, boxShadow: '0 0 40px rgba(250,189,0,0.15)' }}

@@ -22,11 +22,13 @@ interface DraftState {
   notes: string;
 }
 
-function makeDraft(record: SessionRecord): DraftState {
+function makeDraft(record: SessionRecord, intervalCount: number): DraftState {
   return {
     pace: record.pace,
     totalTime: record.totalTime,
-    intervalTimes: [...record.intervalTimes],
+    intervalTimes: record.intervalTimes.length === intervalCount
+      ? record.intervalTimes
+      : Array.from({ length: intervalCount }, (_, i) => record.intervalTimes[i] || ''),
     strokeRate: record.strokeRate,
     notes: record.notes,
   };
@@ -164,6 +166,8 @@ export default function SessionCard({
         <div
           className="flex items-start gap-3 cursor-pointer touch-manipulation"
           onClick={() => setExpanded(!expanded)}
+          role="button"
+          aria-expanded={expanded}
         >
           <CheckCircle checked={record.completed} onChange={handleToggleComplete} />
 
