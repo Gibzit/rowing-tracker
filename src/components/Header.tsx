@@ -42,7 +42,7 @@ export default function Header({ coreCompleted, coreTotal, theme, onToggleTheme,
           {onManagePlans && (
             <button
               onClick={onManagePlans}
-              className="min-w-[36px] min-h-[36px] flex items-center justify-center text-gray-400 dark:text-[#5a6580] hover:text-[#00d2ff] dark:hover:text-[#00d2ff] transition-colors touch-manipulation"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-gray-400 dark:text-[#5a6580] hover:text-[#00d2ff] dark:hover:text-[#00d2ff] transition-colors touch-manipulation"
               title={activePlanName ? `Plan: ${activePlanName}` : 'Manage plans'}
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

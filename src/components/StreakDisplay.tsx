@@ -90,14 +90,14 @@ export default function StreakDisplay({
         {todayIsRestDay ? (
           <button
             onClick={onUndoRestDay}
-            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 px-2 py-1.5 min-h-[32px] rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100 dark:bg-indigo-900/30 hover:bg-indigo-200 dark:hover:bg-indigo-900/50 px-2 py-1.5 min-h-[44px] rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
           >
             Resting
           </button>
         ) : canLogRestDay ? (
           <button
             onClick={onLogRestDay}
-            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100/60 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-900/40 px-2 py-1.5 min-h-[32px] rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
+            className="text-[10px] font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-100/60 dark:bg-indigo-900/20 hover:bg-indigo-200 dark:hover:bg-indigo-900/40 px-2 py-1.5 min-h-[44px] rounded-full transition-colors active:scale-95 touch-manipulation uppercase tracking-wider"
           >
             +Rest
           </button>

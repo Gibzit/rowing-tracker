@@ -68,13 +68,13 @@ export default function PlanSessionRow({
         <div className="flex gap-2">
           <button
             onClick={handleCancel}
-            className="flex-1 min-h-[36px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#0f1b33] text-gray-400 hover:text-gray-300 transition-colors touch-manipulation"
+            className="flex-1 min-h-[44px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#0f1b33] text-gray-400 hover:text-gray-300 transition-colors touch-manipulation"
           >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="flex-1 min-h-[36px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] hover:bg-[#00d2ff]/20 transition-colors touch-manipulation"
+            className="flex-1 min-h-[44px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] hover:bg-[#00d2ff]/20 transition-colors touch-manipulation"
           >
             Save
           </button>

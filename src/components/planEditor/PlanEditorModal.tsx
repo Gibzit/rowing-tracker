@@ -184,7 +184,7 @@ export default function PlanEditorModal({
             <button
               onClick={onClose}
               aria-label="Close plan editor"
-              className="min-w-[36px] min-h-[36px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
+              className="min-w-[36px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -289,26 +289,26 @@ export default function PlanEditorModal({
                           value={newLabel}
                           onChange={(e) => setNewLabel(e.target.value)}
                           placeholder="e.g. 6000m, 4 x 1000m / 3min rest"
-                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/20 outline-none"
+                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                           autoFocus
                         />
                         <textarea
                           value={newDescription}
                           onChange={(e) => setNewDescription(e.target.value)}
                           placeholder="Description (optional)"
-                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] resize-y focus:ring-2 focus:ring-[#00d2ff]/20 outline-none"
+                          className="w-full px-3 py-2 border border-white/[0.08] bg-[#0f1b33] text-[#dae2fd] rounded-lg text-sm min-h-[44px] resize-y focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                         />
                         <div className="flex gap-2">
                           <button
                             onClick={() => { setAddingToWeek(null); setNewLabel(''); setNewDescription(''); }}
-                            className="flex-1 min-h-[36px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#0f1b33] text-gray-400 touch-manipulation"
+                            className="flex-1 min-h-[44px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#0f1b33] text-gray-400 touch-manipulation"
                           >
                             Cancel
                           </button>
                           <button
                             onClick={() => handleAddSession(week)}
                             disabled={!newLabel.trim()}
-                            className="flex-1 min-h-[36px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] disabled:opacity-40 touch-manipulation"
+                            className="flex-1 min-h-[44px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] disabled:opacity-40 touch-manipulation"
                           >
                             Add
                           </button>

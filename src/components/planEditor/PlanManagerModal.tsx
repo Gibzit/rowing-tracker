@@ -80,7 +80,7 @@ export default function PlanManagerModal({
             <button
               onClick={onClose}
               aria-label="Close plan manager"
-              className="min-w-[36px] min-h-[36px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
+              className="min-w-[36px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -129,21 +129,21 @@ export default function PlanManagerModal({
                   {!isActive && (
                     <button
                       onClick={() => onSwitchPlan(plan.id)}
-                      className="min-h-[36px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] hover:bg-[#00d2ff]/20 transition-colors touch-manipulation"
+                      className="min-h-[44px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] hover:bg-[#00d2ff]/20 transition-colors touch-manipulation"
                     >
                       Switch to
                     </button>
                   )}
                   <button
                     onClick={() => onDuplicatePlan(plan.id, `${plan.name} (copy)`)}
-                    className="min-h-[36px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#1a2640] text-gray-300 hover:bg-[#222a3d] transition-colors touch-manipulation"
+                    className="min-h-[44px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#1a2640] text-gray-300 hover:bg-[#222a3d] transition-colors touch-manipulation"
                   >
                     Duplicate
                   </button>
                   {plans.length > 1 && (
                     <button
                       onClick={() => setDeleteConfirm(plan.id)}
-                      className="min-h-[36px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-red-900/20 text-red-400 hover:bg-red-900/30 transition-colors touch-manipulation"
+                      className="min-h-[44px] px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg bg-red-900/20 text-red-400 hover:bg-red-900/30 transition-colors touch-manipulation"
                     >
                       Delete
                     </button>
@@ -192,7 +192,7 @@ export default function PlanManagerModal({
                     value={blankName}
                     onChange={(e) => setBlankName(e.target.value)}
                     placeholder="Plan name"
-                    className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/20 outline-none"
+                    className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                     autoFocus
                   />
                   <div>
@@ -205,19 +205,19 @@ export default function PlanManagerModal({
                       max="52"
                       value={blankWeeks}
                       onChange={(e) => setBlankWeeks(e.target.value)}
-                      className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/20 outline-none"
+                      className="w-full px-3 py-2 border border-white/[0.08] bg-[#1a2640] text-[#dae2fd] rounded-lg text-sm min-h-[44px] font-mono focus:ring-2 focus:ring-[#00d2ff]/40 outline-none"
                     />
                   </div>
                   <div className="flex gap-2">
                     <button
                       onClick={() => { setShowBlankForm(false); setBlankName(''); setBlankWeeks('12'); }}
-                      className="flex-1 min-h-[36px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#1a2640] text-gray-400 touch-manipulation"
+                      className="flex-1 min-h-[44px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#1a2640] text-gray-400 touch-manipulation"
                     >
                       Cancel
                     </button>
                     <button
                       onClick={handleCreateBlank}
-                      className="flex-1 min-h-[36px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] touch-manipulation"
+                      className="flex-1 min-h-[44px] text-[10px] font-bold uppercase tracking-wider rounded-lg bg-[#00d2ff]/10 text-[#00d2ff] touch-manipulation"
                     >
                       Create
                     </button>
