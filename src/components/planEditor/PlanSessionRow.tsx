@@ -112,7 +112,7 @@ export default function PlanSessionRow({
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 [@media(hover:none)]:opacity-100 transition-opacity shrink-0">
         <button
           onClick={() => onEdit({ isOptional: !session.isOptional })}
-          className="min-w-[28px] min-h-[28px] flex items-center justify-center text-[#5a6580] hover:text-[#00d2ff] transition-colors touch-manipulation"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#00d2ff] transition-colors touch-manipulation"
           title={session.isOptional ? 'Make required' : 'Make optional'}
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -125,7 +125,7 @@ export default function PlanSessionRow({
         </button>
         <button
           onClick={() => setEditing(true)}
-          className="min-w-[28px] min-h-[28px] flex items-center justify-center text-[#5a6580] hover:text-[#00d2ff] transition-colors touch-manipulation"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#00d2ff] transition-colors touch-manipulation"
           title="Edit session"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -135,7 +135,7 @@ export default function PlanSessionRow({
         </button>
         <button
           onClick={onDelete}
-          className="min-w-[28px] min-h-[28px] flex items-center justify-center text-[#5a6580] hover:text-red-400 transition-colors touch-manipulation"
+          className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-red-400 transition-colors touch-manipulation"
           title="Delete session"
         >
           <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

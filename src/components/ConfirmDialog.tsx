@@ -75,7 +75,7 @@ export default function ConfirmDialog({
               value={typedText}
               onChange={(e) => setTypedText(e.target.value)}
               placeholder={requireTypedConfirmation}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono tracking-wider focus:ring-2 focus:ring-[#00d2ff]/30 focus:border-[#00d2ff]/40 outline-none transition-colors"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono tracking-wider focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
             />
           </div>
         )}

@@ -60,7 +60,7 @@ export default function PlanManagerModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-      style={{ animation: 'backdropFadeIn 0.2s ease-out' }}
+      style={{ animation: 'backdropFadeIn 0.25s ease-out' }}
       onClick={onClose}
     >
       <div
@@ -80,7 +80,7 @@ export default function PlanManagerModal({
             <button
               onClick={onClose}
               aria-label="Close plan manager"
-              className="min-w-[36px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
+              className="min-w-[44px] min-h-[44px] flex items-center justify-center text-[#5a6580] hover:text-[#dae2fd] transition-colors touch-manipulation"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />

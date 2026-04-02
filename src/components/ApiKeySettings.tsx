@@ -47,7 +47,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
-      style={{ animation: 'backdropFadeIn 0.2s ease-out' }}
+      style={{ animation: 'backdropFadeIn 0.25s ease-out' }}
       onClick={onClose}
     >
       <div
@@ -86,7 +86,7 @@ export default function ApiKeySettings({ currentKey, onSave, onClear, onClose }:
             }}
             placeholder="sk-ant-..."
             autoComplete="off"
-            className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-[#00d2ff]/30 focus:border-[#00d2ff]/40 outline-none transition-colors"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-white/[0.06] dark:bg-[#0f1b33] dark:text-[#dae2fd] rounded-lg text-base min-h-[44px] font-mono text-sm focus:ring-2 focus:ring-[#00d2ff]/40 focus:border-[#00d2ff]/40 outline-none transition-colors"
           />
         </div>
 

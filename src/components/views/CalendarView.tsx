@@ -361,7 +361,7 @@ export default function CalendarView({ sessions, restDays, plan }: CalendarViewP
             </h3>
             <button
               onClick={() => setSelectedDay(null)}
-              className="text-gray-400 dark:text-[#5a6580] hover:text-gray-600 dark:hover:text-gray-300 min-w-[28px] min-h-[28px] flex items-center justify-center touch-manipulation"
+              className="text-gray-400 dark:text-[#5a6580] hover:text-gray-600 dark:hover:text-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
               aria-label="Close details"
             >
               <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
