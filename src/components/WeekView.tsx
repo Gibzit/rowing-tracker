@@ -19,6 +19,8 @@ interface WeekViewProps {
   onSetupRequired?: () => void;
   onEditPlan?: () => void;
   defaultDragFactor?: number;
+  compareSlots?: [string | null, string | null];
+  onTogglePin?: (key: string) => void;
 }
 
 export default function WeekView({
@@ -35,6 +37,8 @@ export default function WeekView({
   onSetupRequired,
   onEditPlan,
   defaultDragFactor,
+  compareSlots,
+  onTogglePin,
 }: WeekViewProps) {
   const [showAddForm, setShowAddForm] = useState(false);
 
@@ -77,6 +81,8 @@ export default function WeekView({
           apiKey={apiKey}
           onSetupRequired={onSetupRequired}
           defaultDragFactor={defaultDragFactor}
+          isPinned={compareSlots?.includes(`${session.weekNumber}-${session.dayNumber}`) ?? false}
+          onTogglePin={onTogglePin ? () => onTogglePin(`${session.weekNumber}-${session.dayNumber}`) : undefined}
         />
       ))}
 
@@ -105,6 +111,8 @@ export default function WeekView({
                   apiKey={apiKey}
                   onSetupRequired={onSetupRequired}
                   defaultDragFactor={defaultDragFactor}
+                  isPinned={compareSlots?.includes(`${session.weekNumber}-${session.dayNumber}`) ?? false}
+                  onTogglePin={onTogglePin ? () => onTogglePin(`${session.weekNumber}-${session.dayNumber}`) : undefined}
                 />
               ))}
               <button
