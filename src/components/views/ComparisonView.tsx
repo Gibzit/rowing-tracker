@@ -14,10 +14,7 @@ interface ComparisonViewProps {
 }
 
 function formatMeters(value: number): string {
-  if (value >= 1000) {
-    return `${(value / 1000).toLocaleString('en', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}k`;
-  }
-  return `${value}m`;
+  return `${value.toLocaleString('en')}m`;
 }
 
 function formatMinutes(value: number): string {
