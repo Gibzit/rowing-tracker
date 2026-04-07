@@ -158,8 +158,7 @@ Create `src/utils/volumeCalc.ts`:
 ```typescript
 import type { SessionRecord } from './storage';
 import type { SessionDescriptor } from '../data/trainingPlan';
-import { parseDistance } from './pacePredictor';
-import { parseTime } from './pacePredictor';
+import { parseDistance, parseTime } from './pacePredictor';
 import { paceToSeconds } from './paceUtils';
 
 export interface WeekVolume {
@@ -385,8 +384,7 @@ git commit -m "feat: add VolumeChart component with CSS horizontal bars"
 ```typescript
 import type { SessionRecord } from '../../utils/storage';
 import type { SessionDescriptor } from '../../data/trainingPlan';
-import { parseDistance } from '../../utils/pacePredictor';
-import { parseTime } from '../../utils/pacePredictor';
+import { parseDistance, parseTime } from '../../utils/pacePredictor';
 import { paceToSeconds } from '../../utils/paceUtils';
 
 interface SessionComparisonProps {
@@ -411,7 +409,7 @@ function deriveDistance(desc: SessionDescriptor, record: SessionRecord): number 
 }
 
 function formatDistance(meters: number): string {
-  return meters >= 1000 ? `${(meters / 1000).toLocaleString('en', { maximumFractionDigits: 1 })}k` : `${meters}m`;
+  return `${meters.toLocaleString('en')}m`;
 }
 
 type HighlightRule = 'lower' | 'higher' | 'none';
@@ -655,7 +653,7 @@ export default function ComparisonView({
   }, [compareSlots, sessions, plan]);
 
   return (
-    <div>
+    <div className="px-5 py-6">
       <h2 className="font-display text-2xl font-bold text-gray-800 dark:text-[#dae2fd] mb-1">
         Training Volume
       </h2>
@@ -875,13 +873,13 @@ const handleTogglePin = useCallback(
       // Fill empty slot
       if (prev[0] === null) return [key, prev[1]];
       if (prev[1] === null) {
-        // Second pin filled — auto-navigate to compare
+        // Second pin filled — auto-navigate to compare (1→2 transition only)
         setTimeout(() => setActiveView('compare'), 0);
         return [prev[0], key];
       }
 
-      // Both full — replace oldest (slot 0)
-      setTimeout(() => setActiveView('compare'), 0);
+      // Both full — replace oldest (slot 0). No auto-navigate:
+      // user is likely already on Compare tab or browsing intentionally.
       return [key, prev[1]];
     });
   },
@@ -893,7 +891,7 @@ const handleClearCompare = useCallback(() => {
 }, []);
 ```
 
-Note: `setTimeout` wraps `setActiveView` to avoid batching issues when updating two state values in the same event handler.
+Note: `setTimeout` wraps `setActiveView` to avoid batching issues when updating two state values in the same event handler. The `visitedViews` guard in `App.tsx` uses a `useEffect` that runs after render, so the first render after `setActiveView('compare')` may briefly show nothing before `visitedViews` includes `'compare'`. On the next render cycle the `CompareSkeleton` Suspense fallback will appear, then the lazy-loaded `ComparisonView` mounts. This produces at most a single-frame flash — acceptable and imperceptible in practice.
 
 - [ ] **Step 2: Pass `compareSlots` and `onTogglePin` to `WeekView`**
 
