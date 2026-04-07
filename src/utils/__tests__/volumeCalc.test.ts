@@ -94,6 +94,15 @@ describe('computeWeeklyVolume', () => {
     expect(result[1].weekNumber).toBe(3);
   });
 
+  it('includes custom sessions (dayNumber >= 100) in volume', () => {
+    const plan = [makeDesc(1, 100, 'Custom workout')];
+    const sessions = { '1-100': makeRecord({ completed: true, pace: '2:00', totalTime: '20:00' }) };
+    const result = computeWeeklyVolume(sessions, plan);
+    expect(result).toHaveLength(1);
+    expect(result[0].totalMinutes).toBeCloseTo(20);
+    expect(result[0].totalMeters).toBe(5000);
+  });
+
   it('handles 3-digit minute totalTime (e.g., 120:00)', () => {
     const plan = [makeDesc(1, 1, '5000m')];
     const sessions = { '1-1': makeRecord({ completed: true, pace: '2:00', totalTime: '120:00' }) };

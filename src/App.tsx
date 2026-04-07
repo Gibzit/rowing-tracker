@@ -245,7 +245,8 @@ function App() {
         // Fill empty slot
         if (prev[0] === null) return [key, prev[1]];
         if (prev[1] === null) {
-          // Second pin filled — auto-navigate to compare (1→2 transition only)
+          // Second pin filled — auto-navigate to compare (1→2 transition only).
+          // Defer setActiveView — cannot call it inside a state updater (side effect).
           setTimeout(() => setActiveView('compare'), 0);
           return [prev[0], key];
         }

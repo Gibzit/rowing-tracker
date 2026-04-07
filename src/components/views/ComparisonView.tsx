@@ -14,7 +14,7 @@ interface ComparisonViewProps {
 }
 
 function formatMeters(value: number): string {
-  return `${value.toLocaleString('en')}m`;
+  return `${value.toLocaleString('en-US')}m`;
 }
 
 function formatMinutes(value: number): string {

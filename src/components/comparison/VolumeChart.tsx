@@ -26,7 +26,7 @@ export default function VolumeChart({ data, color, currentWeek, formatValue, lab
       <div className="flex flex-col gap-1.5">
         {data.map((d) => {
           const isCurrent = d.weekNumber === currentWeek;
-          const widthPercent = Math.max((d.value / maxValue) * 100, 2);
+          const widthPercent = Math.max(((d.value || 0) / maxValue) * 100, 2);
           return (
             <div key={d.weekNumber} className="flex items-center gap-2 h-7">
               <span

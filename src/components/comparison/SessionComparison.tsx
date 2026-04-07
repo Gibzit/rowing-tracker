@@ -25,7 +25,7 @@ function deriveDistance(desc: SessionDescriptor, record: SessionRecord): number 
 }
 
 function formatDistance(meters: number): string {
-  return `${meters.toLocaleString('en')}m`;
+  return `${meters.toLocaleString('en-US')}m`;
 }
 
 type HighlightRule = 'lower' | 'higher' | 'none';
