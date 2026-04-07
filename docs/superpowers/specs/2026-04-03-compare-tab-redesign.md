@@ -93,6 +93,8 @@ const [compareSlots, setCompareSlots] = useState<[string | null, string | null]>
 
 Values are session keys (e.g., `"3-1"` for week 3, day 1). Navigating between tabs preserves the pin state. Only clearing or unmounting the app resets it.
 
+`handleClearCompare` sets `compareSlots` to `[null, null]` and does **not** change `activeView` — the user stays on whatever tab they're on.
+
 ### Floating Indicator
 
 When exactly one session is pinned, a small bar appears above the bottom navigation:
@@ -102,7 +104,7 @@ When exactly one session is pinned, a small bar appears above the bottom navigat
 ```
 
 - Positioned with `fixed left-4 right-4 z-50` and `bottom: calc(5rem + env(safe-area-inset-bottom, 0px))` — sitting directly above the bottom nav, matching the default power level prompt pattern
-- If a `SaveToast` is also visible simultaneously, the floating indicator renders below it (lower z-index or stacked via bottom offset). In practice this is rare since SaveToast appears on the Session tab during save, and the floating indicator also shows on the Session tab — but both can coexist without overlapping.
+- `SaveToast` coexistence: both are fixed-position toasts on the Session tab. The floating indicator uses `z-40` (below `SaveToast`'s `z-50`), so if both are visible simultaneously, `SaveToast` renders on top. In practice this is a rare, transient overlap (SaveToast auto-dismisses after a few seconds). The vertical offset difference between their `bottom` values provides some natural separation.
 - Dismissing via ✕ unpins the session (resets to 0 pins)
 - Uses `role="status"` and `aria-live="polite"` for accessibility
 - If the user navigates back to the Session tab with 1 pin remaining (e.g., after clearing one from Compare), the floating indicator reappears
@@ -238,6 +240,8 @@ This function:
 4. Aggregates per week
 5. Returns only weeks that have at least one completed session
 6. Sorts by week number ascending
+
+Custom sessions (dayNumber >= 100) are included in the volume calculation. Their user-entered labels typically will not match `parseDistance` patterns, so they fall through to the pace×time distance estimation, or contribute 0 meters if no pace/time is recorded. They still contribute their `totalTime` to the time chart when available.
 
 ## 7. Design Tokens
 
