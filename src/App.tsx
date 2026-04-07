@@ -119,6 +119,7 @@ function App() {
   const [celebration, setCelebration] = useState<number | null>(null);
   const [achievementQueue, setAchievementQueue] = useState<AchievementDef[]>([]);
   const [showDfPrompt, setShowDfPrompt] = useState<number | null>(null);
+  const [compareSlots, setCompareSlots] = useState<[string | null, string | null]>([null, null]);
 
   // Track week completion to trigger celebration
   const weekComplete = isWeekComplete(selectedWeek);
@@ -234,6 +235,32 @@ function App() {
     setActiveView('training');
   }, []);
 
+  const handleTogglePin = useCallback(
+    (key: string) => {
+      setCompareSlots((prev) => {
+        // If already pinned, unpin it (always takes priority)
+        if (prev[0] === key) return [prev[1], null];
+        if (prev[1] === key) return [prev[0], null];
+
+        // Fill empty slot
+        if (prev[0] === null) return [key, prev[1]];
+        if (prev[1] === null) {
+          // Second pin filled — auto-navigate to compare (1→2 transition only)
+          setTimeout(() => setActiveView('compare'), 0);
+          return [prev[0], key];
+        }
+
+        // Both full — replace oldest (slot 0). No auto-navigate.
+        return [key, prev[1]];
+      });
+    },
+    []
+  );
+
+  const handleClearCompare = useCallback(() => {
+    setCompareSlots([null, null]);
+  }, []);
+
   const handleManagePlans = useCallback(() => {
     // Initialize the plan system on first use
     if (!data.plans || data.plans.length === 0) {
@@ -296,6 +323,8 @@ function App() {
             onSetupRequired={() => setShowApiSettings(true)}
             onEditPlan={handleEditPlan}
             defaultDragFactor={data.defaultDragFactor}
+            compareSlots={compareSlots}
+            onTogglePin={handleTogglePin}
           />
           {all24Complete && (
             <GenerateWeekBanner
@@ -344,7 +373,13 @@ function App() {
           <Suspense fallback={<CompareSkeleton />}>
             <TabPanel active={activeView === 'compare'}>
               <ErrorBoundary>
-                <ComparisonView sessions={data.sessions} plan={combinedPlan} onGoToTraining={handleGoToTraining} />
+                <ComparisonView
+                  sessions={data.sessions}
+                  plan={combinedPlan}
+                  compareSlots={compareSlots}
+                  onClearCompare={handleClearCompare}
+                  currentWeek={currentWeek}
+                />
               </ErrorBoundary>
             </TabPanel>
           </Suspense>
@@ -399,6 +434,28 @@ function App() {
                 className="px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider bg-gray-100 dark:bg-[#0f1b33] text-gray-600 dark:text-gray-400 min-h-[44px] touch-manipulation"
               >
                 No
+              </button>
+            </div>
+          </div>
+        )}
+
+        {compareSlots[0] !== null && compareSlots[1] === null && (
+          <div
+            role="status"
+            aria-live="polite"
+            className="fixed left-4 right-4 z-40"
+            style={{ bottom: 'calc(5rem + env(safe-area-inset-bottom, 0px))' }}
+          >
+            <div className="max-w-md mx-auto bg-white dark:bg-[#1a2640] rounded-2xl px-4 py-3 shadow-lg border border-gray-200 dark:border-white/[0.06] flex items-center justify-between">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                1 selected — tap another to compare
+              </p>
+              <button
+                onClick={() => setCompareSlots([null, null])}
+                className="text-gray-400 dark:text-[#5a6580] hover:text-gray-600 dark:hover:text-gray-300 min-w-[44px] min-h-[44px] flex items-center justify-center touch-manipulation"
+                aria-label="Cancel comparison"
+              >
+                ✕
               </button>
             </div>
           </div>
