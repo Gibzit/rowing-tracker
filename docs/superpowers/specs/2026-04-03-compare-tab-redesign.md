@@ -15,10 +15,12 @@ Both live in the Compare tab. Volume charts are always visible. The session comp
 
 Two horizontal bar charts stacked vertically in the top portion of the Compare tab.
 
-**Summary line** above the charts showing current week totals:
+**Summary line** above the charts showing current plan week totals:
 ```
-12,400m this week · 42 min
+W3: 12,400m · 42 min
 ```
+
+"Current week" means the plan's current week (the lowest incomplete week, as returned by `useTrainingData`'s `currentWeek`), not the calendar week. `currentWeek` is passed as a prop from `App.tsx` through to `ComparisonView`.
 
 If no sessions are completed, show empty state: "Complete sessions to see training volume."
 
@@ -50,7 +52,11 @@ For time-based sessions (e.g., `"20min"`) where `parseDistance` returns null:
 
 ### Time Derivation
 
-Parse `totalTime` (format `"mm:ss"` or `"m:ss"`) into minutes. Use the same `parseTime` regex from `pacePredictor.ts` (now accepting 1-3 digit minutes). Sessions without `totalTime` contribute 0 to the time chart.
+Parse `totalTime` (format `"mm:ss"` or `"m:ss"`) into minutes. The `parseTime` function in `pacePredictor.ts` is currently module-private — **export it** as part of this work so `volumeCalc.ts` can import it. Sessions without `totalTime` contribute 0 to the time chart.
+
+### Label Format Assumption
+
+The `parseDistance` regex requires exact formats: `"5000m"` (anchored with `^$`) for simple distances, and `N x Nm` anywhere in the string for intervals. Labels with trailing text (e.g., `"5000m steady state"`) will not match the simple-distance path and will fall through to the pace×time estimation. This is acceptable — the training plan's labels all conform to these formats (`"5000m"`, `"6 x 500m / 2min rest"`, `"20min"`).
 
 ## 2. Pin-to-Compare Interaction
 
@@ -61,6 +67,8 @@ Each **completed** collapsed `SessionCard` in the Session tab displays a small c
 - **Unpinned state:** Icon is subtle/muted (gray), same visual weight as the chevron
 - **Pinned state:** Icon fills with teal/cyan accent, indicating selection
 - Only completed sessions show the pin icon (incomplete sessions have nothing to pin)
+- The pin icon is a `<button>` with `min-w-[44px] min-h-[44px]` and `touch-manipulation`
+- Must call `e.stopPropagation()` on click to prevent the parent header's expand/collapse handler from firing (same pattern as the existing delete button in SessionCard)
 
 ### Pin State Machine
 
@@ -68,12 +76,12 @@ Each **completed** collapsed `SessionCard` in the Session tab displays a small c
 |------|----------|
 | 0 | Normal state. No indicators. |
 | 1 | Pinned card's icon highlighted. Floating indicator near bottom nav: **"1 selected — tap another to compare"**. Indicator is small, non-blocking, dismissible by tapping its X. |
-| 2 | Auto-navigate to Compare tab. Side-by-side comparison renders below volume charts. Floating indicator disappears. |
+| 2 | Auto-navigate to Compare tab via `setActiveView('compare')`. The `visitedViews` guard in App.tsx will be satisfied by the same render cycle that updates `activeView`, so the lazy-loaded `ComparisonView` mounts with `compareSlots` already populated. The `CompareSkeleton` fallback shows during initial load. Floating indicator disappears. |
 
 Additional rules:
-- Tapping a pinned card's icon again unpins it (deselects)
-- If two are already pinned and user taps a third, it replaces the oldest pin (slot 0)
-- The "Clear" button on the comparison view unpins both
+- Tapping a pinned card's icon again unpins it (deselects). **This check runs first** — if the tapped card is already pinned, it always unpins, regardless of how many slots are full.
+- If two are already pinned and user taps a *different* (unpinned) third card, it replaces the oldest pin (slot 0)
+- The "Clear" button on the comparison view unpins both and the user stays on the Compare tab (volume charts remain visible)
 
 ### State Management
 
@@ -93,9 +101,11 @@ When exactly one session is pinned, a small bar appears above the bottom navigat
 [1 selected — tap another to compare          ✕]
 ```
 
-- Positioned similarly to the existing `SaveToast` / default power level prompt pattern
+- Positioned with `fixed left-4 right-4 z-50` and `bottom: calc(5rem + env(safe-area-inset-bottom, 0px))` — sitting directly above the bottom nav, matching the default power level prompt pattern
+- If a `SaveToast` is also visible simultaneously, the floating indicator renders below it (lower z-index or stacked via bottom offset). In practice this is rare since SaveToast appears on the Session tab during save, and the floating indicator also shows on the Session tab — but both can coexist without overlapping.
 - Dismissing via ✕ unpins the session (resets to 0 pins)
 - Uses `role="status"` and `aria-live="polite"` for accessibility
+- If the user navigates back to the Session tab with 1 pin remaining (e.g., after clearing one from Compare), the floating indicator reappears
 
 ## 3. Side-by-Side Comparison
 
@@ -148,17 +158,18 @@ Same derivation as the volume charts: `parseDistance(label)` with pace×time fal
 
 | File | Purpose |
 |------|---------|
-| `src/components/comparison/VolumeChart.tsx` | Reusable horizontal bar chart component. Props: `data` (week number + value pairs), `color` (teal or amber), `currentWeek`, `unit` (m or min). Used twice — once for meters, once for time. |
+| `src/components/comparison/VolumeChart.tsx` | Reusable horizontal bar chart component using CSS div bars (not SVG — simpler for horizontal bars with text labels). Each bar row is a flex container: week label (fixed width) + colored div bar (width as percentage of max value) + value label. Each row is 28px tall with 6px gap. Props: `data` (week number + value pairs), `color` (teal or amber class string), `currentWeek`, `formatValue` (callback to format the number, e.g., `"12,400m"` vs `"42 min"`). Used twice — once for meters, once for time. |
 | `src/components/comparison/SessionComparison.tsx` | Side-by-side metric rows. Props: `leftSession`, `rightSession`, `leftDescriptor`, `rightDescriptor`, `onClear`. |
 
 ### Rewritten Files
 
 | File | Change |
 |------|--------|
-| `src/components/views/ComparisonView.tsx` | Complete rewrite. Renders volume summary line, two `VolumeChart` instances, and `SessionComparison` when pins are active. Props: `sessions`, `plan`, `compareSlots`, `onClearCompare`. |
+| `src/components/views/ComparisonView.tsx` | Complete rewrite. Renders volume summary line, two `VolumeChart` instances, and `SessionComparison` when pins are active. Props: `sessions`, `plan`, `compareSlots`, `onClearCompare`, `currentWeek`. |
 | `src/components/SessionCard.tsx` | Add pin icon to completed collapsed cards. New props: `isPinned?: boolean`, `onTogglePin?: () => void`. |
 | `src/App.tsx` | Add `compareSlots` state, `handleTogglePin(sessionKey)` callback, auto-navigate to Compare on second pin, pass `compareSlots`/`onClearCompare` to ComparisonView, pass `isPinned`/`onTogglePin` through to SessionCard. |
-| `src/components/WeekView.tsx` | Pass `isPinned` and `onTogglePin` through to SessionCard instances. |
+| `src/components/WeekView.tsx` | Add `compareSlots: [string | null, string | null]` and `onTogglePin: (key: string) => void` to `WeekViewProps`. For each `SessionCard`, compute `isPinned` by checking `compareSlots.includes(\`${session.weekNumber}-${session.dayNumber}\`)` and pass `onTogglePin={() => onTogglePin(\`${session.weekNumber}-${session.dayNumber}\`)}`. Applies to both core and optional session cards. |
+| `src/utils/pacePredictor.ts` | Export the existing `parseTime` function (currently module-private) so `volumeCalc.ts` can import it. |
 
 ### Deleted Files
 
@@ -167,6 +178,7 @@ Same derivation as the volume charts: `parseDistance(label)` with pace×time fal
 | `src/utils/workoutGrouping.ts` | Label-matching grouping logic no longer needed |
 | `src/components/comparison/ComparisonSparkline.tsx` | Old sparkline chart no longer needed |
 | `src/components/comparison/ComparisonTable.tsx` | Old comparison table no longer needed |
+| `src/utils/__tests__/workoutGrouping.test.ts` | Tests for deleted workoutGrouping.ts |
 
 ### Preserved
 
@@ -181,17 +193,21 @@ App.tsx
   compareSlots state: [string | null, string | null]
   handleTogglePin(key: string): void
   handleClearCompare(): void
+  currentWeek (from useTrainingData)
   │
   ├── WeekView
-  │     └── SessionCard
-  │           isPinned: boolean
-  │           onTogglePin: () => void
+  │     compareSlots: [string | null, string | null]
+  │     onTogglePin: (key: string) => void
+  │     └── SessionCard (for each session, computed per-card)
+  │           isPinned: boolean  (compareSlots.includes(key))
+  │           onTogglePin: () => void  (() => onTogglePin(key))
   │
   └── ComparisonView (lazy)
         sessions: Record<string, SessionRecord>
         plan: SessionDescriptor[]
         compareSlots: [string | null, string | null]
         onClearCompare: () => void
+        currentWeek: number
         │
         ├── VolumeChart (meters)
         ├── VolumeChart (time)
