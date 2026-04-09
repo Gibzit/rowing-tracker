@@ -20,7 +20,7 @@ function rpeTextColor(rpe: number): string {
 export default function RpePrompt({ onSelect, onDismiss }: RpePromptProps) {
   const [exiting, setExiting] = useState(false);
   const [selected, setSelected] = useState<number | null>(null);
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
 
   // Auto-dismiss after 8 seconds
@@ -46,7 +46,7 @@ export default function RpePrompt({ onSelect, onDismiss }: RpePromptProps) {
     if (exiting) onDismiss();
   }, [exiting, onDismiss]);
 
-  const selectTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const selectTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   // Clean up select timer on unmount
   useEffect(() => {

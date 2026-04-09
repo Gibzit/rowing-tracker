@@ -91,7 +91,7 @@ export default function SessionCard({
   const prevCompletedRef = useRef(record.completed);
   const contentRef = useRef<HTMLDivElement>(null);
   const paceInputRef = useRef<HTMLInputElement>(null);
-  const focusTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const focusTimerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
   useEffect(() => {
     if (record.completed && !prevCompletedRef.current) {
